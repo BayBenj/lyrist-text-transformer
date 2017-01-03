@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="misc">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/misc" />
+      <root url="jar://$PROJECT_DIR$/lib/misc/commons-lang3-3.4/commons-lang3-3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/misc/commons-csv-1.2/commons-csv-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/lib/misc/commons-csv-1.2/apidocs" />
+      <root url="file://$PROJECT_DIR$/lib/misc/commons-lang3-3.4/apidocs" />
+      <root url="jar://$PROJECT_DIR$/lib/misc/gson-2.8.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/misc/commons-lang3-3.4/commons-lang3-3.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/misc" recursive="false" />
+  </library>
+</component>

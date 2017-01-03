@@ -18,18 +18,18 @@ public class NeMatchFilter extends ModelWordFilter {
 
     //    private Word neWord;
 //
-//    public FiltrationResults filter(HashSet<W2vWordSuggestion> w2vWordSuggestions, Word neWord) {
+//    public FiltrationResults filterWords(HashSet<W2vWordSuggestion> w2vWordSuggestions, Word neWord) {
 //        this.setNeWord(neWord);
-//        return this.filter(w2vWordSuggestions);
+//        return this.filterWords(w2vWordSuggestions);
 //    }
 //
-//    public HashSet<Word> filter(HashSet<Word> w2vSuggestions, Word neWord, boolean b) {
+//    public HashSet<Word> filterWords(HashSet<Word> w2vSuggestions, Word neWord, boolean b) {
 //        this.setNeWord(neWord);
-//        return this.filter(w2vSuggestions, b);
+//        return this.filterWords(w2vSuggestions, b);
 //    }
 //
 //    @Override
-//    public FiltrationResults filter(Set<W2vWordSuggestion> w2vWordSuggestions) {
+//    public FiltrationResults filterWords(Set<W2vWordSuggestion> w2vWordSuggestions) {
 //        HashSet<W2vWordSuggestion> filteredIn = new HashSet<W2vWordSuggestion>();
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        NamedEntity ne = neWord.getNe();

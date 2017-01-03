@@ -1,7 +1,9 @@
 package song;
 
-import main.Syllable;
-import misc.Phoneme;
+import rhyme.Phoneme;
+import rhyme.Pronunciation;
+import rhyme.StressedPhone;
+import rhyme.Syllable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ public class Word extends SongElement implements Comparable<Word> {
     private List<Integer> stresses = null;
     private Pos pos = null;
     private NamedEntity ne = null;
+    private Pronunciation pronunciation = null;
     private boolean capitalized = false;
 
     public Word(String s) {
@@ -21,7 +24,7 @@ public class Word extends SongElement implements Comparable<Word> {
     }
 
     public String getSpelling() {
-        return this.spelling;
+        return this.spelling.toLowerCase();
     }
 
     public void setSpelling(String spelling) {
@@ -34,7 +37,7 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.phonemes;
     }
 
-    public void setPhonemes(ArrayList<Phoneme> phonemes) {
+    public void setPhonemes(List<Phoneme> phonemes) {
         this.phonemes = phonemes;
     }
 
@@ -42,7 +45,7 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.syllables;
     }
 
-    public void setSyllables(ArrayList<Syllable> syllables) {
+    public void setSyllables(List<Syllable> syllables) {
         this.syllables = syllables;
     }
 
@@ -50,7 +53,7 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.stresses;
     }
 
-    public void setStresses(ArrayList<Integer> stresses) {
+    public void setStresses(List<Integer> stresses) {
         this.stresses = stresses;
     }
 
@@ -76,6 +79,24 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public void setCapitalized(boolean b) {
         this.capitalized = b;
+    }
+
+    public Pronunciation getPronunciation() {
+        return pronunciation;
+    }
+
+    public void setPronunciation(Pronunciation pronunciation) {
+        this.pronunciation = pronunciation;
+        List<Phoneme> tempPhonemes = new ArrayList<>();
+        List<Integer> tempStresses = new ArrayList<>();
+        if (pronunciation != null) {
+            for (StressedPhone sp : pronunciation) {
+                tempPhonemes.add(sp.phone);
+                tempStresses.add(sp.stress);
+            }
+            this.setPhonemes(tempPhonemes);
+            this.setStresses(tempStresses);     //TODO change this to syllables rather than 1 per phone
+        }
     }
 
     @Override
@@ -174,9 +195,6 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.getSpelling().compareTo(o.getSpelling());
     }
 }
-
-
-
 
 
 

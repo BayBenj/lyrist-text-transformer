@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="cmu">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/cmu" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/cmu/sphinx4-core-1.0.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/lib/cmu" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/lib/cmu" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/cmu" recursive="false" type="SOURCES" />
+  </library>
+</component>

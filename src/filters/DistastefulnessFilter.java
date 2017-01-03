@@ -475,7 +475,7 @@ public class DistastefulnessFilter extends VocabListFilter {
     }
 
 //    @Override
-//    public FiltrationResults filter(Set<W2vWordSuggestion> w2vWordSuggestions) {
+//    public FiltrationResults filterWords(Set<W2vWordSuggestion> w2vWordSuggestions) {
 //        HashSet<W2vWordSuggestion> filteredIn = new HashSet<W2vWordSuggestion>();
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        for (W2vWordSuggestion wordSuggestion : w2vWordSuggestions) {
@@ -491,7 +491,7 @@ public class DistastefulnessFilter extends VocabListFilter {
 //        return new FiltrationResults(filteredIn, filteredOut);
 //    }
 
-//    public Set<Word> filter(Set<Word> w2vSuggestions, boolean b) {
+//    public Set<Word> filterWords(Set<Word> w2vSuggestions, boolean b) {
 //        for (Word w : w2vSuggestions) {
 //            if (dirtyStopSet.contains(w.getSpelling()))
 //                w2vSuggestions.remove(w);

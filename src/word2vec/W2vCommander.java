@@ -1,6 +1,7 @@
 package word2vec;
 
 import song.Word;
+import utils.Pair;
 import utils.Utils;
 
 import java.io.*;
@@ -70,18 +71,18 @@ public class W2vCommander {
         strings.add(oldSentiment);
         strings.add(newSentiment);
         strings.add(oldWord);
-        W2vPoint point = stringsToPoint(OperationType.ANALOGY, strings);
-        return new HashMap<>(W2vOperations.pointToStrings(point, nOfSuggestions));
+        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.ANALOGY, strings);
+        return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
 
     public Map<Double, String> findSimilars(String string, int nOfSuggestions) {
         // uses chosen suggestion quantity
         ArrayList<String> oneString = new ArrayList<>();
         oneString.add(string);
-        W2vPoint point = W2vOperations.stringsToPoint(OperationType.SINGLE, oneString);
-        Map<Double, String> tree = new TreeMap<Double, String>(W2vOperations.pointToStrings(point, nOfSuggestions));
-        if (tree.containsKey(point.getString()))
-            tree.remove(point.getString());
+        Pair<W2vPoint,int[]> pair = W2vOperations.stringsToPoint(OperationType.SINGLE, oneString);
+        Map<Double, String> tree = new TreeMap<Double, String>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
+        if (tree.containsValue(pair.getFirst().getString()))
+            tree.remove(pair.getFirst().getString());
         return new HashMap<>(tree);
     }
 
@@ -90,30 +91,28 @@ public class W2vCommander {
         return this.findSimilars(string, nOfDefaultSuggestions);
     }
 
-    public Map<Double, String> findSum(HashSet<Word> words, int nOfSuggestions) {
+    public Map<Double, String> findSum(Set<Word> words, int nOfSuggestions) {
         HashSet<String> strings = new HashSet<>();
         for (Word word : words)
             strings.add(word.getSpelling().toLowerCase());
         return this.findSum(strings, nOfSuggestions, true);
     }
 
-    public Map<Double, String> findSum(HashSet<String> strings, int nOfSuggestions, boolean b) {
-        W2vPoint sumPoint = stringsToPoint(OperationType.SUM, new ArrayList<String>(strings));
-        return new HashMap<>(W2vOperations.pointToStrings(sumPoint, nOfSuggestions));
+    public Map<Double, String> findSum(Set<String> strings, int nOfSuggestions, boolean b) {
+        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.SUM, new ArrayList<String>(strings));
+        return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
 
-    public Map<Double, String> findSum(HashSet<String> words) {
+    public Map<Double, String> findSum(Set<String> words) {
         return this.findSum(words, nOfDefaultSuggestions, true);
     }
 
-    public Map<Double, String> findSentiment(HashSet<String> strings, int nOfSuggestions) {
-        W2vPoint sumPoint = stringsToPoint(OperationType.AVERAGE, new ArrayList<String>(strings));
-        return new HashMap<>(W2vOperations.pointToStrings(sumPoint, nOfSuggestions));
+    public Map<Double, String> findSentiment(Set<String> strings, int nOfSuggestions) {
+        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.AVERAGE, new ArrayList<String>(strings));
+        return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
 
 }
-
-
 
 
 

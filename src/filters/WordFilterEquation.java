@@ -2,7 +2,6 @@ package filters;
 
 import song.Word;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,10 +14,10 @@ public class WordFilterEquation extends FilterEquation {
                 WordFilter wordFilter = (WordFilter) filterObject;
                 switch (super.currentOperator) {
                     case INTERSECTION:
-                        currentWords.retainAll(wordFilter.filter(unfilteredWords));
+                        currentWords.retainAll(wordFilter.filterWords(unfilteredWords));
                         break;
                     case UNION:
-                        currentWords.addAll(wordFilter.filter(unfilteredWords));
+                        currentWords.addAll(wordFilter.filterWords(unfilteredWords));
                         break;
                 }
             }
@@ -86,7 +85,7 @@ public class WordFilterEquation extends FilterEquation {
 //        ArrayList<HashSet<W2vWordSuggestion>> filteredInMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
 //        ArrayList<HashSet<W2vWordSuggestion>> filteredOutMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
 //        for (WordFilter wordFilter : this.filterObjects) {
-//            FiltrationResults filtrationResults = wordFilter.filter(unfilteredWords);
+//            FiltrationResults filtrationResults = wordFilter.filterWords(unfilteredWords);
 //            filteredInMaps.add(filtrationResults.getFilteredIn());
 //            filteredOutMaps.add(filtrationResults.getFilteredOut());
 //        }
@@ -107,15 +106,15 @@ public class WordFilterEquation extends FilterEquation {
 //            //TODO FIX THIS AWFUL FILTRATION SYSTEM
 //            if (wordFilter instanceof PosMatchFilter) {
 //                PosMatchFilter filterWithModel = (PosMatchFilter)wordFilter;
-//                filtrationResults =  filterWithModel.filter(unfilteredWords, modelWord);
+//                filtrationResults =  filterWithModel.filterWords(unfilteredWords, modelWord);
 //
 //            }
 //            else if (wordFilter instanceof NeMatchFilter) {
 //                NeMatchFilter filterWithModel = (NeMatchFilter)wordFilter;
-//                filtrationResults = filterWithModel.filter(unfilteredWords, modelWord);
+//                filtrationResults = filterWithModel.filterWords(unfilteredWords, modelWord);
 //            }
 //            else {
-//                filtrationResults = wordFilter.filter(unfilteredWords);
+//                filtrationResults = wordFilter.filterWords(unfilteredWords);
 //            }
 //            filteredInSets.add(filtrationResults.getFilteredIn());
 //            filteredOutSets.add(filtrationResults.getFilteredOut());
@@ -130,6 +129,7 @@ public class WordFilterEquation extends FilterEquation {
 //        //TODO: Make sure this map intersection works
 //    }
 }
+
 
 
 

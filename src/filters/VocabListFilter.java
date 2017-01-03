@@ -24,7 +24,7 @@ public abstract class VocabListFilter extends StringFilter {
     }
 }
 
-//    public Object filter(VocabList vocabList, HashSet<String> w2vSuggestions) {
+//    public Object filterWords(VocabList vocabList, HashSet<String> w2vSuggestions) {
 //            for (String tempString : w2vSuggestions)
 //                if (!vocabList.contains(w2vSuggestions))
 //                    w2vSuggestions.remove(tempString);

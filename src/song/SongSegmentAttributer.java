@@ -1,6 +1,6 @@
 //package song;
 //
-//import misc.Phoneme;
+//import rhyme.Phoneme;
 //
 //import static java.lang.Character.isLowerCase;
 //

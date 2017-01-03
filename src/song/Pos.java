@@ -1,5 +1,7 @@
 package song;
 
+import org.omg.CORBA.UNKNOWN;
+
 public enum Pos {
 
     CC,
@@ -38,6 +40,8 @@ public enum Pos {
     WP,
     WP$,
     WRB,
+
+    PUNCTUATION,
     UNKNOWN,
     CONTRACTION_WORD
 

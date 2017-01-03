@@ -20,6 +20,7 @@ public class UnsafePosFilter extends WordFilter {
             Pos.EX,
             Pos.PRP$,
             Pos.FW,
+            Pos.PUNCTUATION,
             Pos.UNKNOWN
     };
     private final Set<Pos> unsafePosSet = new HashSet<>(Arrays.asList(unsafePosArray));
@@ -41,6 +42,11 @@ public class UnsafePosFilter extends WordFilter {
         return filteredIn;
     }
 }
+
+
+
+
+
 
 
 

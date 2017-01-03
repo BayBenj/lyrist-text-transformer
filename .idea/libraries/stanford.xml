@@ -1,0 +1,30 @@
+<component name="libraryTable">
+  <library name="stanford">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/ejml-0.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/javax.json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/joda-time.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/jollyday.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/protobuf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/slf4j-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/slf4j-simple.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/stanford-corenlp-3.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/xom.jar!/" />
+      <root url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/stanford-corenlp-3.7.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/javax.json-api-1.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/joda-time-2.9-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/jollyday-0.4.9-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/stanford-corenlp-3.7.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/xom-1.2.10-src.jar!/src" />
+      <root url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" />
+      <root url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" recursive="false" type="SOURCES" />
+  </library>
+</component>

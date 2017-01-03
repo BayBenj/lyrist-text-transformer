@@ -4,7 +4,6 @@ import main.ProgramArgs;
 import song.Word;
 import utils.Utils;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class WordFilter extends Filter {
@@ -17,7 +16,7 @@ public abstract class WordFilter extends Filter {
         super(direction);
     }
 
-    public Set<Word> filter(Set<Word> originalWords) {
+    public Set<Word> filterWords(Set<Word> originalWords) {
         if (ProgramArgs.isTesting()) {
             FilterUtils.startTimer();
             Set<Word> result = this.doFilter(originalWords);

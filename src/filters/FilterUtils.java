@@ -6,6 +6,7 @@ public class FilterUtils {
 
     private static VocabList commonWords;
     private static VocabList bibleWords;
+    private static VocabList modelWords;
     private static long startTime;
     private static long endTime;
 
@@ -36,6 +37,14 @@ public class FilterUtils {
 
     public static void setBibleWords(VocabList bibleWords) {
         FilterUtils.bibleWords = bibleWords;
+    }
+
+    public static VocabList getModelWords() {
+        return modelWords;
+    }
+
+    public static void setModelWords(VocabList modelWords) {
+        FilterUtils.modelWords = modelWords;
     }
 }
 

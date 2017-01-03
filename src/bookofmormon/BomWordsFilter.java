@@ -3,8 +3,9 @@ package bookofmormon;
 import filters.Direction;
 import filters.VocabListFilter;
 import song.VocabList;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BomWordsFilter extends VocabListFilter {
 

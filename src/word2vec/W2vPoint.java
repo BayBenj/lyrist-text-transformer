@@ -1,34 +1,21 @@
 package word2vec;
 
-import song.Word;
-
 public class W2vPoint extends W2vResult {
 
     private double[] point;
-    private long[] inputWordVocabPositions;
-    private int number_of_input_words;
+    private int vocabPosition;
     private String word;
 
-    public W2vPoint(double[] point, long[] inputWordVocabPositions, int number_of_input_words) {
+    public W2vPoint(double[] point) {
         this.setPoint(point);
-        this.setInputWordVocabPositions(inputWordVocabPositions);
-        this.setNumber_of_input_words(number_of_input_words);
     }
 
-    public long[] getInputWordVocabPositions() {
-        return inputWordVocabPositions;
+    public int getInputWordVocabPosition() {
+        return vocabPosition;
     }
 
-    public void setInputWordVocabPositions(long[] inputWordVocabPositions) {
-        this.inputWordVocabPositions = inputWordVocabPositions;
-    }
-
-    public int getNumber_of_input_words() {
-        return number_of_input_words;
-    }
-
-    public void setNumber_of_input_words(int number_of_input_words) {
-        this.number_of_input_words = number_of_input_words;
+    public void setInputWordVocabPosition(int vocabPosition) {
+        this.vocabPosition = vocabPosition;
     }
 
     public double[] getPoint() {
@@ -49,8 +36,6 @@ public class W2vPoint extends W2vResult {
         this.word = word;
     }
 }
-
-
 
 
 

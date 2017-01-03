@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import conditionCHECK.ConstraintCondition;
-import constraintCHECK.Constraint;
+import condition.ConstraintCondition;
+import constraint.Constraint;
 import utils.MathUtils;
 
 public class SparseNHMM<T> extends AbstractMarkovModel<T>{
@@ -92,7 +92,7 @@ public class SparseNHMM<T> extends AbstractMarkovModel<T>{
 			constrain(constraint);
 			if(!satisfiable())
 			{
-				throw new RuntimeException("Not satisfiable upon addition of constraintCHECK: " + constraint);
+				throw new RuntimeException("Not satisfiable upon addition of constraint: " + constraint);
 			}		
 		}
 		
@@ -472,7 +472,7 @@ public class SparseNHMM<T> extends AbstractMarkovModel<T>{
 		boolean desiredConditionState = constraint.getDesiredConditionState();
 		
 		for (int stateIndex = 0; stateIndex < states.length; stateIndex++) {
-			// if the considered state satisfies/dissatisfies the conditionCHECK contrary to what we wanted
+			// if the considered state satisfies/dissatisfies the condition contrary to what we wanted
 			if(condition.isSatisfiedBy(states[stateIndex]) ^ desiredConditionState)
 			{
 				// remove it

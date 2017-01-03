@@ -12,17 +12,10 @@ import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import main.ProgramArgs;
-import song.NamedEntity;
-import song.Pos;
-import song.Sentence;
-import song.Word;
+import song.*;
 import utils.Utils;
 
 import java.io.*;
@@ -31,7 +24,7 @@ import java.util.*;
 public class StanfordNlp {
 
     private static StanfordCoreNLP pipeline;
-    private static final String ANNOTATOR = "annotators";
+    private static final String INPUT_TYPE = "annotators";
     private static final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner";
 //    private final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner, parse, dcoref";
     //private static final MaxentTagger tagger = new MaxentTagger(Utils.rootPath + "lib/stanford-parser/3.6.0/libexec/models/wsj-0-18-bidirectional-nodistsim.tagger");
@@ -143,7 +136,7 @@ public class StanfordNlp {
 
     private void buildPipeline() {
         Properties props = new Properties();
-        props.put(ANNOTATOR, ANNOTATORS);
+        props.put(INPUT_TYPE, ANNOTATORS);
         this.pipeline = new StanfordCoreNLP(props);
         //this.serializePipeline();
     }
@@ -153,7 +146,6 @@ public class StanfordNlp {
 
         //make the result object
         ArrayList<Sentence> mySentences = new ArrayList<Sentence>();
-
 
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(rawText);
@@ -173,44 +165,50 @@ public class StanfordNlp {
             for (CoreLabel token : tempCoreMap.get(CoreAnnotations.TokensAnnotation.class)) {
                 // this is the text of the token
                 String spelling = token.get(CoreAnnotations.TextAnnotation.class);
-                // this is the POS tag of the token
-                String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-                // this is the NER label of the token
-                String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 
-                try {
-                    Pos.valueOf(pos);
-                    NamedEntity.valueOf(ne);
-                }
-                catch (IllegalArgumentException e) {
-                    //System.out.println("BAD POS OR NE TOKEN: " + pos + " or " + ne + " FOR THE WORD: " + spelling);
-                    //e.printStackTrace();
-                    spelling = "";
-                }
-
-                if (spelling.length() < 1 || (spelling.length() == 1 && !Character.isAlphabetic(spelling.charAt(0)))) {
-                    //it's empty or lonely punctuation, do nothing
-                }
-                else if (spelling.contains("'")) {
-                    Word lastWord = tempSentence.get(tempSentence.size() - 1);
-                    lastWord.setSpelling(lastWord.getSpelling() + spelling);
-                    lastWord.setPos(Pos.CONTRACTION_WORD);
+                if (spelling.length() == 1 && !Character.isLetterOrDigit(spelling.charAt(0))) {
+                    //it's punctuation
+                    Punctuation punct = new Punctuation(spelling);
+                    tempSentence.add(punct);
                 }
                 else {
-                    //Make a new word object
-                    Word tempWord = new Word(spelling);
-                    tempWord.setPos(Pos.valueOf(pos));
-                    tempWord.setNe(NamedEntity.valueOf(ne));
+                    // this is the POS tag of the token
+                    String pos = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+                    // this is the NER label of the token
+                    String ne = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 
-                    //Add it to the sentence object
-                    tempSentence.add(tempWord);
+                    try {
+                        Pos.valueOf(pos);
+                        NamedEntity.valueOf(ne);
+                    }
+                    catch (IllegalArgumentException e) {
+                        //System.out.println("BAD POS OR NE TOKEN: " + pos + " or " + ne + " FOR THE WORD: " + spelling);
+                        //e.printStackTrace();
+                        spelling = "";
+                    }
+                    if (spelling.length() < 1) {
+                        //it's empty, do nothing
+                    }
+                    else if (spelling.contains("'")) {
+                        Word lastWord = tempSentence.get(tempSentence.size() - 1);
+                        lastWord.setSpelling(lastWord.getSpelling() + spelling);
+                        lastWord.setPos(Pos.CONTRACTION_WORD);
+                    }
+                    else {
+                        //Make a new word object
+                        Word tempWord = new Word(spelling);
+                        tempWord.setPos(Pos.valueOf(pos));
+                        tempWord.setNe(NamedEntity.valueOf(ne));
+
+                        //Add it to the sentence object
+                        tempSentence.add(tempWord);
+                    }
                 }
 
                 //System.out.println("token: " + spelling + " pos: " + pos + " ne:" + ne);
             }
 
             mySentences.add(tempSentence);
-
 
 //            // this is the parse tree of the current sentence
 //            Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
@@ -289,36 +287,43 @@ public class StanfordNlp {
                                                                            Word oldWord,
                                                                            int oldWordIndex) {
         Map<Double, Word> result = new HashMap<>();
-        int corelabelIndex = contextSentence.getWordIndexIncludingPunctuation(oldWordIndex);
-//        int corelabelIndex = oldWordIndex;
 
-        //Contextually tag every input string all at once
+        //Add 1 sentence per suggestion to sb
         String oldString = oldWord.toString();
         StringBuilder sb = new StringBuilder();
+        boolean capitalized = oldWord.getCapitalized();
         for (Map.Entry<Double, String> entry : suggestions.entrySet()) {
             String suggestion = entry.getValue();
-            if (oldWord.getCapitalized())
+            if (capitalized)
                 suggestion = suggestion.substring(0, 1).toUpperCase() + suggestion.substring(1);
-            String contextSentenceString = contextSentence.toString().replace(oldString, suggestion);
-            sb.append(contextSentenceString);
-            sb.append(".\n");
+            if (Character.isLetterOrDigit(contextSentence.toString().charAt(contextSentence.toString().length() - 1)))
+                sb.append(contextSentence.toString().replaceAll(oldString, suggestion) + ".\n");
+            else
+                sb.append(contextSentence.toString().replaceAll(oldString, suggestion) + "\n");
         }
+
+        //Parse all sentences
         Annotation annotation = new Annotation(sb.toString());
         pipeline.annotate(annotation);
         List<CoreMap> stanfordSentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
 
+        //Go through parsed sentences to find tags on the suggested word
         for (CoreMap stanfordSentence : stanfordSentences) {
             CoreLabel parsedToken = null;
             Word contextualSuggestedWord = null;
+            //Get parsed token, set text
             try {
-                parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(corelabelIndex);
+                parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(oldWordIndex);
                 contextualSuggestedWord = new Word(parsedToken.get(CoreAnnotations.TextAnnotation.class));
-            } catch (IndexOutOfBoundsException e) {
+            }
+            catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
+            //Set Part of Speech
             try {
                 contextualSuggestedWord.setPos(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
                     e.printStackTrace();
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
@@ -326,9 +331,11 @@ public class StanfordNlp {
                 }
                 contextualSuggestedWord.setPos(Pos.UNKNOWN);
             }
+            //Set Named Entity
             try {
                 contextualSuggestedWord.setNe(NamedEntity.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
                     e.printStackTrace();
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
@@ -336,24 +343,19 @@ public class StanfordNlp {
                 }
                 contextualSuggestedWord.setNe(NamedEntity.UNKNOWN);
             }
-            if (Character.isUpperCase(oldString.charAt(0)))
-                contextualSuggestedWord.setCapitalized(oldWord.getCapitalized());
-            result.put(suggestions.firstKey(), contextualSuggestedWord);
-            suggestions.remove(suggestions.firstKey());
+
+            //Manage capitalization
+            contextualSuggestedWord.setCapitalized(oldWord.getCapitalized());
+
+            if (suggestions.size() > 0) {
+                result.put(suggestions.firstKey(), contextualSuggestedWord);
+                suggestions.remove(suggestions.firstKey());
+            }
         }
-
-
-        //Contextually tag every input string
-//        for (Map.Entry<Double, String> entry : suggestions.entrySet()) {
-//            String suggestion = entry.getValue();
-//            Word word = sentenceContext(contextSentence, oldWord, suggestion, corelabelIndex);
-//            result.put(entry.getKey(), word);
-//        }
         return result;
     }
 
-    private static Word sentenceContext(//Map<Double, String> suggestions,
-                                       Sentence contextSentence,
+    private static Word sentenceContext(Sentence contextSentence,
                                        Word oldWord,
                                        String suggestion,
                                        int corelabelIndex
@@ -409,10 +411,6 @@ Decide how to hold data on words and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */
-
-
-
-
 
 
 

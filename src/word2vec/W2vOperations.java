@@ -1,5 +1,6 @@
 package word2vec;
 
+import utils.Pair;
 import utils.Utils;
 
 import java.io.*;
@@ -12,7 +13,7 @@ import static java.lang.Math.toIntExact;
 public abstract class W2vOperations {
 
     private static W2vModel model;
-    private static final long max_w = 50;                         // max length of vocabulary entries in vector, important for w2v operations!
+    private static final long maxWordLength = 25;  // max length of vocabulary entries in vector. Important for w2v operations!
 
     public static W2vModel buildW2vModel(String fileName) {
         Utils.testPrint("Entering buildW2vModel");
@@ -28,45 +29,50 @@ public abstract class W2vOperations {
 
         try {
             Utils.testPrint("Building W2v Model");
-            //TODO: make sure this is the best way to read
             DataInputStream data_in = new DataInputStream(new BufferedInputStream(new FileInputStream(Utils.rootPath + "local-data/w2v/models/bins/" + file)));
 
             //TODO: fix
 //            numberOfWordsInVector = 681320;     //word-phrase
 //            numberOfWordsInVector = 682454;   //news2012
-//            numberOfWordsInVector = 38160;   //news2012
-            numberOfWordsInVector = 3000000;   //GoogleNews-3000000-300
+//            numberOfWordsInVector = 38160;   //1600s-lotr
+//            numberOfWordsInVector = 3000000;   //GoogleNews-3000000-300
+            numberOfWordsInVector = 109478;   //news-lyrics-bom
+//            numberOfWordsInVector = 288340;   //songs 288340-500-5
             System.out.println("Words: " + numberOfWordsInVector);
+            data_in.readLong();
 
             //TODO: fix
 //            numberOfDimensionsInVector = 200;   //word-phrase
 //            numberOfDimensionsInVector = 300; //news2012
 //            numberOfDimensionsInVector = 1000; //1600s-lotr
-            numberOfDimensionsInVector = 300; //GoogleNews-3000000-300
+//            numberOfDimensionsInVector = 300; //GoogleNews-3000000-300
+            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
+//            numberOfDimensionsInVector = 500;   //songs 288340-500-5
             System.out.println("Size: " + numberOfDimensionsInVector);
+            data_in.readLong();
 
             //TODO: fix
             float[] M = new float[(int) (numberOfDimensionsInVector + numberOfDimensionsInVector * numberOfWordsInVector + 1)];
-            char[] vocab = new char[toIntExact(max_w * numberOfWordsInVector + max_w + 1)];
+            char[] vocab = new char[toIntExact(maxWordLength * numberOfWordsInVector + maxWordLength + 1)];
 
             for (b = 0; b < numberOfWordsInVector; b++) {
                 a = 0;
                 boolean eof = false;
                 while (!eof) {
                     try {
-                        vocab[toIntExact(b * max_w + a)] = (char) data_in.readByte();
+                        vocab[toIntExact(b * maxWordLength + a)] = (char) data_in.readByte();
                         if (eof)
                             break;
-                        if (vocab[toIntExact(b * max_w + a)] == (int) ' ')
+                        if (vocab[toIntExact(b * maxWordLength + a)] == (int) ' ')
                             break;
 
-                        if ((a < max_w) && (vocab[toIntExact(b * max_w + a)] != (int) '\n'))
+                        if ((a < maxWordLength) && (vocab[toIntExact(b * maxWordLength + a)] != (int) '\n'))
                             a++;
                     } catch (EOFException e) {
                         eof = true;
                     }
                 }
-                vocab[toIntExact(b * max_w + a)] = '0';
+                vocab[toIntExact(b * maxWordLength + a)] = '0';
 
                 for (a = 0; a < numberOfDimensionsInVector; a++) {
                     //TODO: understand how to do this
@@ -124,8 +130,8 @@ public abstract class W2vOperations {
 //                //TODO: ensure this works
 //                String temp = "";
 //                int x = 0;
-//                while (vocab[toIntExact(b * max_w + x)] == inputWords[toIntExact(a)].charAt(x)) {
-//                    temp += vocab[toIntExact(b * max_w + x)];
+//                while (vocab[toIntExact(b * maxWordLength + x)] == inputWords[toIntExact(a)].charAt(x)) {
+//                    temp += vocab[toIntExact(b * maxWordLength + x)];
 //                    String tempString = inputWords[toIntExact(a)];
 //                    if (temp.equals(tempString))
 //                        break outerloop;
@@ -160,11 +166,12 @@ public abstract class W2vOperations {
 //        return new W2vPoint(point, closest_word, inputWordVocabPositions, number_of_input_words);
 //    }
 
-    public static Map<Double, String> pointToStrings(W2vPoint referencePoint, final int number_of_suggestions_to_show) {
+    public static Map<Double, String> pointToStrings(W2vPoint referencePoint,
+                                                     int[] inputWordVocabPositions,
+                                                     final int number_of_suggestions_to_show) {
         // Grab data from point in vector
         String word = referencePoint.getString();
-        long[] inputWordVocabPositions = referencePoint.getInputWordVocabPositions();
-        int number_of_input_words = referencePoint.getNumber_of_input_words();
+        int number_of_input_words = inputWordVocabPositions.length;
         double[] point = referencePoint.getPoint();
 
         // Grab data from word2vec model
@@ -181,59 +188,52 @@ public abstract class W2vOperations {
         if (number_of_suggestions_to_show > 1 && !word.equals("NO_WORD_YET"))
             Utils.testPrint("Finding word2vec suggestions similar to [" + word + "]...");
 
-        // Fill words and distances with blank values TODO: is this necessary?
-        for (a = 0; a < number_of_suggestions_to_show; a++) {
+        // Fill words with blank values
+        for (a = 0; a < number_of_suggestions_to_show; a++)
             closest_words[toIntExact(a)] = "";
-            closest_distances[toIntExact(a)] = 0;
-        }
 
-        //TODO: IMPORTANT!!!!! SOMEHOW GET RID OF TRIPLE-NESTED FOR LOOP!
-        for (a = 0; a < number_of_suggestions_to_show; a++) {
-            for (c = 0; c < numberOfWordsInVector; c++) {
-                for (int l = 0; l < inputWordVocabPositions.length; l++) {
-                    if (c == inputWordVocabPositions[l])
-                        continue;
-                }
-                a = 0;
-                for (b = 0; b < number_of_input_words; b++)
-                    if (inputWordVocabPositions[toIntExact(b)] == c) a = 1;
-                if (a == 1)
+        for (c = 0; c < numberOfWordsInVector; c++) {
+            for (int l = 0; l < inputWordVocabPositions.length; l++)
+                if (c == inputWordVocabPositions[l])
                     continue;
-                double dist = 0;
-                for (a = 0; a < numberOfDimensionsInVector; a++)
-                    dist += point[toIntExact(a)] * M[toIntExact(a + c * numberOfDimensionsInVector)];
-                for (a = 0; a < number_of_suggestions_to_show; a++) {
-                    if (dist > closest_distances[toIntExact(a)]) {
-                        for (d = number_of_suggestions_to_show - 1; d > a; d--) {
-                            closest_distances[toIntExact(d)] = closest_distances[toIntExact(d - 1)];
+            a = 0;
+            for (b = 0; b < number_of_input_words; b++)
+                if (inputWordVocabPositions[toIntExact(b)] == c) a = 1;
+            if (a == 1)
+                continue;
+            double dist = 0;
+            for (a = 0; a < numberOfDimensionsInVector; a++)
+                dist += point[toIntExact(a)] * M[toIntExact(a + c * numberOfDimensionsInVector)];
+            for (a = 0; a < number_of_suggestions_to_show; a++) {
+                if (dist > closest_distances[toIntExact(a)]) {
+                    for (d = number_of_suggestions_to_show - 1; d > a; d--) {
+                        closest_distances[toIntExact(d)] = closest_distances[toIntExact(d - 1)];
 
-                            StringBuilder sb = new StringBuilder(closest_words[toIntExact(d - 1)]);
-                            closest_words[toIntExact(d)] = sb.toString();
+                        StringBuilder sb = new StringBuilder(closest_words[toIntExact(d - 1)]);
+                        closest_words[toIntExact(d)] = sb.toString();
 
-                        }
-                        closest_distances[toIntExact(a)] = dist;
-                        char not0 = vocab[toIntExact(c * max_w)];
-                        String temp = "";
-                        int x = 1;
-                        while (not0 != '0') {
-                            temp += not0;
-                            not0 = vocab[toIntExact(c * max_w + x)];
-                            x++;
-                        }
-                        closest_words[toIntExact(a)] = temp;
-                        break;
                     }
+                    closest_distances[toIntExact(a)] = dist;
+                    char not0 = vocab[toIntExact(c * maxWordLength)];
+                    String temp = "";
+                    int x = 1;
+                    while (not0 != '0') {
+                        temp += not0;
+                        not0 = vocab[toIntExact(c * maxWordLength + x)];
+                        x++;
+                    }
+                    closest_words[toIntExact(a)] = temp;
+                    break;
                 }
             }
         }
 
-        //TODO: someday return the points along with the strings
-        // Put resulting suggestions into a object to return
+        // Put resulting suggestions into an object to return (distances are negative for sorting)
         Map<Double, String> suggestions = new HashMap<>();
         for (a = 0; a < number_of_suggestions_to_show; a++) {
             if (a == 0 && number_of_suggestions_to_show > 1)
-                Utils.testPrint("\tFound " + number_of_suggestions_to_show + " words.");
-            suggestions.put(closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
+                Utils.testPrint("\tword2vec found " + number_of_suggestions_to_show + " words.");
+            suggestions.put(-1 * closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
         }
         return suggestions;
     }
@@ -282,8 +282,8 @@ public abstract class W2vOperations {
 //                //TODO: ensure this works
 //                String temp = "";
 //                int x = 0;
-//                while (vocab[toIntExact(b * max_w + x)] == inputWords[toIntExact(a)].charAt(x)) {
-//                    temp += vocab[toIntExact(b * max_w + x)];
+//                while (vocab[toIntExact(b * maxWordLength + x)] == inputWords[toIntExact(a)].charAt(x)) {
+//                    temp += vocab[toIntExact(b * maxWordLength + x)];
 //                    String tempString = inputWords[toIntExact(a)];
 //                    if (temp.equals(tempString))
 //                        break outerloop;
@@ -374,8 +374,8 @@ public abstract class W2vOperations {
 ////                //TODO: ensure this works
 ////                String temp = "";
 ////                int x = 0;
-////                while (vocab[toIntExact(b * max_w + x)] == inputWords[toIntExact(a)].charAt(x)) {
-////                    temp += vocab[toIntExact(b * max_w + x)];
+////                while (vocab[toIntExact(b * maxWordLength + x)] == inputWords[toIntExact(a)].charAt(x)) {
+////                    temp += vocab[toIntExact(b * maxWordLength + x)];
 ////                    String tempString = inputWords[toIntExact(a)];
 ////                    if (temp.equals(tempString))
 ////                        break outerloop;
@@ -403,7 +403,7 @@ public abstract class W2vOperations {
 ////        return new W2vPoint(point, word, new long[] {inputWordVocabPosition}, number_of_input_words);
     //}
 
-    public static W2vPoint stringsToPoint(OperationType type, List<String> strings) {
+    public static Pair<W2vPoint, int[]> stringsToPoint(OperationType type, List<String> strings) {
         // Grab data from word2vec model
         long numberOfWordsInVector = model.getNumberOfWordsInVector();
         long numberOfDimensionsInVector = model.getNumberOfDimensionsInVector();
@@ -426,7 +426,7 @@ public abstract class W2vOperations {
             }
         }
         double[] resultPoint = new double[toIntExact(numberOfDimensionsInVector)];
-        long[] inputWordVocabPositions = new long[nOfPoints];
+        int[] inputWordVocabPositions = new int[nOfPoints];
 
         prePrint(type, strings);
 
@@ -436,8 +436,8 @@ public abstract class W2vOperations {
             for (b = 0; b < numberOfWordsInVector; b++) {
                 String temp = "";
                 int x = 0;
-                while (vocab[toIntExact(b * max_w + x)] == inputWords[toIntExact(a)].charAt(x)) {
-                    temp += vocab[toIntExact(b * max_w + x)];
+                while (vocab[toIntExact(b * maxWordLength + x)] == inputWords[toIntExact(a)].charAt(x)) {
+                    temp += vocab[toIntExact(b * maxWordLength + x)];
                     String tempString = inputWords[toIntExact(a)];
                     if (temp.equals(tempString))
                         break outerloop;
@@ -446,9 +446,9 @@ public abstract class W2vOperations {
             }
             if (b == numberOfWordsInVector)
                 b = 0;
-            inputWordVocabPositions[toIntExact(a)] = b;
+            inputWordVocabPositions[toIntExact(a)] = toIntExact(b);
             if (b == 0) {
-                System.out.println("# Out of dictionary input word! Whole w2v operation is broken!");
+                System.out.println("# Out of dictionary input word! Whole word2vec operation is broken!");
                 break;
             }
         }
@@ -467,7 +467,7 @@ public abstract class W2vOperations {
 
         //postPrint(type, closest_word);
 
-        return new W2vPoint(resultPoint, inputWordVocabPositions, nOfPoints);
+        return new Pair<>(new W2vPoint(resultPoint), inputWordVocabPositions);
     }
 
     private static void prePrint(OperationType type, List<String> strings) {
@@ -521,7 +521,7 @@ public abstract class W2vOperations {
         }
     }
 
-    private static void vectorOperation(OperationType type, float[] M, long[] inputWordVocabPositions, long numberOfDimensionsInVector, int nOfPoints, double[] resultPoint) {
+    private static void vectorOperation(OperationType type, float[] M, int[] inputWordVocabPositions, long numberOfDimensionsInVector, int nOfPoints, double[] resultPoint) {
         switch (type) {
             case SUM:
                 for (int a = 0; a < numberOfDimensionsInVector; a++) {
@@ -568,10 +568,6 @@ public abstract class W2vOperations {
 
 /*
 TODO > Get rid of inputWordVocabPositions (maybe not actually)
-
-TODO > Put max_w in the correct place
-
-TODO > Put max_input_string_size in the correct place, or even better get rid of it
 
 TODO > Rename iterating longs after their role, like dim for nOfDimension
  */

@@ -4,6 +4,7 @@ import main.ProgramArgs;
 import song.Word;
 import utils.Utils;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public abstract class StringFilter extends Filter {
@@ -28,9 +29,14 @@ public abstract class StringFilter extends Filter {
             return this.doFilter(originalStrings);
     }
 
-    public abstract Set<String> doFilter(Set<String> originalWords);
+    public abstract Set<String> doFilter(Set<String> originalStrings);
 
 }
+
+
+
+
+
 
 
 

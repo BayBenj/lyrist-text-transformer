@@ -1,13 +1,14 @@
 package song;
 
-//import inspirationCHECK.Inspiration;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import filters.*;
-import misc.Phoneme;
+import rhyme.Phoneme;
+import rhyme.Phoneticizer;
+import rhyme.Pronunciation;
+import rhyme.StressedPhone;
 import stanford_nlp.StanfordNlp;
 import utils.Utils;
-import word2vec.ReplacementJob;
 
 import java.io.*;
 import java.util.*;
@@ -25,23 +26,22 @@ public final class TemplateSongEngineer extends SongEngineer {
 
         Utils.startTimer();
 
-        FilterUtils.setCommonWords(this.readInCommonWords());
-
         //Read in original song lyrics, set up a SongWrapper and a Song object for the template.
-        String rawTemplateText = this.readTemplate("fleetwood.txt");
+        String rawTemplateText = this.readTemplate("sorrow-short.txt");
         StanfordNlp stanford = Utils.getStanfordNlp();
 //        List<List<CoreLabel>> stanfordSentences = stanford.parseTextCompletelyByString(rawTemplateText);
 //        ArrayList<Sentence> parsedSentences = this.stanfordSentencesToSentences(stanfordSentences);
 //        stanford.parseTextCompletelyByPath("let-it-be.txt");
 
         List<Sentence> parsedSentences = stanford.parseTextToSentences(rawTemplateText);
+        setPronunciationsForSentences(parsedSentences);
         SongWrapper templateSongWrapper = this.sentencesToSongWrapper(rawTemplateText, parsedSentences);
         Song templateSong = templateSongWrapper.getSong();
 
         //Filter out unsafe words so they can't be marked
         WordFilterEquation wordFilterEquation = new WordFilterEquation();
+        wordFilterEquation.add(new FilterINTERSECTION());
         wordFilterEquation.add(new UnsafePosFilter(Direction.EXCLUDE_MATCH));
-        //Set<Word> allMarkableWordsSet = new HashSet<>(wordFilterEquation.run(new HashSet(templateSong.getAllWords())));
         List<Word> allMarkableWordsList = new ArrayList<>(wordFilterEquation.run(new HashSet(templateSong.getAllWords())));
 
         //Mark random markable words from template
@@ -50,11 +50,12 @@ public final class TemplateSongEngineer extends SongEngineer {
             allWordIndexes.add(i);
         HashSet<Integer> markedIndexes = this.getRandomIndexes(allWordIndexes, 1);
         Set<Word> markedWords = new HashSet<Word>();
-        for(int index : markedIndexes)
+        for (int index : markedIndexes)
             markedWords.add(allMarkableWordsList.get(index));
 
         //Replace marked words in template w/ word2vec
         ReplacementJob replacementJob = new ReplacementJob();
+        replacementJob.setnSuggestionsToPrint(10);
         WordReplacements wordReplacements = replacementJob.getAnalogousWords(markedWords,
                 parsedSentences,
                 replacementJob.getNormalStringFilters(),
@@ -63,7 +64,7 @@ public final class TemplateSongEngineer extends SongEngineer {
         Song generatedSong = this.replaceWords(templateSong, wordReplacements);
 
         //Do my own fixes on the text
-        this.manageCapitalization(generatedSong);
+        this.manageSongText(generatedSong);
 
         //Print both songs out
         Utils.printSideBySide(templateSong, generatedSong);
@@ -73,36 +74,34 @@ public final class TemplateSongEngineer extends SongEngineer {
         return generatedSong;
     }
 
-    private VocabList readInCommonWords() {
-        String filePath = Utils.rootPath + "local-data/vocablists/common_words.txt";
-        File file = new File(filePath);
-        Set<String> set = new HashSet<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null)
-                set.add(line);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void setPronunciationsForSentences(List<Sentence> sentences) {
+        for (Sentence sentence : sentences) {
+            for (Word word : sentence) {
+                word.setPronunciation(getPronunciationForWord(word));
+            }
         }
-        return new VocabList(set);
     }
 
+    private Pronunciation getPronunciationForWord(String string) {
+        if (string != null && string.length() > 0 && string.matches("\\w+")) {
+            return Phoneticizer.getTopPronunciation(string.toUpperCase());
+        }
+        return null;
+    }
 
-    private void manageCapitalization(Song generatedSong) {
-        // Lowercase all words
-        this.lowercaseAllWords(generatedSong);
+    private Pronunciation getPronunciationForWord(Word word) {
+        if (word.getClass() != Punctuation.class) {
+            return this.getPronunciationForWord(word.getSpelling());
+        }
+        return null;
+    }
 
+    private void manageSongText(Song generatedSong) {
         // Fix indefinite articles
         this.fixAllIndefiniteArticles(generatedSong);
 
         // Capitalize first word of every line
         this.capitalizeFirstWordsInLines(generatedSong);
-
-        // Eventually re-capitalize: proper nouns, I
-        //        this.capitalizeProperNouns(generatedSong);
-
     }
 
     private ArrayList<Sentence> stanfordSentencesToSentences(List<List<CoreLabel>> stanfordSentences) {
@@ -210,20 +209,25 @@ public final class TemplateSongEngineer extends SongEngineer {
 
     public void mutateIndefiniteArticle(Word article, Word following) {
         List<Phoneme> phonemes = following.getPhonemes();
-        String string = following.toString();
-        char firstChar = string.charAt(0);
-        if (phonemes != null) {
+        String spelling = following.getSpelling();
+        if (phonemes != null && phonemes.size() > 0) {
             Phoneme first = phonemes.get(0);
             if (first.isVowel())
                 article.setSpelling("an");
             else
                 article.setSpelling("a");
         }
-        else
-            if (this.isVowel(firstChar))
+        else if (spelling != null && spelling.length() > 0) {
+            char firstChar = spelling.charAt(0);
+            if (    firstChar == 'a' ||
+                    firstChar == 'e' ||
+                    firstChar == 'i' ||
+                    firstChar == 'o' ||
+                    firstChar == 'u' )
                 article.setSpelling("an");
             else
                 article.setSpelling("a");
+        }
     }
 
     public void capitalizeWord(Word word) {
@@ -236,6 +240,7 @@ public final class TemplateSongEngineer extends SongEngineer {
 
     public HashSet<Integer> getRandomIndexes(Set<Integer> originalIndexes, double replacement_frequency) {
         Utils.testPrintln("Entering getRandomIndexes");
+
 //        //Make whiteListIndexes
 //        List<Integer> whiteListIndexes = new ArrayList<Integer>();
 //        for (int i = 0; i < originalIndexes.size(); i++)
@@ -314,6 +319,9 @@ public final class TemplateSongEngineer extends SongEngineer {
         if (replacement_frequency == 1)
             return (HashSet<Integer>) originalIndexes;
 
+        if (originalIndexes.size() < 1)
+            return (HashSet<Integer>) originalIndexes;
+
         HashSet<Integer> randomIndexes = new HashSet<Integer>();
         int nOfOriginalIndexes = originalIndexes.size();
         int num_to_replace = (int)(replacement_frequency * nOfOriginalIndexes); //TODO decide which way to round
@@ -326,14 +334,6 @@ public final class TemplateSongEngineer extends SongEngineer {
             num_to_replace--;
         }
         return randomIndexes;
-    }
-
-    private HashSet<Word> markRandomWordsByPos(HashMap<Pos, Word> posMap, int replacement_frequency) {
-        //TODO implement this
-            //TODO for each part of speech key, call getRandomIndexes() on the value, which is a HashSet<Word>
-        //TODO when I've got Pos truly figured out, make a way to replace all nouns, some conjunctions, some determiners, etc.
-            //TODO Maybe this function takes in a map<Pos, replacement_frequency>
-        return null;
     }
 
     private Song replaceWords(Song templateSong, WordReplacements wordReplacements) {
@@ -433,7 +433,7 @@ public final class TemplateSongEngineer extends SongEngineer {
         Utils.testPrintln("Entering readTemplate");
         Song song = new Song();
         try {
-            File file = new File(Utils.rootPath + "local-data/test-template-songs/" + songFile);
+            File file = new File(Utils.rootPath + "local-data/dev-template-songs/" + songFile);
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
             fis.read(data);
@@ -447,32 +447,6 @@ public final class TemplateSongEngineer extends SongEngineer {
         }
     }
 
-    public boolean isVowel(char c) {
-        String s = Character.toString(c);
-        s.toLowerCase();
-        c = s.charAt(0);
-        if (    c == 'a' ||
-                c == 'e' ||
-                c == 'i' ||
-                c == 'o' ||
-                c == 'u' ||
-                c == 'y' )
-            return true;
-        return false;
-    }
-
-    public boolean isConsonant(char c) {
-        return !this.isVowel(c);
-    }
-
-    public void fixPronoun() {
-
-    }
-
-    public void dealWithContraction() {
-
-    }
-
 }
 
 
@@ -484,7 +458,7 @@ TODO: Tag pos in w2v suggestions within the context of the whole song (or at lea
 
 TODO: Figure out verbs: reflexive, transitive, person, etc.
 
-TODO: Make a named entity recognition filter
+TODO: Make a named entity recognition filterWords
 
 TODO: Recognize compound nouns, replace them with nouns or compound nouns
 
@@ -526,10 +500,6 @@ Let it be. Let it be.
 
 Lines are defined by the \n character. Sentences are defined by punctuation.
  */
-
-
-
-
 
 
 

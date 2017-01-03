@@ -388,7 +388,7 @@ public class BomNameFilter extends VocabListFilter {
         for (String s : originalStrings) {
             if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s.toLowerCase()) ||
                     super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase()))
-                result.add(s);
+                result.add(s.substring(0, 1).toUpperCase() + s.substring(1));
         }
         return result;
     }

@@ -72,7 +72,7 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
 //        ArrayList<HashSet<W2vWordSuggestion>> filteredInMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
 //        ArrayList<HashSet<W2vWordSuggestion>> filteredOutMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
 //        for (WordFilter wordFilter : this.filterObjects) {
-//            FiltrationResults filtrationResults = wordFilter.filter(unfilteredWords);
+//            FiltrationResults filtrationResults = wordFilter.filterWords(unfilteredWords);
 //            filteredInMaps.add(filtrationResults.getFilteredIn());
 //            filteredOutMaps.add(filtrationResults.getFilteredOut());
 //        }
@@ -93,15 +93,15 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
 //            //TODO FIX THIS AWFUL FILTRATION SYSTEM
 //            if (wordFilter instanceof PosMatchFilter) {
 //                PosMatchFilter filterWithModel = (PosMatchFilter)wordFilter;
-//                filtrationResults =  filterWithModel.filter(unfilteredWords, modelWord);
+//                filtrationResults =  filterWithModel.filterWords(unfilteredWords, modelWord);
 //
 //            }
 //            else if (wordFilter instanceof NeMatchFilter) {
 //                NeMatchFilter filterWithModel = (NeMatchFilter)wordFilter;
-//                filtrationResults = filterWithModel.filter(unfilteredWords, modelWord);
+//                filtrationResults = filterWithModel.filterWords(unfilteredWords, modelWord);
 //            }
 //            else {
-//                filtrationResults = wordFilter.filter(unfilteredWords);
+//                filtrationResults = wordFilter.filterWords(unfilteredWords);
 //            }
 //            filteredInSets.add(filtrationResults.getFilteredIn());
 //            filteredOutSets.add(filtrationResults.getFilteredOut());
@@ -131,8 +131,8 @@ TODO > Change ArrayList<TaggedWord> to HashSet<TaggedWord>, figure out how to us
 /*
 Similar to villain
 Original suggestions: bretch, baddie, terrible
-POS filter: returns bretch, baddie
-Dirty word filter: baddie, terrible
+POS filterWords: returns bretch, baddie
+Dirty word filterWords: baddie, terrible
 
 Intersect sets for baddie
 

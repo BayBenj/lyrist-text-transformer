@@ -9,38 +9,38 @@ import java.util.*;
 public class BomGroupFilter extends VocabListFilter {
 
     private static String[] list = {
-            "amalekites",
-            "amalickiahites",
-            "amlicites",
-            "ammonihahites",
-            "ammonites",
-            "amulonites",
-            "anti-nephi-lehies",
-            "babylonians",
-            "gadianton robbers",
-            "gentiles",
-            "ishmaelites",
-            "israelites",
-            "jacobites",
-            "jaredites",
-            "jews",
-            "josephites",
-            "lamanites",
-            "lehites",
-            "lemuelites",
-            "mulekites",
-            "nephites",
-            "stripling warriors",
-            "zoramites"
+            "amalekite",
+            "amalickiahite",
+            "amlicite",
+            "ammonihahite",
+            "ammonite",
+            "amulonite",
+            "anti-nephi-lehite",
+            "babylonian",
+            "gadianton robber",
+            "gentile",
+            "ishmaelite",
+            "israelite",
+            "jacobite",
+            "jaredite",
+            "jew",
+            "josephite",
+            "lamanite",
+            "lehite",
+            "lemuelite",
+            "mulekite",
+            "nephite",
+            "stripling warrior",
+            "zoramite"
     };
     private static Set set = new HashSet(Arrays.asList(list));
 
     public BomGroupFilter() {
-        super(new VocabList(set, "book of mormon groups"));
+        super(new VocabList(set, "book of mormon group"));
     }
 
     public BomGroupFilter(Direction direction) {
-        super(direction, new VocabList(set, "book of mormon groups"));
+        super(direction, new VocabList(set, "book of mormon group"));
     }
 
     @Override
@@ -48,8 +48,9 @@ public class BomGroupFilter extends VocabListFilter {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s.toLowerCase()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase()))
-                result.add(s);
+                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase())) {
+                result.add(s.substring(0, 1).toUpperCase() + s.substring(1));
+            }
         }
         return result;
     }
@@ -58,7 +59,6 @@ public class BomGroupFilter extends VocabListFilter {
         return list;
     }
 }
-
 
 
 

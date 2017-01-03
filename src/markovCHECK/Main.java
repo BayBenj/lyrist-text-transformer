@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import conditionCHECK.ExactUnaryMatch;
-import constraintCHECK.Constraint;
+import condition.ExactUnaryMatch;
+import constraint.Constraint;
 
 public class Main {
 	public static void main(String[] args) {

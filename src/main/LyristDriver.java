@@ -1,17 +1,23 @@
 package main;
 
+import bookofmormon.BookOfMormonMain;
+import filters.FilterUtils;
+import rhyme.Phoneticizer;
 import song.TemplateSongEngineer;
+import song.VocabList;
 import stanford_nlp.StanfordNlp;
 import utils.Utils;
 import word2vec.W2vCommander;
 
-import java.io.File;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LyristDriver {
 
     //Generates a new song inspired from a system-selected inspiring idea
 
-        public static void main(String[] args) {
+        public static void main(String[] args) throws IOException {
 
             //Set the root path of Lyrist in Utils
             File currentDirFile = new File("");
@@ -21,15 +27,22 @@ public class LyristDriver {
             ProgramArgs.loadProgramArgs(args); //TODO: right now it doesn't want any args
 
             //Set testing variable
-            ProgramArgs.setTesting(true);
+            ProgramArgs.setTesting(false);
 
             //Setup StanfordNlp
             StanfordNlp stanfordNlp = new StanfordNlp();
             Utils.setStanfordNlp(stanfordNlp);
 
             //Setup W2vCommander
-            W2vCommander w2v  = new W2vCommander("GoogleNews-3000000-300");
+            W2vCommander w2v  = new W2vCommander("news-lyrics-bom2");
             Utils.setW2vCommander(w2v);
+
+            //Setup Phoneticizer
+            Utils.phoneticizer = new Phoneticizer();
+
+            //set common words
+            FilterUtils.setCommonWords(readInCommonWords());
+
 
 //            //Studio studio = new Studio();
 //
@@ -44,6 +57,23 @@ public class LyristDriver {
 
 
         }
+
+    private static VocabList readInCommonWords() {
+        String filePath = Utils.rootPath + "local-data/vocab-lists/common-words.txt";
+        File file = new File(filePath);
+        Set<String> set = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null)
+                set.add(line);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new VocabList(set);
+    }
+
 
 
 //    public static void main(String[] args) {

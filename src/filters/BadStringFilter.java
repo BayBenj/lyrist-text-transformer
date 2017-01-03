@@ -64,7 +64,7 @@ public class BadStringFilter extends CharFilter {
     }
 
 //    @Override
-//    public FiltrationResults filter(Set<W2vWordSuggestion> w2vWordSuggestions) {
+//    public FiltrationResults filterWords(Set<W2vWordSuggestion> w2vWordSuggestions) {
 //        HashSet<W2vWordSuggestion> filteredIn = new HashSet<W2vWordSuggestion>();
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        for (W2vWordSuggestion wordSuggestion : w2vWordSuggestions) {
@@ -83,7 +83,7 @@ public class BadStringFilter extends CharFilter {
 //        return new FiltrationResults(filteredIn, filteredOut);
 //    }
 
-//    public Set<Word> filter(Set<Word> w2vSuggestions, boolean b) {
+//    public Set<Word> filterWords(Set<Word> w2vSuggestions, boolean b) {
 //        for (Word w : w2vSuggestions) {
 //            String spelling = w.getSpelling();
 //            for (char c: spelling.toCharArray()) {

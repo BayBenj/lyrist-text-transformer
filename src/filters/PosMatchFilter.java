@@ -18,18 +18,18 @@ public class PosMatchFilter extends ModelWordFilter {
 
 //    private Word posWord;
 //
-//    public FiltrationResults filter(HashSet<W2vWordSuggestion> w2vWordSuggestions, Word posWord) {
+//    public FiltrationResults filterWords(HashSet<W2vWordSuggestion> w2vWordSuggestions, Word posWord) {
 //        this.setPosWord(posWord);
-//        return this.filter(w2vWordSuggestions);
+//        return this.filterWords(w2vWordSuggestions);
 //    }
 //
-//    public HashSet<Word> filter(HashSet<Word> w2vSuggestions, Word posWord, boolean b) {
+//    public HashSet<Word> filterWords(HashSet<Word> w2vSuggestions, Word posWord, boolean b) {
 //        this.setPosWord(posWord);
-//        return this.filter(w2vSuggestions, b);
+//        return this.filterWords(w2vSuggestions, b);
 //    }
 //
 //    @Override
-//    public FiltrationResults filter(Set<W2vWordSuggestion> w2vWordSuggestions) {
+//    public FiltrationResults filterWords(Set<W2vWordSuggestion> w2vWordSuggestions) {
 //        HashSet<W2vWordSuggestion> filteredIn = new HashSet<W2vWordSuggestion>();
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        Pos pos = posWord.getPos();

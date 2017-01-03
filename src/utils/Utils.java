@@ -1,6 +1,7 @@
 package utils;
 
 import main.ProgramArgs;
+import rhyme.Phoneticizer;
 import song.Line;
 import song.Song;
 import song.SongElement;
@@ -19,7 +20,7 @@ import java.util.Map.Entry;
 
 import static com.sun.tools.classfile.Opcode.get;
 
-//import constraintCHECK.ConstraintBlock;
+//import constraint.ConstraintBlock;
 //import lyrics.Lyric;
 
 public class Utils {
@@ -28,6 +29,7 @@ public class Utils {
 
     private static StanfordNlp stanfordNlp;
     private static W2vCommander w2vCommander;
+    public static Phoneticizer phoneticizer;
 
     private static long startTime;
     private static long endTime;
