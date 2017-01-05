@@ -8,6 +8,8 @@ import java.util.Set;
 public class WordFilterEquation extends FilterEquation {
 
     public Set<Word> run(Set<Word> unfilteredWords) {
+        if (unfilteredWords == null)
+            return null;
         Set<Word> currentWords = new HashSet<>(unfilteredWords);
         for (FilterObject filterObject : this) {
             if (filterObject instanceof Filter) {
@@ -17,7 +19,12 @@ public class WordFilterEquation extends FilterEquation {
                         currentWords.retainAll(wordFilter.filterWords(unfilteredWords));
                         break;
                     case UNION:
-                        currentWords.addAll(wordFilter.filterWords(unfilteredWords));
+                        try {
+                            currentWords.addAll(wordFilter.filterWords(unfilteredWords));
+                        }
+                        catch (NullPointerException e) {
+                            System.out.println("stop for testing");
+                        }
                         break;
                 }
             }
@@ -129,6 +136,9 @@ public class WordFilterEquation extends FilterEquation {
 //        //TODO: Make sure this map intersection works
 //    }
 }
+
+
+
 
 
 

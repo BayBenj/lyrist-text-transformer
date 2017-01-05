@@ -3,10 +3,7 @@ package song;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import filters.*;
-import rhyme.Phoneme;
-import rhyme.Phoneticizer;
-import rhyme.Pronunciation;
-import rhyme.StressedPhone;
+import rhyme.*;
 import stanford_nlp.StanfordNlp;
 import utils.Utils;
 
@@ -34,7 +31,8 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        stanford.parseTextCompletelyByPath("let-it-be.txt");
 
         List<Sentence> parsedSentences = stanford.parseTextToSentences(rawTemplateText);
-        setPronunciationsForSentences(parsedSentences);
+        this.setPronunciationsForSentences(parsedSentences);
+        this.setSyllablesForSentences(parsedSentences);
         SongWrapper templateSongWrapper = this.sentencesToSongWrapper(rawTemplateText, parsedSentences);
         Song templateSong = templateSongWrapper.getSong();
 
@@ -55,11 +53,11 @@ public final class TemplateSongEngineer extends SongEngineer {
 
         //Replace marked words in template w/ word2vec
         ReplacementJob replacementJob = new ReplacementJob();
-        replacementJob.setnSuggestionsToPrint(10);
+        replacementJob.setnSuggestionsToPrint(100);
         WordReplacements wordReplacements = replacementJob.getAnalogousWords(markedWords,
                 parsedSentences,
                 replacementJob.getNormalStringFilters(),
-                10,
+                100,
                 Utils.getW2vCommander());
         Song generatedSong = this.replaceWords(templateSong, wordReplacements);
 
@@ -77,23 +75,17 @@ public final class TemplateSongEngineer extends SongEngineer {
     private void setPronunciationsForSentences(List<Sentence> sentences) {
         for (Sentence sentence : sentences) {
             for (Word word : sentence) {
-                word.setPronunciation(getPronunciationForWord(word));
+                word.setPhonemes(Phoneticizer.getPronunciationForWord(word));
             }
         }
     }
 
-    private Pronunciation getPronunciationForWord(String string) {
-        if (string != null && string.length() > 0 && string.matches("\\w+")) {
-            return Phoneticizer.getTopPronunciation(string.toUpperCase());
+    private void setSyllablesForSentences(List<Sentence> sentences) {
+        for (Sentence sentence : sentences) {
+            for (Word word : sentence) {
+                word.setSyllables(Phoneticizer.getSyllablesForWord(word));
+            }
         }
-        return null;
-    }
-
-    private Pronunciation getPronunciationForWord(Word word) {
-        if (word.getClass() != Punctuation.class) {
-            return this.getPronunciationForWord(word.getSpelling());
-        }
-        return null;
     }
 
     private void manageSongText(Song generatedSong) {
@@ -160,7 +152,7 @@ public final class TemplateSongEngineer extends SongEngineer {
 //                String lyricString = lyric.toString();
 //                lineString.add(lyricString);
 //            }
-//            int[] lineRhymeScheme = RhymeStructureAnalyzer.extractRhymeScheme(lineString);
+//            int[] lineRhymeScheme = Rhymer.extractRhymeScheme(lineString);
 //            rhymeSchemes.add(lineRhymeScheme);
 //        }
 //
@@ -208,10 +200,10 @@ public final class TemplateSongEngineer extends SongEngineer {
     }
 
     public void mutateIndefiniteArticle(Word article, Word following) {
-        List<Phoneme> phonemes = following.getPhonemes();
+        List<StressedPhoneme> phonemes = following.getPhonemes();
         String spelling = following.getSpelling();
         if (phonemes != null && phonemes.size() > 0) {
-            Phoneme first = phonemes.get(0);
+            Phoneme first = phonemes.get(0).phoneme;
             if (first.isVowel())
                 article.setSpelling("an");
             else
@@ -500,8 +492,6 @@ Let it be. Let it be.
 
 Lines are defined by the \n character. Sentences are defined by punctuation.
  */
-
-
 
 
 

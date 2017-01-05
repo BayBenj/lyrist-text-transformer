@@ -76,6 +76,14 @@ public enum Phoneme {
         return p.getManner();
     }
 
+    public boolean isObstruent() {
+        if (this.getManner() == MannerOfArticulation.STOP ||
+                this.getManner() == MannerOfArticulation.FRICATIVE ||
+                this.getManner() == MannerOfArticulation.AFFRICATE)
+            return true;
+        return false;
+    }
+
     public static PlaceOfArticulation getPlace(Phoneme p) {
         return p.getPlace();
     }

@@ -4,14 +4,14 @@
 //import java.util.Collections;
 //import java.util.List;
 //
-//import song.StressedPhone;
+//import song.StressedPhoneme;
 //
 //public class WordPhonemePair extends SequencePair {
 //
 //    public class WordPhonemeAlignmentBuilder extends AlignmentBuilder {
 //
 //        StringBuilder alnWordBldr = new StringBuilder();
-//        List<StressedPhone> alnPhoneBldr = new ArrayList<StressedPhone>();
+//        List<StressedPhoneme> alnPhoneBldr = new ArrayList<StressedPhoneme>();
 //
 //        @Override
 //        public void appendCharSequence1(int i) {
@@ -35,7 +35,7 @@
 //
 //        @Override
 //        public Alignment renderAlignment() {
-//            return new WordPhonemeAlignment(alnWordBldr.toString(),alnPhoneBldr.toArray(new StressedPhone[0]), scores);
+//            return new WordPhonemeAlignment(alnWordBldr.toString(),alnPhoneBldr.toArray(new StressedPhoneme[0]), scores);
 //        }
 //
 //        @Override
@@ -48,9 +48,9 @@
 //
 //    String word;
 //    String wordlc;
-//    StressedPhone[] phonemes;
+//    StressedPhoneme[] phonemes;
 //
-//    public WordPhonemePair(String word, StressedPhone[] phonemes) {
+//    public WordPhonemePair(String word, StressedPhoneme[] phonemes) {
 //        this.word = word;
 //        this.wordlc = word.toLowerCase();
 //        this.phonemes = phonemes;
@@ -63,7 +63,7 @@
 //
 //    @Override
 //    public double matchScore(int row_1, int i) {
-//        switch(phonemes[i].phone){
+//        switch(phonemes[i].phoneme){
 //		/*case 0://			AA	vowel odd
 //		case 3://			AO	vowel ought
 //			return wordlc.charAt(row_1) == 'o' || wordlc.charAt(row_1) == 'a'? MATCH_SCORE : MISMATCH_SCORE;

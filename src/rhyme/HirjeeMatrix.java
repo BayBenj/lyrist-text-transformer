@@ -65,15 +65,15 @@
 //            System.out.println();
 //        }
 //
-//        for (String phone : phonesDict.keySet()) {
-//            System.out.println("AA with " + phone + ": "
-//                    + matrix[phonesDict.get(phone).getFirst()][phonesDict.get("AA").getFirst()]);
+//        for (String phoneme : phonesDict.keySet()) {
+//            System.out.println("AA with " + phoneme + ": "
+//                    + matrix[phonesDict.get(phoneme).getFirst()][phonesDict.get("AA").getFirst()]);
 //        }
 //    }
 //
-//    public static double score(int phone, int phone2) {
+//    public static double score(int phoneme, int phone2) {
 //        // TODO Auto-generated method stub
-//        return matrix[phone][phone2];
+//        return matrix[phoneme][phone2];
 //    }
 //
 //}

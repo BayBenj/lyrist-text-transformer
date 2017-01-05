@@ -1,9 +1,10 @@
 package song;
 
-import edu.stanford.nlp.naturalli.Util;
 import filters.*;
 import main.ProgramArgs;
-import song.*;
+import rhyme.Phoneticizer;
+import rhyme.RhymeScheme;
+import rhyme.Rhymer;
 import stanford_nlp.StanfordNlp;
 import utils.Utils;
 import word2vec.W2vCommander;
@@ -52,7 +53,7 @@ public class ReplacementJob {
     public Word getExistingSentiment(Set<Word> wordsToAverage, W2vCommander w2v) {
 //        Random rand = new Random();
 //        return temporarySentimentList.get(rand.nextInt(temporarySentimentList.size()));
-        return new Word("depression");
+        return new Word("sadness");
 //        HashSet<String> stringsToAverage = new HashSet<String>();
 //        for (Word w : wordsToAverage)
 //            stringsToAverage.add(w.getSpelling().toLowerCase());
@@ -65,7 +66,7 @@ public class ReplacementJob {
     }
 
     public Word generateNewSentiment() {
-        return new Word("forest");
+        return new Word("joy");
 //        int rnd = Utils.rand.nextInt(15);
 //
 //        if (rnd == 0)
@@ -118,6 +119,14 @@ public class ReplacementJob {
         //return StanfordNlp.parseTextCompletelyByString()
     }
 
+    public RhymeScheme getABABRhymeScheme() {
+        return new RhymeScheme("A","B","A","B");
+    }
+
+    public RhymeScheme getAABBRhymeScheme() {
+        return new RhymeScheme("A","A","B","B");
+    }
+
     public StringFilterEquation getNormalStringFilters() {
         StringFilterEquation stringFilters = new StringFilterEquation();
 
@@ -126,13 +135,23 @@ public class ReplacementJob {
         stringFilters.add(new FilterUNION());
 
 //        List list = new ArrayList<Character>();
-//        list.add('x');
+//        list.add('n');
 //        stringFilters.add(new FirstLetterFilter(Direction.EXCLUDE_MATCH, new CharList(list, "x")));
 //        stringFilters.add(new FilterUNION());
 
         stringFilters.add(new BadStringFilter(Direction.INCLUDE_MATCH));
         stringFilters.add(new DistastefulnessFilter(Direction.INCLUDE_MATCH));
         return stringFilters;
+    }
+
+    public WordFilterEquation getPosNeSylWordFilters(Word oldWord) {
+        WordFilterEquation wordFilters = new WordFilterEquation();
+        wordFilters.add(new FilterINTERSECTION());
+        wordFilters.add(new PosMatchFilter(Direction.EXCLUDE_MATCH, oldWord));
+        wordFilters.add(new FilterUNION());
+        wordFilters.add(new NeMatchFilter(Direction.EXCLUDE_MATCH, oldWord));
+        wordFilters.add(new PerfectRhymeFilter(Direction.EXCLUDE_MATCH, oldWord));
+        return wordFilters;
     }
 
     public WordFilterEquation getPosNeWordFilters(Word oldWord) {
@@ -191,7 +210,15 @@ public class ReplacementJob {
 
                     Utils.testPrintln("After string filtration: " + stringSuggestionMap.size() + " valid suggestions");
 
-                    //Tag word2vec's suggestions
+                    //If rhyming filter is included, add all this word's perfect rhymes to the stringSuggestionMap.
+                    Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.getSpelling(), 1);
+                    double extra = 0.0001;
+                    for (String rhyme : allRhymes) {
+                        stringSuggestionMap.put(1.0 + extra, rhyme.toLowerCase());
+                        extra += 0.0001;
+                    }
+
+                    //Tag pos and ne on word2vec's suggestions
                     Map<Double, Word> wordSuggestionMap = new TreeMap<>();
                     if (stringSuggestionMap.size() > 0) {
                         wordSuggestionMap = StanfordNlp.tagWordsWithSentenceContextWithDoubles(
@@ -201,16 +228,29 @@ public class ReplacementJob {
                                 oldWordIndex
                         );
 
+                        //Assign phonemes on word2vec's suggestions
+                        for (Map.Entry<Double, Word> entry : wordSuggestionMap.entrySet()) {
+                            entry.getValue().setPhonemes(Phoneticizer.getPronunciationForWord(entry.getValue()));
+                        }
+
+                        //Assign syllables on word2vec's suggestions
+                        for (Map.Entry<Double, Word> entry : wordSuggestionMap.entrySet()) {
+                            entry.getValue().setSyllables(Phoneticizer.getSyllablesForWord(entry.getValue()));
+                        }
+
                         //Use Word filters
-                        WordFilterEquation wordFilterEquation = this.getPosNeWordFilters(oldWord);
+                        WordFilterEquation wordFilterEquation = this.getPosNeSylWordFilters(oldWord);
                         Set<Word> badWords = wordFilterEquation.run(new HashSet<>(wordSuggestionMap.values()));
                         wordSuggestionMap.values().removeAll(badWords);
-    //                    FiltrationResults filtrationResults = stringFilters.filterWordSuggestionsWithModel(wordSuggestions, oldWord);
-    //                    SimilarW2vResults w2vResults = new SimilarW2vResults();
-    //                    w2vResults.setFiltrationResults(filtrationResults);
+//                    FiltrationResults filtrationResults = stringFilters.filterWordSuggestionsWithModel(wordSuggestions, oldWord);
+//                    SimilarW2vResults w2vResults = new SimilarW2vResults();
+//                    w2vResults.setFiltrationResults(filtrationResults);
+
 
                         Utils.testPrintln("After Word filtration: " + wordSuggestionMap.size() + " valid suggestions");
                     }
+
+
                     //Put suggestions into sorted TreeMap
                     TreeMap<Double, Word> finalWordSuggestions = new TreeMap<>(wordSuggestionMap);
 
@@ -301,6 +341,16 @@ TODO > Decide between prereq and prereq
 /*
 TODO > Make a SinglePointOutput subtype for W2vOperations
  */
+
+
+
+
+
+
+
+
+
+
 
 
 

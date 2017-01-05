@@ -3,14 +3,14 @@
 //import java.util.Arrays;
 //
 //import song.Phonetecizer;
-//import song.StressedPhone;
+//import song.StressedPhoneme;
 //
 //public class WordPhonemeAlignment extends Alignment {
 //
 //    private String first;
-//    private StressedPhone[] second;
+//    private StressedPhoneme[] second;
 //
-//    public WordPhonemeAlignment(String string, StressedPhone[] stressedPhones, double[] scores) {
+//    public WordPhonemeAlignment(String string, StressedPhoneme[] stressedPhones, double[] scores) {
 //        super(scores);
 //        this.first = string;
 //        this.second = stressedPhones;
@@ -33,8 +33,8 @@
 //            str.append("\t");
 //        }
 //        str.append("\n");
-//        for (StressedPhone p : second) {
-//            str.append(p == null? "null":Phonetecizer.intToString(p.phone));
+//        for (StressedPhoneme p : second) {
+//            str.append(p == null? "null":Phonetecizer.intToString(p.phoneme));
 //            str.append("\t");
 //        }
 //        str.append("\n");

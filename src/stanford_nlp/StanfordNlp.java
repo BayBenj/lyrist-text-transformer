@@ -285,8 +285,9 @@ public class StanfordNlp {
     public static Map<Double, Word> tagWordsWithSentenceContextWithDoubles(TreeMap<Double, String> suggestions,
                                                                            Sentence contextSentence,
                                                                            Word oldWord,
-                                                                           int oldWordIndex) {
+                                                                           int originalOldWordIndex) {
         Map<Double, Word> result = new HashMap<>();
+        int oldWordIndex = originalOldWordIndex;
 
         //Add 1 sentence per suggestion to sb
         String oldString = oldWord.toString();
@@ -313,7 +314,23 @@ public class StanfordNlp {
             Word contextualSuggestedWord = null;
             //Get parsed token, set text
             try {
-                parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(oldWordIndex);
+                if (stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).size() == contextSentence.size())
+                    parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(oldWordIndex);
+                else {
+                    oldWordIndex = originalOldWordIndex;
+                    for (int i = 0; i < stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).size(); i++) {
+                        if (i == oldWordIndex)
+                            break;
+
+                        String string = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(i).toString();
+                        String shortened = string.substring(0, string.length() - 2);
+
+                        if (shortened.matches(".*[^\\w\\s].*")) {
+                            oldWordIndex++;
+                        }
+                    }
+                    parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(oldWordIndex);
+                }
                 contextualSuggestedWord = new Word(parsedToken.get(CoreAnnotations.TextAnnotation.class));
             }
             catch (IndexOutOfBoundsException e) {
