@@ -323,7 +323,9 @@ public class StanfordNlp {
                             break;
 
                         String string = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(i).toString();
-                        String shortened = string.substring(0, string.length() - 2);
+                        int dashIndex = string.lastIndexOf('-');
+                        int subtract = string.length() - dashIndex;
+                        String shortened = string.substring(0, string.length() - subtract);
 
                         if (shortened.matches(".*[^\\w\\s].*")) {
                             oldWordIndex++;
@@ -428,6 +430,7 @@ Decide how to hold data on words and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */
+
 
 
 

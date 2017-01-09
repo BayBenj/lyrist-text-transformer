@@ -211,12 +211,12 @@ public class ReplacementJob {
                     Utils.testPrintln("After string filtration: " + stringSuggestionMap.size() + " valid suggestions");
 
                     //If rhyming filter is included, add all this word's perfect rhymes to the stringSuggestionMap.
-                    Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.getSpelling(), 1);
-                    double extra = 0.0001;
-                    for (String rhyme : allRhymes) {
-                        stringSuggestionMap.put(1.0 + extra, rhyme.toLowerCase());
-                        extra += 0.0001;
-                    }
+//                    Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.getSpelling(), 1);
+//                    double extra = 0.0001;
+//                    for (String rhyme : allRhymes) {
+//                        stringSuggestionMap.put(1.0 + extra, rhyme.toLowerCase());
+//                        extra += 0.0001;
+//                    }
 
                     //Tag pos and ne on word2vec's suggestions
                     Map<Double, Word> wordSuggestionMap = new TreeMap<>();

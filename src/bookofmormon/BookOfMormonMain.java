@@ -244,14 +244,15 @@ public class BookOfMormonMain {
 
         //Replace marked words in original tweet w/ word2vec
         ReplacementJob replacementJob = new ReplacementJob();
-
-        TreeMap<Double,String> treeMap = new TreeMap<>(Utils.getW2vCommander().findSentiment(nonPunctWords, 1));
-        String theme;
         Pair<String,String> pair = this.getOldAndNewThemes();
-        if (treeMap.size() > 0)
-            theme = treeMap.firstEntry().getValue();
-        else
-            theme = pair.getFirst();
+
+//        TreeMap<Double,String> treeMap = new TreeMap<>(Utils.getW2vCommander().findSentiment(nonPunctWords, 1));
+//        String theme;
+//        if (treeMap.size() > 0)
+//            theme = treeMap.firstEntry().getValue();
+//        else
+//            theme = pair.getFirst();
+
         WordReplacements wordReplacements = replacementJob.getAnalogousWords(markedWords,
                                                                             sentences,
 //                                                                            this.getBomBibleWordsFilterEquation(),
