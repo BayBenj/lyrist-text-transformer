@@ -6,7 +6,7 @@ import java.util.List;
 public abstract class SongElement {
 
     private SongElement superElement = null;
-    private ArrayList<SongElement> subElements = null;
+    private List<SongElement> subElements = null;
 
     public final void add(SongElement se) {
         if (this.getSubElements() == null)
@@ -20,7 +20,7 @@ public abstract class SongElement {
     }
 
     public SongElement get(int index) {
-        ArrayList<? extends SongElement> subelements = this.getSubElements();
+        List<? extends SongElement> subelements = this.getSubElements();
         if (subelements != null && subelements.get(index) != null)
             return subelements.get(index);
         return null;
@@ -77,7 +77,7 @@ public abstract class SongElement {
     }
 
     public boolean hasCompleteSpellingStructure() {
-        ArrayList<SongElement> subElements = this.getSubElements();
+        List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompleteSpellingStructure())
                 return false;
@@ -86,7 +86,7 @@ public abstract class SongElement {
     }
 
     public boolean hasCompletePosStructure() {
-        ArrayList<SongElement> subElements = this.getSubElements();
+        List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompletePosStructure())
                 return false;
@@ -95,7 +95,7 @@ public abstract class SongElement {
     }
 
     public boolean hasCompletePhonemeStructure() {
-        ArrayList<SongElement> subElements = this.getSubElements();
+        List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompletePhonemeStructure())
                 return false;
@@ -104,7 +104,7 @@ public abstract class SongElement {
     }
 
     public boolean hasCompleteSyllableStructure() {
-        ArrayList<SongElement> subElements = this.getSubElements();
+        List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompleteSyllableStructure())
                 return false;
@@ -113,7 +113,7 @@ public abstract class SongElement {
     }
 
     public boolean hasCompleteStressStructure() {
-        ArrayList<SongElement> subElements = this.getSubElements();
+        List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompleteStressStructure())
                 return false;
@@ -145,11 +145,11 @@ public abstract class SongElement {
         this.superElement = superElement;
     }
 
-    protected ArrayList<SongElement> getSubElements() {
+    protected List<SongElement> getSubElements() {
         return this.subElements;
     }
 
-    protected void setSubElements(ArrayList<SongElement> subElements) {
+    protected void setSubElements(List<SongElement> subElements) {
         this.subElements = subElements;
     }
 
@@ -160,8 +160,8 @@ public abstract class SongElement {
 
         SongElement songElement = (SongElement) o;
 
-        ArrayList<SongElement> thisSubElements = this.getSubElements();
-        ArrayList<SongElement> thatSubElements = songElement.getSubElements();
+        List<SongElement> thisSubElements = this.getSubElements();
+        List<SongElement> thatSubElements = songElement.getSubElements();
         for (int i = 0; i < thisSubElements.size(); i++) {
             if (!thisSubElements.get(i).equals(thatSubElements.get(i)))
                 return false;
@@ -254,7 +254,6 @@ public means other classes can use it
 protected means Stanzas, Lines, and Words can use it
 private means only stuff in this class can use it
  */
-
 
 
 

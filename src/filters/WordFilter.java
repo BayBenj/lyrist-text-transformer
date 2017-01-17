@@ -4,19 +4,20 @@ import main.ProgramArgs;
 import song.Word;
 import utils.Utils;
 
+import java.util.Collection;
 import java.util.Set;
 
 public abstract class WordFilter extends Filter {
 
     public WordFilter() {
-        super(Direction.INCLUDE_MATCH);
+        super(ReturnType.MATCHES);
     }
 
-    public WordFilter(Direction direction) {
-        super(direction);
+    public WordFilter(ReturnType returnType) {
+        super(returnType);
     }
 
-    public Set<Word> filterWords(Set<Word> originalWords) {
+    public Set<Word> filterWords(Collection<Word> originalWords) {
         if (ProgramArgs.isTesting()) {
             FilterUtils.startTimer();
             Set<Word> result = this.doFilter(originalWords);
@@ -28,7 +29,7 @@ public abstract class WordFilter extends Filter {
             return this.doFilter(originalWords);
     }
 
-    public abstract Set<Word> doFilter(Set<Word> originalWords);
+    public abstract Set<Word> doFilter(Collection<Word> originalWords);
 
 }
 

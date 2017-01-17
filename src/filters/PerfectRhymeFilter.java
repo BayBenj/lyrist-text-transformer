@@ -1,8 +1,6 @@
 package filters;
 
 import rhyme.Phoneme;
-import rhyme.Pronunciation;
-import rhyme.StressedPhoneme;
 import song.Word;
 
 import java.util.HashSet;
@@ -15,8 +13,8 @@ public class PerfectRhymeFilter extends ModelWordFilter {
         super(model);
     }
 
-    public PerfectRhymeFilter(Direction direction, Word model) {
-        super(direction, model);
+    public PerfectRhymeFilter(ReturnType returnType, Word model) {
+        super(returnType, model);
     }
 
     @Override
@@ -29,18 +27,18 @@ public class PerfectRhymeFilter extends ModelWordFilter {
                     int nWordSyl = w.getSyllables().size();
                     List<Phoneme> modelRhyme = this.getModel().getSyllables().get(nModelSyl - 1).getRhyme();
                     List<Phoneme> wordRhyme = w.getSyllables().get(nWordSyl - 1).getRhyme();
-                    if (    super.getDirection() == Direction.INCLUDE_MATCH && modelRhyme.equals(wordRhyme) ||
-                            super.getDirection() == Direction.EXCLUDE_MATCH && !modelRhyme.equals(wordRhyme) )
+                    if (    super.getReturnType() == ReturnType.MATCHES && modelRhyme.equals(wordRhyme) ||
+                            super.getReturnType() == ReturnType.NON_MATCHES && !modelRhyme.equals(wordRhyme) )
                     result.add(w);
                 }
                 //Removes words with no syllables
-                else if (super.getDirection() == Direction.EXCLUDE_MATCH) {
+                else if (super.getReturnType() == ReturnType.NON_MATCHES) {
                     result.add(w);
                 }
             }
             return result;
         }
-        if (super.getDirection() == Direction.EXCLUDE_MATCH)
+        if (super.getReturnType() == ReturnType.NON_MATCHES)
             return originalWords;
         else
             return new HashSet<>();

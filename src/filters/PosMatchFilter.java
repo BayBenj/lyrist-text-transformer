@@ -11,8 +11,8 @@ public class PosMatchFilter extends ModelWordFilter {
         super(model);
     }
 
-    public PosMatchFilter(Direction direction, Word model) {
-        super(direction, model);
+    public PosMatchFilter(ReturnType returnType, Word model) {
+        super(returnType, model);
     }
 
 
@@ -48,8 +48,8 @@ public class PosMatchFilter extends ModelWordFilter {
         Set<Word> filteredIn = new HashSet<>();
         Pos pos = super.getModel().getPos();
         for (Word w : w2vSuggestions) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && pos == w.getPos() ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && pos != w.getPos())
+            if (super.getReturnType() == ReturnType.MATCHES && pos == w.getPos() ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && pos != w.getPos())
                 filteredIn.add(w);
         }
         return filteredIn;

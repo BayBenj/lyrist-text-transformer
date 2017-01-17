@@ -1,14 +1,15 @@
 package song;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Song extends SongElement {
 
     @Override
-    public ArrayList<SongElement> getSubElements() {
+    public List<SongElement> getSubElements() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<SongElement> result = super.getSubElements();
+        List<SongElement> result = super.getSubElements();
         for (SongElement se : super.getSubElements()) {
             Stanza temp = (Stanza)se;
         }
@@ -16,26 +17,26 @@ public class Song extends SongElement {
     }
 
     @Override
-    public void setSubElements(ArrayList<SongElement> stanzas) {
+    public void setSubElements(List<SongElement> stanzas) {
         for (SongElement se : stanzas) {
             Stanza temp = (Stanza)se;
         }
         super.setSubElements(stanzas);
     }
 
-    public ArrayList<Stanza> getStanzas() {
+    public List<Stanza> getStanzas() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<Stanza> stanzas = new ArrayList<Stanza>();
-        ArrayList<SongElement> elements = super.getSubElements();
+        List<Stanza> stanzas = new ArrayList<Stanza>();
+        List<SongElement> elements = super.getSubElements();
         for (SongElement se : elements) {
             stanzas.add((Stanza) se);
         }
         return stanzas;
     }
 
-    public void setStanzas(ArrayList<Stanza> stanzas) {
-        ArrayList<SongElement> result = new ArrayList<SongElement>();
+    public void setStanzas(List<Stanza> stanzas) {
+        List<SongElement> result = new ArrayList<SongElement>();
         for (Stanza s : stanzas)
             result.add(s);
         this.setSubElements(result);
@@ -44,7 +45,7 @@ public class Song extends SongElement {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        ArrayList<Stanza> stanzas = this.getStanzas();
+        List<Stanza> stanzas = this.getStanzas();
         for (int i = 0; i < stanzas.size(); i++) {
             result.append(stanzas.get(i).toString());
             if (i != stanzas.size() - 1)

@@ -3,6 +3,7 @@ package song;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import filters.*;
+import intentions.SongIntentions;
 import rhyme.*;
 import stanford_nlp.StanfordNlp;
 import utils.Utils;
@@ -15,16 +16,24 @@ import static edu.stanford.nlp.util.Timing.endTime;
 
 public final class TemplateSongEngineer extends SongEngineer {
 
+    private boolean providedStructuralIntentions = false;
+    private boolean providedEmotionalIntentions = false;
+    private boolean providedCulturalIntentions = false;
+
+    private boolean providedRhymeScheme = false;
+    private boolean providedMeter = false;
+
+
     //TODO if a Pop*-defined structure is passed in, find a template song using that structure. Otherwise, pick any template song.
     @Override
     public Song generateSong(
-            //Inspiration inspiration
+            SongIntentions intentions
     ) {
-
         Utils.startTimer();
+        this.setIntentionBools(intentions);
 
         //Read in original song lyrics, set up a SongWrapper and a Song object for the template.
-        String rawTemplateText = this.readTemplate("sorrow-short.txt");
+        String rawTemplateText = this.readTemplate("sorrow.txt");
         StanfordNlp stanford = Utils.getStanfordNlp();
 //        List<List<CoreLabel>> stanfordSentences = stanford.parseTextCompletelyByString(rawTemplateText);
 //        ArrayList<Sentence> parsedSentences = this.stanfordSentencesToSentences(stanfordSentences);
@@ -37,9 +46,7 @@ public final class TemplateSongEngineer extends SongEngineer {
         Song templateSong = templateSongWrapper.getSong();
 
         //Filter out unsafe words so they can't be marked
-        WordFilterEquation wordFilterEquation = new WordFilterEquation();
-        wordFilterEquation.add(new FilterINTERSECTION());
-        wordFilterEquation.add(new UnsafePosFilter(Direction.EXCLUDE_MATCH));
+        WordFilterEquation wordFilterEquation = FilterManager.wEq(FilterManager.getUnsafePosForPosTaggingFilter());
         List<Word> allMarkableWordsList = new ArrayList<>(wordFilterEquation.run(new HashSet(templateSong.getAllWords())));
 
         //Mark random markable words from template
@@ -54,9 +61,10 @@ public final class TemplateSongEngineer extends SongEngineer {
         //Replace marked words in template w/ word2vec
         ReplacementJob replacementJob = new ReplacementJob();
         replacementJob.setnSuggestionsToPrint(100);
-        WordReplacements wordReplacements = replacementJob.getAnalogousWords(markedWords,
+        WordReplacements wordReplacements = replacementJob.getAnalogousWords(
+                markedWords,
                 parsedSentences,
-                replacementJob.getNormalStringFilters(),
+                FilterManager.sEq(FilterManager.getSafetyStringFilters()),
                 100,
                 Utils.getW2vCommander());
         Song generatedSong = this.replaceWords(templateSong, wordReplacements);
@@ -70,6 +78,23 @@ public final class TemplateSongEngineer extends SongEngineer {
         Utils.stopTimer();
         print("TOTAL RUNNING TIME: " + Utils.getTotalTime() + "\n");
         return generatedSong;
+    }
+
+    private void setIntentionBools(SongIntentions intentions) {
+        if (intentions.getStructuralIntentions() != null && !intentions.getStructuralIntentions().hasNothing()) {
+            providedStructuralIntentions = true;
+            if (intentions.getStructuralIntentions().getRhymeScheme() != null)
+                providedRhymeScheme = true;
+
+            if (intentions.getStructuralIntentions().getMeter() != null)
+                providedMeter = true;
+        }
+
+        if (intentions.getEmotionalIntentions() != null && intentions.getEmotionalIntentions().size() > 0)
+            providedEmotionalIntentions = true;
+
+        if (intentions.getCulturalIntentions() != null && intentions.getCulturalIntentions().size() > 0)
+            providedCulturalIntentions = true;
     }
 
     private void setPronunciationsForSentences(List<Sentence> sentences) {
@@ -492,6 +517,9 @@ Let it be. Let it be.
 
 Lines are defined by the \n character. Sentences are defined by punctuation.
  */
+
+
+
 
 
 

@@ -130,7 +130,7 @@ public class BookOfMormonMain {
     private String useStringFilters(String[] words, String officialTweet) {
         //Swap names
         StringFilterEquation stringFilters = new StringFilterEquation();
-        stringFilters.add(new BomNameFilter(Direction.INCLUDE_MATCH));
+        stringFilters.add(new BomNameFilter(ReturnType.MATCHES));
         Set<String> names = stringFilters.run(new HashSet<>(Arrays.asList(words)));
         for (String name : names) {
             if (this.hasNameSwap()) {
@@ -143,7 +143,7 @@ public class BookOfMormonMain {
 
         //Swap geographical words
         stringFilters = new StringFilterEquation();
-        stringFilters.add(new BomGeographyFilter(Direction.INCLUDE_MATCH));
+        stringFilters.add(new BomGeographyFilter(ReturnType.MATCHES));
         Set<String> geographicals = stringFilters.run(new HashSet<>(Arrays.asList(words)));
         for (String geographical : geographicals) {
             if (this.hasNameSwap()) {
@@ -155,7 +155,7 @@ public class BookOfMormonMain {
 
         //Swap pluralized group names
         stringFilters = new StringFilterEquation();
-        stringFilters.add(new BomGroupsFilter(Direction.INCLUDE_MATCH));
+        stringFilters.add(new BomGroupsFilter(ReturnType.MATCHES));
         Set<String> pluralGroups = stringFilters.run(new HashSet<>(Arrays.asList(words)));
         for (String pluralGroup : pluralGroups) {
             if (this.hasNameSwap()) {
@@ -167,7 +167,7 @@ public class BookOfMormonMain {
 
         //Swap singular group names
         stringFilters = new StringFilterEquation();
-        stringFilters.add(new BomGroupFilter(Direction.INCLUDE_MATCH));
+        stringFilters.add(new BomGroupFilter(ReturnType.MATCHES));
         Set<String> groups = stringFilters.run(new HashSet<>(Arrays.asList(words)));
         for (String group : groups) {
             if (this.hasNameSwap()) {
@@ -211,7 +211,7 @@ public class BookOfMormonMain {
         //Find words that aren't in the model's vocabulary
         StringFilterEquation stringFilter = new StringFilterEquation();
         stringFilter.add(new FilterINTERSECTION());
-        stringFilter.add(new W2vModelVocabFilter(Direction.EXCLUDE_MATCH));
+        stringFilter.add(new W2vModelVocabFilter(ReturnType.NON_MATCHES));
         Set<String> badStringsInModel = stringFilter.run(new HashSet<>(allWords.keySet()));
         Set<String> stringsInModel = new HashSet<>(allWords.keySet());
         stringsInModel.removeAll(badStringsInModel);
@@ -219,11 +219,10 @@ public class BookOfMormonMain {
         //Find safe words
         WordFilterEquation wordFilterEquation = new WordFilterEquation();
         wordFilterEquation.add(new FilterINTERSECTION());
-        wordFilterEquation.add(new UnsafePosFilter(Direction.INCLUDE_MATCH));
+        wordFilterEquation.add(new UnsafePosForPosTaggingFilter(ReturnType.MATCHES));
         wordFilterEquation.add(new FilterUNION());
-        wordFilterEquation.add(new UnsafeWordFilter(Direction.INCLUDE_MATCH));
-        Set<Word> badWordsSet = wordFilterEquation.run(new HashSet<>(allWords.values()));
-        allWords.values().removeAll(badWordsSet);
+        wordFilterEquation.add(new UnsafeWordFilter(ReturnType.MATCHES));
+        allWords.values().retainAll(wordFilterEquation.removeMatches(new HashSet<>(allWords.values())));
         List<Word> allMarkableWordsList = new ArrayList<>(allWords.values());
 
         for (Map.Entry<String, Word> entry : allWords.entrySet()) {
@@ -444,18 +443,18 @@ public class BookOfMormonMain {
         StringFilterEquation stringFilters = new StringFilterEquation();
 
         stringFilters.add(new FilterINTERSECTION());
-        stringFilters.add(new BomWordsFilter(Direction.EXCLUDE_MATCH));
+        stringFilters.add(new BomWordsFilter(ReturnType.NON_MATCHES));
         stringFilters.add(new FilterUNION());
-        stringFilters.add(new BibleWordsFilter(Direction.EXCLUDE_MATCH));
-        stringFilters.add(new CommonStringFilter(Direction.EXCLUDE_MATCH));
+        stringFilters.add(new BibleWordsFilter(ReturnType.NON_MATCHES));
+        stringFilters.add(new CommonStringFilter(ReturnType.NON_MATCHES));
 
 //        List list = new ArrayList<Character>();
 //        list.add('x');
-//        stringFilters.add(new FirstLetterFilter(Direction.EXCLUDE_MATCH, new CharList(list, "x")));
+//        stringFilters.add(new FirstLetterFilter(ReturnType.NON_MATCHES, new CharList(list, "x")));
 //        stringFilters.add(new FilterUNION());
 
-        stringFilters.add(new BadStringFilter(Direction.INCLUDE_MATCH));
-        stringFilters.add(new DistastefulnessFilter(Direction.INCLUDE_MATCH));
+        stringFilters.add(new BadStringFilter(ReturnType.MATCHES));
+        stringFilters.add(new DistastefulnessFilter(ReturnType.MATCHES));
         return stringFilters;
     }
 
@@ -1141,7 +1140,7 @@ public class BookOfMormonMain {
             themes.add(newTheme);
             StringFilterEquation modelVocabFilter = new StringFilterEquation();
             modelVocabFilter.add(new FilterINTERSECTION());
-            modelVocabFilter.add(new W2vModelVocabFilter(Direction.EXCLUDE_MATCH));
+            modelVocabFilter.add(new W2vModelVocabFilter(ReturnType.NON_MATCHES));
             Set<String> badStringsInModel = modelVocabFilter.run(new HashSet<>(themes));
             Set<String> themesInModel = new HashSet<>(themes);
             themesInModel.removeAll(badStringsInModel);

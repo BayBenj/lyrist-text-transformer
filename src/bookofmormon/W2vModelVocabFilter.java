@@ -1,9 +1,8 @@
 package bookofmormon;
 
-import filters.Direction;
+import filters.ReturnType;
 import filters.FilterUtils;
 import filters.VocabListFilter;
-import song.VocabList;
 
 import java.util.*;
 
@@ -13,16 +12,16 @@ public class W2vModelVocabFilter extends VocabListFilter {
         super(FilterUtils.getModelWords());
     }
 
-    public W2vModelVocabFilter(Direction direction) {
-        super(direction, FilterUtils.getModelWords());
+    public W2vModelVocabFilter(ReturnType returnType) {
+        super(returnType, FilterUtils.getModelWords());
     }
 
     @Override
     public Set<String> doFilter(Set<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s.toLowerCase()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase()))
+            if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !super.vocabList.contains(s.toLowerCase()))
                 result.add(s);
         }
         return result;

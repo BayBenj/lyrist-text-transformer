@@ -4,42 +4,42 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RhymeScheme extends ArrayList<Rhyme> {
-
-    private List<Rhyme> rhymeTypes;
+public abstract class RhymeScheme extends ArrayList<Rhyme> {
 
     public void specify(RhymeClass rhymeClass, SpecificRhyme specificRhyme) {
-        for (int i = 0; i < rhymeTypes.size(); i++) {
-            if (rhymeTypes.get(i) instanceof RhymeClass && rhymeClass.equals(rhymeTypes.get(i))) {
-                rhymeTypes.remove(i);
-                rhymeTypes.add(i,specificRhyme);
+        for (int i = 0; i < this.size(); i++) {
+            if (this.get(i) instanceof RhymeClass && rhymeClass.equals(this.get(i))) {
+                this.remove(i);
+                this.add(i,specificRhyme);
             }
         }
     }
 
-    public RhymeScheme(List<Rhyme> rhymeTypes) {
-        this.rhymeTypes = rhymeTypes;
+    public RhymeScheme(List<Rhyme> rhymes) {
+        this.setRhymes(rhymes);
     }
 
-    public RhymeScheme(Rhyme... rhymeTypes) {
-        this.rhymeTypes = Arrays.asList(rhymeTypes);
+//    public RhymeScheme(Rhyme... rhymes) {
+//        this.rhymes = Arrays.asList(rhymes);
+//    }
+
+    public RhymeScheme(String... rhymes) {
+        List<String> strings = Arrays.asList(rhymes);
+        for (String string : strings)
+            this.add(new RhymeClass(string));
     }
 
-    public RhymeScheme(String... rhymeTypes) {
-        List<String> strings = Arrays.asList(rhymeTypes);
-        for (String string : strings) {
-            this.rhymeTypes.add(new RhymeClass(string));
-        }
+    public List<Rhyme> getRhymes() {
+        return this;
     }
 
-    public List<Rhyme> getRhymeTypes() {
-        return rhymeTypes;
-    }
-
-    public void setRhymeTypes(List<Rhyme> rhymeTypes) {
-        this.rhymeTypes = rhymeTypes;
+    public void setRhymes(List<Rhyme> rhymes) {
+        for (Rhyme rhyme : rhymes)
+            this.add(rhyme);
     }
 }
+
+
 
 
 

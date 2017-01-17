@@ -1,6 +1,6 @@
 package bookofmormon;
 
-import filters.Direction;
+import filters.ReturnType;
 import filters.VocabListFilter;
 import song.VocabList;
 
@@ -29,16 +29,16 @@ public class BomGeographyFilter extends VocabListFilter {
         super(new VocabList(set, "book of mormon geography"));
     }
 
-    public BomGeographyFilter(Direction direction) {
-        super(direction, new VocabList(set, "book of mormon geography"));
+    public BomGeographyFilter(ReturnType returnType) {
+        super(returnType, new VocabList(set, "book of mormon geography"));
     }
 
     @Override
     public Set<String> doFilter(Set<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s.toLowerCase()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase()))
+            if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !super.vocabList.contains(s.toLowerCase()))
                 result.add(s);
         }
         return result;

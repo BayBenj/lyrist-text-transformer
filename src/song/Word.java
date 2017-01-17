@@ -19,6 +19,10 @@ public class Word extends SongElement implements Comparable<Word> {
         this.setSpelling(s);
     }
 
+    public List<StressedPhoneme> getFullRhyme() {
+        return this.syllables.getWordRhymeFromStress();
+    }
+
     public String getSpelling() {
         return this.spelling.toLowerCase();
     }

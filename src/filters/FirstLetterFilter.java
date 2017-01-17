@@ -11,8 +11,8 @@ public class FirstLetterFilter extends CharFilter {
         super(charList);
     }
 
-    public FirstLetterFilter(Direction direction, CharList charList) {
-        super(direction, charList);
+    public FirstLetterFilter(ReturnType returnType, CharList charList) {
+        super(returnType, charList);
     }
 
     @Override
@@ -21,10 +21,10 @@ public class FirstLetterFilter extends CharFilter {
         for (String s : originalStrings) {
             if (s != null && s.length() > 0) {
                 char c = s.charAt(0);
-                if (super.getDirection() == Direction.INCLUDE_MATCH && (super.getCharList().contains(Character.toLowerCase(c)) || super.getCharList().contains(Character.toUpperCase(c)))) {
+                if (super.getReturnType() == ReturnType.MATCHES && (super.getCharList().contains(Character.toLowerCase(c)) || super.getCharList().contains(Character.toUpperCase(c)))) {
                     result.add(s);
                 }
-                else if (super.getDirection() == Direction.EXCLUDE_MATCH && !(super.getCharList().contains(Character.toLowerCase(c)) || super.getCharList().contains(Character.toUpperCase(c)))) {
+                else if (super.getReturnType() == ReturnType.NON_MATCHES && !(super.getCharList().contains(Character.toLowerCase(c)) || super.getCharList().contains(Character.toUpperCase(c)))) {
                     result.add(s);
                 }
             }

@@ -2,6 +2,6 @@ package filters;
 
 public enum Operator {
 
-    UNION, INTERSECTION
+    UNION, INTERSECTION, DIFFERENCE
 
 }

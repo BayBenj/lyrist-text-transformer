@@ -12,8 +12,8 @@ public class NeMatchFilter extends ModelWordFilter {
         super(model);
     }
 
-    public NeMatchFilter(Direction direction, Word model) {
-        super(direction, model);
+    public NeMatchFilter(ReturnType returnType, Word model) {
+        super(returnType, model);
     }
 
     //    private Word neWord;
@@ -65,8 +65,8 @@ public class NeMatchFilter extends ModelWordFilter {
         Set<Word> filteredIn = new HashSet<>();
         NamedEntity modelEnum = super.getModel().getNe();
         for (Word w : w2vSuggestions) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && modelEnum == w.getNe() ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && modelEnum != w.getNe())
+            if (super.getReturnType() == ReturnType.MATCHES && modelEnum == w.getNe() ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && modelEnum != w.getNe())
                 filteredIn.add(w);
         }
         return filteredIn;

@@ -10,8 +10,8 @@ public abstract class VocabMapFilter extends StringFilter {
         this.setVocabMap(vocabMap);
     }
 
-    public VocabMapFilter(Direction direction, VocabMap vocabMap) {
-        super(direction);
+    public VocabMapFilter(ReturnType returnType, VocabMap vocabMap) {
+        super(returnType);
         this.setVocabMap(vocabMap);
     }
 

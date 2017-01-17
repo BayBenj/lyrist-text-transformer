@@ -1,6 +1,7 @@
 package song;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Stanza extends SongElement {
 
@@ -29,10 +30,10 @@ public class Stanza extends SongElement {
     }
 
     @Override
-    public ArrayList<SongElement> getSubElements() {
+    public List<SongElement> getSubElements() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<SongElement> result = super.getSubElements();
+        List<SongElement> result = super.getSubElements();
         for (SongElement se : super.getSubElements()) {
             Line temp = (Line)se;
             // TODO: Catch ClassCastException
@@ -41,7 +42,7 @@ public class Stanza extends SongElement {
     }
 
     @Override
-    public void setSubElements(ArrayList<SongElement> lines) {
+    public void setSubElements(List<SongElement> lines) {
         for (SongElement se : lines) {
             Line temp = (Line)se;
             // TODO: Catch ClassCastException
@@ -58,11 +59,11 @@ public class Stanza extends SongElement {
         // TODO: Catch ClassCastException
     }
 
-    public ArrayList<Line> getLines() {
+    public List<Line> getLines() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<Line> lines = new ArrayList<Line>();
-        ArrayList<SongElement> elements = super.getSubElements();
+        List<Line> lines = new ArrayList<Line>();
+        List<SongElement> elements = super.getSubElements();
         for (SongElement se : elements) {
             lines.add((Line)se);
             // TODO: Catch ClassCastException
@@ -80,7 +81,7 @@ public class Stanza extends SongElement {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        ArrayList<Line> lines = this.getLines();
+        List<Line> lines = this.getLines();
         for (int i = 0; i < lines.size(); i++) {
             result.append(lines.get(i).toString());
             if (i != lines.size() - 1)
@@ -92,13 +93,6 @@ public class Stanza extends SongElement {
 
 
 }
-
-
-
-
-
-
-
 
 
 

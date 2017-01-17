@@ -470,8 +470,8 @@ public class DistastefulnessFilter extends VocabListFilter {
         super(new VocabList(dirtyStopList, "distasteful"));
     }
 
-    public DistastefulnessFilter(Direction direction) {
-        super(direction, new VocabList(dirtyStopList, "distasteful"));
+    public DistastefulnessFilter(ReturnType returnType) {
+        super(returnType, new VocabList(dirtyStopList, "distasteful"));
     }
 
 //    @Override
@@ -503,8 +503,8 @@ public class DistastefulnessFilter extends VocabListFilter {
     public Set<String> doFilter(Set<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s))
+            if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !super.vocabList.contains(s))
                 result.add(s);
         }
         return result;

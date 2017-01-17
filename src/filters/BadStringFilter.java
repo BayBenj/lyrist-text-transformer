@@ -1,7 +1,6 @@
 package filters;
 
 import song.CharList;
-import song.VocabList;
 
 import java.util.*;
 
@@ -59,8 +58,8 @@ public class BadStringFilter extends CharFilter {
         super(new CharList(badCharacterList, "bad-chars"));
     }
 
-    public BadStringFilter(Direction direction) {
-        super(direction, new CharList(badCharacterList, "bad-chars"));
+    public BadStringFilter(ReturnType returnType) {
+        super(returnType, new CharList(badCharacterList, "bad-chars"));
     }
 
 //    @Override
@@ -99,14 +98,14 @@ public class BadStringFilter extends CharFilter {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             for (char c: s.toCharArray()) {
-                if (super.getDirection() == Direction.INCLUDE_MATCH && super.getCharList().contains(c)) {
+                if (super.getReturnType() == ReturnType.MATCHES && super.getCharList().contains(c)) {
                     result.add(s);
                     break;
                 }
-                else if (super.getDirection() == Direction.EXCLUDE_MATCH && super.getCharList().contains(c))
+                else if (super.getReturnType() == ReturnType.NON_MATCHES && super.getCharList().contains(c))
                     break;
             }
-            if (super.getDirection() == Direction.EXCLUDE_MATCH)
+            if (super.getReturnType() == ReturnType.NON_MATCHES)
                 result.add(s);
         }
         return result;

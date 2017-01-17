@@ -1,6 +1,6 @@
 package bookofmormon;
 
-import filters.Direction;
+import filters.ReturnType;
 import filters.VocabListFilter;
 import song.VocabList;
 
@@ -39,16 +39,16 @@ public class BomGroupsFilter extends VocabListFilter {
         super(new VocabList(set, "book of mormon groups"));
     }
 
-    public BomGroupsFilter(Direction direction) {
-        super(direction, new VocabList(set, "book of mormon groups"));
+    public BomGroupsFilter(ReturnType returnType) {
+        super(returnType, new VocabList(set, "book of mormon groups"));
     }
 
     @Override
     public Set<String> doFilter(Set<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s.toLowerCase()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s.toLowerCase()))
+            if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !super.vocabList.contains(s.toLowerCase()))
                 result.add(s.substring(0, 1).toUpperCase() + s.substring(1));
         }
         return result;

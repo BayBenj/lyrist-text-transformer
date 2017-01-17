@@ -1,23 +1,22 @@
 package filters;
 
 import main.ProgramArgs;
-import song.Word;
 import utils.Utils;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
 
 public abstract class StringFilter extends Filter {
 
     public StringFilter() {
-        super(Direction.EXCLUDE_MATCH);
+        super(ReturnType.NON_MATCHES);
     }
 
-    public StringFilter(Direction direction) {
-        super(direction);
+    public StringFilter(ReturnType returnType) {
+        super(returnType);
     }
 
-    public Set<String> filter(Set<String> originalStrings) {
+    public Set<String> filter(Collection<String> originalStrings) {
         if (ProgramArgs.isTesting()) {
             FilterUtils.startTimer();
             Set<String> result = this.doFilter(originalStrings);
@@ -29,7 +28,7 @@ public abstract class StringFilter extends Filter {
             return this.doFilter(originalStrings);
     }
 
-    public abstract Set<String> doFilter(Set<String> originalStrings);
+    public abstract Set<String> doFilter(Collection<String> originalStrings);
 
 }
 

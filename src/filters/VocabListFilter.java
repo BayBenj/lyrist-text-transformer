@@ -10,8 +10,8 @@ public abstract class VocabListFilter extends StringFilter {
         this.setVocabList(vocabList);
     }
 
-    public VocabListFilter(Direction direction, VocabList vocabList) {
-        super(direction);
+    public VocabListFilter(ReturnType returnType, VocabList vocabList) {
+        super(returnType);
         this.setVocabList(vocabList);
     }
 

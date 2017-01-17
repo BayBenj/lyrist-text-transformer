@@ -89,8 +89,8 @@ public class Utils {
                 longest_line_length = line.toString().length();
 
         for (int i = 0; i < s1Stanzas.size(); i++) {
-            ArrayList<Line> s1Lines = s1Stanzas.get(i).getLines();
-            ArrayList<Line> s2Lines = s2Stanzas.get(i).getLines();
+            List<Line> s1Lines = s1Stanzas.get(i).getLines();
+            List<Line> s2Lines = s2Stanzas.get(i).getLines();
             for (int j = 0; j < s1Lines.size(); j++) {
                 int extra_space1 = (longest_line_length + 5) - s1Lines.get(j).toString().length();
                 System.out.print(s1Lines.get(j).toString());

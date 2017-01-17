@@ -11,16 +11,16 @@ public class SameStressFilter extends ModelWordFilter {
         super(model);
     }
 
-    public SameStressFilter(Direction direction, Word model) {
-        super(direction, model);
+    public SameStressFilter(ReturnType returnType, Word model) {
+        super(returnType, model);
     }
 
     @Override
     public Set<Word> doFilter(Set<Word> originalWords) {
         Set<Word> result = new HashSet<>();
         for (Word w : originalWords) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && this.getModel().getStresses().equals(w.getStresses()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !this.getModel().getStresses().equals(w.getStresses()))
+            if (super.getReturnType() == ReturnType.MATCHES && this.getModel().getStresses().equals(w.getStresses()) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !this.getModel().getStresses().equals(w.getStresses()))
                 result.add(w);
         }
         return result;

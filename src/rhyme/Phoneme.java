@@ -1,7 +1,5 @@
 package rhyme;
 
-import twitter4j.Place;
-
 public enum Phoneme {
 
     //Arpabet phonemes
@@ -308,7 +306,6 @@ public enum Phoneme {
     }
 
 }
-
 
 
 

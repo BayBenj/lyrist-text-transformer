@@ -10,8 +10,8 @@ public abstract class ModelWordFilter extends WordFilter {
         this.setModel(model);
     }
 
-    public ModelWordFilter(Direction direction, Word model) {
-        super(direction);
+    public ModelWordFilter(ReturnType returnType, Word model) {
+        super(returnType);
         this.model = model;
     }
 

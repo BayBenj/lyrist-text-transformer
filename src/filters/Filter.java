@@ -2,22 +2,22 @@ package filters;
 
 public abstract class Filter extends FilterObject {
 
-    private Direction direction;
+    private ReturnType returnType;
 
     public Filter() {
-        this.setDirection(Direction.INCLUDE_MATCH);
+        this.setReturnType(ReturnType.MATCHES);
     }
 
-    public Filter(Direction direction) {
-        this.setDirection(direction);
+    public Filter(ReturnType returnType) {
+        this.setReturnType(returnType);
     }
 
-    protected Direction getDirection() {
-        return direction;
+    protected ReturnType getReturnType() {
+        return returnType;
     }
 
-    private void setDirection(Direction direction) {
-        this.direction = direction;
+    private void setReturnType(ReturnType returnType) {
+        this.returnType = returnType;
     }
 }
 

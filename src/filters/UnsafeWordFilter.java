@@ -99,16 +99,16 @@ public class UnsafeWordFilter extends WordFilter {
 
     public UnsafeWordFilter() {}
 
-    public UnsafeWordFilter(Direction direction) {
-        super(direction);
+    public UnsafeWordFilter(ReturnType returnType) {
+        super(returnType);
     }
 
     @Override
     public Set<Word> doFilter(Set<Word> w2vSuggestions) {
         Set<Word> filteredIn = new HashSet<Word>();
         for (Word w : w2vSuggestions) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && unsafeStrSet.contains(w.toString().toLowerCase()) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !unsafeStrSet.contains(w.toString().toLowerCase()))
+            if (super.getReturnType() == ReturnType.MATCHES && unsafeStrSet.contains(w.toString().toLowerCase()) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !unsafeStrSet.contains(w.toString().toLowerCase()))
                 filteredIn.add(w);
         }
         return filteredIn;

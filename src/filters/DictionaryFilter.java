@@ -15,8 +15,8 @@ public class DictionaryFilter extends VocabListFilter {
         super(new VocabList(dictionaryList, "dictionary"));
     }
 
-    public DictionaryFilter(Direction direction) {
-        super(direction, new VocabList(dictionaryList, "dictionary"));
+    public DictionaryFilter(ReturnType returnType) {
+        super(returnType, new VocabList(dictionaryList, "dictionary"));
     }
 
 //    @Override

@@ -9,16 +9,16 @@ public class CommonStringFilter extends VocabListFilter {
         super(FilterUtils.getCommonWords());
     }
 
-    public CommonStringFilter(Direction direction) {
-        super(direction, FilterUtils.getCommonWords());
+    public CommonStringFilter(ReturnType returnType) {
+        super(returnType, FilterUtils.getCommonWords());
     }
 
     @Override
     public Set<String> doFilter(Set<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
-            if (super.getDirection() == Direction.INCLUDE_MATCH && super.vocabList.contains(s) ||
-                    super.getDirection() == Direction.EXCLUDE_MATCH && !super.vocabList.contains(s))
+            if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s) ||
+                    super.getReturnType() == ReturnType.NON_MATCHES && !super.vocabList.contains(s))
                 result.add(s);
         }
         return result;

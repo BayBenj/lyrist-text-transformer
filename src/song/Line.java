@@ -1,6 +1,7 @@
 package song;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Line extends SongElement {
 
@@ -19,10 +20,10 @@ public class Line extends SongElement {
     }
 
     @Override
-    public ArrayList<SongElement> getSubElements() {
+    public List<SongElement> getSubElements() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<SongElement> result = super.getSubElements();
+        List<SongElement> result = super.getSubElements();
         if (result == null)
             return null;
         for (SongElement se : result) {
@@ -33,7 +34,7 @@ public class Line extends SongElement {
     }
 
     @Override
-    public void setSubElements(ArrayList<SongElement> words) {
+    public void setSubElements(List<SongElement> words) {
         for (SongElement se : words) {
             Word temp = (Word)se;
             // TODO: Catch ClassCastException
@@ -50,11 +51,11 @@ public class Line extends SongElement {
         // TODO: Catch ClassCastException
     }
 
-    public ArrayList<Word> getWords() {
+    public List<Word> getWords() {
         if (super.getSubElements() == null)
             return null;
-        ArrayList<Word> words = new ArrayList<Word>();
-        ArrayList<SongElement> elements = super.getSubElements();
+        List<Word> words = new ArrayList<>();
+        List<SongElement> elements = super.getSubElements();
         for (SongElement se : elements) {
             words.add((Word)se);
             // TODO: Catch ClassCastException
@@ -62,15 +63,15 @@ public class Line extends SongElement {
         return words;
     }
 
-    public void setWords(ArrayList<Word> words) {
-        ArrayList<SongElement> result = new ArrayList<SongElement>();
+    public void setWords(List<Word> words) {
+        List<SongElement> result = new ArrayList<>();
         for (Word w : words)
             result.add(w);
         this.setSubElements(result);
     }
 
     @Override
-    public ArrayList<Word> getAllWords() {
+    public List<Word> getAllWords() {
         if (super.getSubElements() == null)
             return null;
         return this.getWords();
@@ -80,7 +81,7 @@ public class Line extends SongElement {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        ArrayList<Word> words = this.getWords();
+        List<Word> words = this.getWords();
         for (int i = 0; i < words.size(); i++) {
             result.append(words.get(i).toString());
             if (i != words.size() - 1)
@@ -90,7 +91,6 @@ public class Line extends SongElement {
     }
 
 }
-
 
 
 

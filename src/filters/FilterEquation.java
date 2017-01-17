@@ -1,5 +1,7 @@
 package filters;
 
+import song.Word;
+
 import java.util.*;
 
 public abstract class FilterEquation extends ArrayList<FilterObject> {
@@ -11,6 +13,8 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
             return Operator.INTERSECTION;
         else if (operator instanceof FilterUNION)
             return Operator.UNION;
+        else if (operator instanceof FilterDIFFERENCE)
+            return Operator.DIFFERENCE;
         else
             return null;
     }
@@ -57,8 +61,8 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
 ////                    filters.add(new BadStringFilter());
 ////            else if (filterObject instanceof NeMatchFilter)
 ////                    filters.add(new NeMatchFilter());
-////            else if (filterObject instanceof UnsafePosFilter)
-////                    filters.add(new UnsafePosFilter());
+////            else if (filterObject instanceof UnsafePosForPosTaggingFilter)
+////                    filters.add(new UnsafePosForPosTaggingFilter());
 ////            else {
 ////                System.out.println("ERROR, DIDN'T RECOGNIZE FILTER NAME!");
 ////                //TODO throw Filter not found Exception
@@ -162,6 +166,7 @@ Map:
     Key:    cosine distance
     Value:  TaggedWord
  */
+
 
 
 

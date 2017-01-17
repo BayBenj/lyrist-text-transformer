@@ -10,7 +10,7 @@ import java.util.*;
 import static word2vec.W2vOperations.stringsToPoint;
 
 public class W2vCommander {
-    private final int nOfDefaultSuggestions = 10;
+    private final int nOfDefaultSuggestions = 100;
 
     private W2vModel model;
 
@@ -80,7 +80,7 @@ public class W2vCommander {
         ArrayList<String> oneString = new ArrayList<>();
         oneString.add(string);
         Pair<W2vPoint,int[]> pair = W2vOperations.stringsToPoint(OperationType.SINGLE, oneString);
-        Map<Double, String> tree = new TreeMap<Double, String>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
+        Map<Double, String> tree = new TreeMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
         if (tree.containsValue(pair.getFirst().getString()))
             tree.remove(pair.getFirst().getString());
         return new HashMap<>(tree);
@@ -99,7 +99,7 @@ public class W2vCommander {
     }
 
     public Map<Double, String> findSum(Set<String> strings, int nOfSuggestions, boolean b) {
-        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.SUM, new ArrayList<String>(strings));
+        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.SUM, new ArrayList<>(strings));
         return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
 
@@ -108,8 +108,18 @@ public class W2vCommander {
     }
 
     public Map<Double, String> findSentiment(Set<String> strings, int nOfSuggestions) {
-        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.AVERAGE, new ArrayList<String>(strings));
+        Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.AVERAGE, new ArrayList<>(strings));
         return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
+    }
+
+    public Double findDistanceBetween(String string1, String string2) {
+        //TODO implement this, especially for choosing the closest rhyming word from a set of distantly-related rhymes
+        return null;
+    }
+
+    public boolean contains(String string) {
+        //TODO implement this, to be used for every word2vec operation. Simply looks at a list of this model's vocabulary.
+        return false;
     }
 
 }

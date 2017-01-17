@@ -1,12 +1,5 @@
 package rhyme;
 
-import java.util.List;
+public abstract class SpecificRhyme extends Rhyme {
 
-public class SpecificRhyme extends Rhyme {
-
-    public List<Phoneme> rhyme;
-
-    public SpecificRhyme(List<Phoneme> rhyme) {
-        this.rhyme = rhyme;
-    }
 }

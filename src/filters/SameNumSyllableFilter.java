@@ -11,8 +11,8 @@ public class SameNumSyllableFilter extends ModelWordFilter {
         super(model);
     }
 
-    public SameNumSyllableFilter(Direction direction, Word model) {
-        super(direction, model);
+    public SameNumSyllableFilter(ReturnType returnType, Word model) {
+        super(returnType, model);
     }
 
     @Override
@@ -21,8 +21,8 @@ public class SameNumSyllableFilter extends ModelWordFilter {
             Set<Word> result = new HashSet<>();
             for (Word w : originalWords) {
                 if (    (w.getSyllables() != null && !w.getSyllables().isEmpty()) &&
-                        (super.getDirection() == Direction.INCLUDE_MATCH && this.getModel().getSyllables().size() == w.getSyllables().size() ||
-                        super.getDirection() == Direction.EXCLUDE_MATCH && this.getModel().getSyllables().size() != w.getSyllables().size()) )
+                        (super.getReturnType() == ReturnType.MATCHES && this.getModel().getSyllables().size() == w.getSyllables().size() ||
+                        super.getReturnType() == ReturnType.NON_MATCHES && this.getModel().getSyllables().size() != w.getSyllables().size()) )
                     result.add(w);
             }
             return result;

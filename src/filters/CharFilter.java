@@ -10,8 +10,8 @@ public abstract class  CharFilter extends StringFilter {
         this.setCharList(charList);
     }
 
-    public  CharFilter(Direction direction,  CharList  charList) {
-        super(direction);
+    public  CharFilter(ReturnType returnType, CharList  charList) {
+        super(returnType);
         this.setCharList( charList);
     }
 
