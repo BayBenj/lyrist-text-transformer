@@ -1,8 +1,8 @@
 package filters;
 
 import main.ProgramArgs;
-import song.Word;
-import utils.Utils;
+import elements.Word;
+import utils.U;
 
 import java.util.Collection;
 import java.util.Set;
@@ -22,7 +22,7 @@ public abstract class WordFilter extends Filter {
             FilterUtils.startTimer();
             Set<Word> result = this.doFilter(originalWords);
             FilterUtils.stopTimer();
-            Utils.testPrint(this.getClass().toString() + " time: " + FilterUtils.getTotalTime());
+            U.testPrint(this.getClass().toString() + " time: " + FilterUtils.getTotalTime());
             return result;
         }
         else
@@ -36,7 +36,6 @@ public abstract class WordFilter extends Filter {
 /*
 TODO > (maybe) Make sure only filters.FilterEquation can access filters.WordFilter methods
  */
-
 
 
 

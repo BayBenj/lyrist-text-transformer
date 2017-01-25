@@ -1,8 +1,5 @@
 package intentions;
 
-import misc.CulturalIntention;
-import misc.EmotionalIntention;
-
 import java.util.List;
 
 public class SongIntentions {

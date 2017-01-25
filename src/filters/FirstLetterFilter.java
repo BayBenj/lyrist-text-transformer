@@ -1,7 +1,6 @@
 package filters;
 
-import song.CharList;
-
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +15,7 @@ public class FirstLetterFilter extends CharFilter {
     }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (s != null && s.length() > 0) {
@@ -32,6 +31,8 @@ public class FirstLetterFilter extends CharFilter {
         return result;
     }
 }
+
+
 
 
 

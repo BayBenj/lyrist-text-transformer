@@ -1,7 +1,7 @@
 package word2vec;
 
 import utils.Pair;
-import utils.Utils;
+import utils.U;
 
 import java.io.*;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public abstract class W2vOperations {
     private static final long maxWordLength = 25;  // max length of vocabulary entries in vector. Important for w2v operations!
 
     public static W2vModel buildW2vModel(String fileName) {
-        Utils.testPrint("Entering buildW2vModel");
+        U.testPrint("Entering buildW2vModel");
         File file;
 
         //TODO: is this st1 correct?
@@ -28,8 +28,8 @@ public abstract class W2vOperations {
         file = new File(fileName + ".bin");
 
         try {
-            Utils.testPrint("Building W2v Model");
-            DataInputStream data_in = new DataInputStream(new BufferedInputStream(new FileInputStream(Utils.rootPath + "local-data/w2v/models/bins/" + file)));
+            U.testPrint("Building W2v Model");
+            DataInputStream data_in = new DataInputStream(new BufferedInputStream(new FileInputStream(U.rootPath + "local-data/w2v/models/bins/" + file)));
 
             //TODO: fix
 //            numberOfWordsInVector = 681320;     //word-phrase
@@ -37,7 +37,7 @@ public abstract class W2vOperations {
 //            numberOfWordsInVector = 38160;   //1600s-lotr
 //            numberOfWordsInVector = 3000000;   //GoogleNews-3000000-300
             numberOfWordsInVector = 109478;   //news-lyrics-bom
-//            numberOfWordsInVector = 288340;   //songs 288340-500-5
+//            numberOfWordsInVector = 288340;   //songtools 288340-500-5
             System.out.println("Words: " + numberOfWordsInVector);
             data_in.readLong();
 
@@ -47,7 +47,7 @@ public abstract class W2vOperations {
 //            numberOfDimensionsInVector = 1000; //1600s-lotr
 //            numberOfDimensionsInVector = 300; //GoogleNews-3000000-300
             numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
-//            numberOfDimensionsInVector = 500;   //songs 288340-500-5
+//            numberOfDimensionsInVector = 500;   //songtools 288340-500-5
             System.out.println("Size: " + numberOfDimensionsInVector);
             data_in.readLong();
 
@@ -121,7 +121,7 @@ public abstract class W2vOperations {
 //        double[] point = new double[toIntExact(numberOfDimensionsInVector)];
 //        long[] inputWordVocabPositions = new long[3];
 //
-//        Utils.testPrint("Performing W2v Analogy: [" + oldSentiment + "] is to [" + newSentiment + "] as [" + oldWord + "] is to ?");
+//        U.testPrint("Performing W2v Analogy: [" + oldSentiment + "] is to [" + newSentiment + "] as [" + oldWord + "] is to ?");
 //
 //        int number_of_input_words = 3;
 //        for (a = 0; a < number_of_input_words; a++) {
@@ -161,7 +161,7 @@ public abstract class W2vOperations {
 //
 //        String closest_word = getClosestWord(model, new W2vPoint(point, "[N/A]", inputWordVocabPositions, number_of_input_words) );
 //
-//        Utils.testPrint("\tThe best analogous word was: [" + closest_word + "]");
+//        U.testPrint("\tThe best analogous word was: [" + closest_word + "]");
 //
 //        return new W2vPoint(point, closest_word, inputWordVocabPositions, number_of_input_words);
 //    }
@@ -186,7 +186,7 @@ public abstract class W2vOperations {
         long a, b, c, d;
 
         if (number_of_suggestions_to_show > 1 && !word.equals("NO_WORD_YET"))
-            Utils.testPrint("Finding word2vec suggestions similar to [" + word + "]...");
+            U.testPrint("Finding word2vec suggestions similar to [" + word + "]...");
 
         // Fill words with blank values
         for (a = 0; a < number_of_suggestions_to_show; a++)
@@ -232,7 +232,7 @@ public abstract class W2vOperations {
         Map<Double, String> suggestions = new HashMap<>();
         for (a = 0; a < number_of_suggestions_to_show; a++) {
             if (a == 0 && number_of_suggestions_to_show > 1)
-                Utils.testPrint("\tword2vec found " + number_of_suggestions_to_show + " words.");
+                U.testPrint("\tword2vec found " + number_of_suggestions_to_show + " words.");
             suggestions.put(-1 * closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
         }
         return suggestions;
@@ -266,13 +266,13 @@ public abstract class W2vOperations {
 //        double[] summedPoint = new double[toIntExact(numberOfDimensionsInVector)];
 //        long[] inputWordVocabPositions = new long[nOfPoints];
 //
-//        Utils.testPrint("Summing W2v points: ");
+//        U.testPrint("Summing W2v points: ");
 //        int i = 0;
 //        for (W2vPoint point : points) {
 //            if (i >= nOfPoints - 1)
-//                Utils.testPrint("[" + point.getClosestString() + "]");
+//                U.testPrint("[" + point.getClosestString() + "]");
 //            else
-//                Utils.testPrint("[" + point.getClosestString() + "], ");
+//                U.testPrint("[" + point.getClosestString() + "], ");
 //            i++;
 //        }
 //
@@ -316,7 +316,7 @@ public abstract class W2vOperations {
 //
 //        String closest_word = getClosestWord(model, new W2vPoint(summedPoint, "[N/A]", inputWordVocabPositions, nOfPoints) );
 //
-//        Utils.testPrint("\tThe summed words gave the word: [" + closest_word + "]");
+//        U.testPrint("\tThe summed words gave the word: [" + closest_word + "]");
 //
 //        return new W2vPoint(summedPoint, closest_word, inputWordVocabPositions, nOfPoints);
 //    }
@@ -365,7 +365,7 @@ public abstract class W2vOperations {
 ////        double[] point = new double[toIntExact(numberOfDimensionsInVector)];
 ////        long inputWordVocabPosition = -1;
 ////
-////        Utils.testPrint("Finding point for " + word + "...");
+////        U.testPrint("Finding point for " + word + "...");
 ////
 ////        int number_of_input_words = 1;
 ////        for (a = 0; a < number_of_input_words; a++) {
@@ -474,32 +474,32 @@ public abstract class W2vOperations {
         final int nOfPoints = strings.size();
         switch (type) {
             case SUM:
-                Utils.testPrint("Summing W2v points: ");
+                U.testPrint("Summing W2v points: ");
                 int i = 0;
                 for (String string : strings) {
                     if (i >= nOfPoints - 1)
-                        Utils.testPrint("[" + string + "]");
+                        U.testPrint("[" + string + "]");
                     else
-                        Utils.testPrint("[" + string + "], ");
+                        U.testPrint("[" + string + "], ");
                     i++;
                 }
                 break;
             case AVERAGE:
-                Utils.testPrint("Averaging W2v points: ");
+                U.testPrint("Averaging W2v points: ");
                 i = 0;
                 for (String string : strings) {
                     if (i >= nOfPoints - 1)
-                        Utils.testPrint("[" + string + "]");
+                        U.testPrint("[" + string + "]");
                     else
-                        Utils.testPrint("[" + string + "], ");
+                        U.testPrint("[" + string + "], ");
                     i++;
                 }
                 break;
             case ANALOGY:
-                Utils.testPrint("Performing W2v Analogy: [" + strings.get(0) + "] is to [" + strings.get(1) + "] as [" + strings.get(2) + "] is to ?");
+                U.testPrint("Performing W2v Analogy: [" + strings.get(0) + "] is to [" + strings.get(1) + "] as [" + strings.get(2) + "] is to ?");
                 break;
             case SINGLE:
-                Utils.testPrint("Finding point of : [" + strings.get(0) + "]...");
+                U.testPrint("Finding point of : [" + strings.get(0) + "]...");
                 break;
         }
     }
@@ -507,16 +507,16 @@ public abstract class W2vOperations {
     private static void postPrint(OperationType type, String closest_word) {
         switch (type) {
             case SUM:
-                Utils.testPrint("\tThe summed words added up to the word: [" + closest_word + "]");
+                U.testPrint("\tThe summed words added up to the word: [" + closest_word + "]");
                 break;
             case AVERAGE:
-                Utils.testPrint("\tThe averaged words gave the word: [" + closest_word + "]");
+                U.testPrint("\tThe averaged words gave the word: [" + closest_word + "]");
                 break;
             case ANALOGY:
-                Utils.testPrint("\tThe best analogous word was: [" + closest_word + "]");
+                U.testPrint("\tThe best analogous word was: [" + closest_word + "]");
                 break;
             case SINGLE:
-                Utils.testPrint("\tFound point for: [" + closest_word + "]...");
+                U.testPrint("\tFound point for: [" + closest_word + "]...");
                 break;
         }
     }

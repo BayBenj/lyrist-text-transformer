@@ -1,8 +1,8 @@
 package word2vec;
 
-import song.Word;
+import elements.Word;
 import utils.Pair;
-import utils.Utils;
+import utils.U;
 
 import java.io.*;
 import java.util.*;
@@ -19,7 +19,7 @@ public class W2vCommander {
     }
 
     public void setupModel(String fileName) {
-        File f = new File(Utils.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
+        File f = new File(U.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
         if(f.exists() && !f.isDirectory())
             this.deserializeW2vModel(fileName);
         else
@@ -28,9 +28,9 @@ public class W2vCommander {
     }
 
     public void deserializeW2vModel(String fileName) {
-        Utils.testPrint("Deserializing W2v Model");
+        U.testPrint("Deserializing W2v Model");
         try {
-            FileInputStream fileIn = new FileInputStream(Utils.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
+            FileInputStream fileIn = new FileInputStream(U.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             this.model = null;
             this.model = (W2vModel) in.readObject();
@@ -48,7 +48,7 @@ public class W2vCommander {
 
     public void serializeW2vModel(String fileName) {
         try {
-            FileOutputStream fileOut = new FileOutputStream(Utils.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
+            FileOutputStream fileOut = new FileOutputStream(U.rootPath + "local-data/w2v/models/sers/" + fileName + ".ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(this.model);
             out.close();

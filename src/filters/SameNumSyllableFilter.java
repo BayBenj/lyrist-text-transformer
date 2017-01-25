@@ -1,7 +1,8 @@
 package filters;
 
-import song.Word;
+import elements.Word;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class SameNumSyllableFilter extends ModelWordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> originalWords) {
+    public Set<Word> doFilter(Collection<Word> originalWords) {
         if (this.getModel().getSyllables() != null && !this.getModel().getSyllables().isEmpty()) {
             Set<Word> result = new HashSet<>();
             for (Word w : originalWords) {
@@ -30,7 +31,6 @@ public class SameNumSyllableFilter extends ModelWordFilter {
         return null;
     }
 }
-
 
 
 

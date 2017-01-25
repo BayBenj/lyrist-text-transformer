@@ -1,7 +1,7 @@
 package filters;
 
 import main.ProgramArgs;
-import utils.Utils;
+import utils.U;
 
 import java.util.Collection;
 import java.util.Set;
@@ -21,7 +21,7 @@ public abstract class StringFilter extends Filter {
             FilterUtils.startTimer();
             Set<String> result = this.doFilter(originalStrings);
             FilterUtils.stopTimer();
-            Utils.testPrint(this.getClass().toString() + " time: " + FilterUtils.getTotalTime());
+            U.testPrint(this.getClass().toString() + " time: " + FilterUtils.getTotalTime());
             return result;
         }
         else

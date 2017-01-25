@@ -1,7 +1,5 @@
 package filters;
 
-import song. CharList;
-
 public abstract class  CharFilter extends StringFilter {
 
     protected  CharList charList;

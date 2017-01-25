@@ -17,7 +17,7 @@ public class BibleWordsFilter extends VocabListFilter {
     }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||
@@ -28,6 +28,7 @@ public class BibleWordsFilter extends VocabListFilter {
     }
 
 }
+
 
 
 

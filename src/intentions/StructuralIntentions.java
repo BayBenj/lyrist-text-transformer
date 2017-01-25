@@ -1,9 +1,11 @@
 package intentions;
 
-import main.Meter;
+import rhyme.Meter;
 import rhyme.RhymeScheme;
 
 public class StructuralIntentions {
+
+    //If user wants to generate elements by replacement on template, the template should be loaded before these structural intentions are decided.
 
     private RhymeScheme rhymeScheme;
     private Meter meter;
@@ -30,3 +32,88 @@ public class StructuralIntentions {
         this.meter = meter;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

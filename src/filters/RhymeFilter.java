@@ -1,6 +1,8 @@
 package filters;
 
-import song.Word;
+import elements.Word;
+
+import java.util.Collection;
 import java.util.Set;
 
 public class RhymeFilter extends ModelWordFilter {
@@ -10,7 +12,7 @@ public class RhymeFilter extends ModelWordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> w2vSuggestions) {
+    public Set<Word> doFilter(Collection<Word> w2vSuggestions) {
         return null;
     }
 

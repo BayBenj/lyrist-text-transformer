@@ -1,7 +1,5 @@
 package filters;
 
-import song.VocabList;
-
 import java.util.*;
 
 public class DistastefulnessFilter extends VocabListFilter {
@@ -500,7 +498,7 @@ public class DistastefulnessFilter extends VocabListFilter {
 //    }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s) ||

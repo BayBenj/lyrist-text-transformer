@@ -1,10 +1,6 @@
 package filters;
 
-import song.CharList;
-import song.Word;
-
-import java.util.ArrayList;
-import java.util.List;
+import elements.Word;
 
 public abstract class FilterManager {
 
@@ -35,7 +31,7 @@ public abstract class FilterManager {
     }
 
     public static FilterObject[] getMirrorPosNeFilters(Word oldWord) {
-        FilterObject[] filters = new FilterObject[2];
+        FilterObject[] filters = new FilterObject[3];
         filters[0] = (getPosWordFilter(oldWord));
         filters[1] = (getNeWordFilter(oldWord));
         return filters;
@@ -50,10 +46,17 @@ public abstract class FilterManager {
 
     public static FilterObject[] getSafetyStringFilters() {
         FilterObject[] filters = new FilterObject[4];
-        filters[0] = (getDistatefulnessFilter());
-        filters[1] = (getBadStringFilter());
-        filters[2] = (getCommonStringFilter());
-        filters[3] = (getDistatefulnessFilter());
+        filters[0] = getDistatefulnessFilter();
+        filters[1] = getBadStringFilter();
+        filters[2] = getCommonStringFilter();
+        filters[3] = getDistatefulnessFilter();
+        return filters;
+    }
+
+    public static FilterObject[] getTaggingSafetyFilters() {
+        FilterObject[] filters = new FilterObject[2];
+        filters[0] = getUnsafePosForPosTaggingFilter();
+        filters[1] = getUnsafeWordFilter();
         return filters;
     }
 
@@ -73,6 +76,10 @@ public abstract class FilterManager {
         return new BadStringFilter(ReturnType.MATCHES);
     }
 
+    public static FilterObject getUnsafeWordFilter() {
+        return new UnsafeWordFilter(ReturnType.MATCHES);
+    }
+
     public static FilterObject getCommonStringFilter() {
         return new CommonStringFilter(ReturnType.NON_MATCHES);
     }
@@ -90,7 +97,7 @@ public abstract class FilterManager {
     }
 
     public static FilterObject getUnsafePosForPosTaggingFilter() {
-        return new UnsafePosForPosTaggingFilter(ReturnType.NON_MATCHES);
+        return new UnsafePosForPosTaggingFilter(ReturnType.MATCHES);
     }
 
     public static FilterObject getUnion() {
@@ -102,13 +109,6 @@ public abstract class FilterManager {
     }
 
 }
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,6 @@
 package filters;
 
-import song.Word;
+import elements.Word;
 
 public abstract class ModelWordFilter extends WordFilter {
 

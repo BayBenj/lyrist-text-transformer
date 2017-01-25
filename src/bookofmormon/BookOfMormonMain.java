@@ -2,11 +2,15 @@ package bookofmormon;
 
 import filters.*;
 import main.ProgramArgs;
-import song.*;
-import stanford_nlp.StanfordNlp;
+import elements.*;
+import elements.Sentence;
+import songtools.SongScanner;
+import songtools.TemplateSongEngineer;
+import songtools.WordReplacements;
+import stanford.StanfordNlp;
 import utils.Pair;
-import utils.Utils;
-import song.ReplacementJob;
+import utils.U;
+import songtools.ReplacementManager;
 import word2vec.W2vCommander;
 
 import java.io.*;
@@ -15,9 +19,9 @@ import java.util.*;
 public class BookOfMormonMain {
 
     public static void main(String[] args) {
-        //Set the root path of Lyrist in Utils
+        //Set the root path of Lyrist in U
         File currentDirFile = new File("");
-        Utils.rootPath = currentDirFile.getAbsolutePath() + "/";
+        U.rootPath = currentDirFile.getAbsolutePath() + "/";
 
         //Load arguments
         ProgramArgs.loadProgramArgs(args); //TODO: right now it doesn't want any args
@@ -27,11 +31,11 @@ public class BookOfMormonMain {
 
         //Setup StanfordNlp
         StanfordNlp stanfordNlp = new StanfordNlp();
-        Utils.setStanfordNlp(stanfordNlp);
+        U.setStanfordNlp(stanfordNlp);
 
         //Setup W2vCommander
         W2vCommander w2v  = new W2vCommander("news-lyrics-bom2");
-        Utils.setW2vCommander(w2v);
+        U.setW2vCommander(w2v);
 
         BookOfMormonMain bom = new BookOfMormonMain();
         FilterUtils.setBibleWords(bom.readInVocabList("local-data/bom/bible-words-all.txt"));
@@ -48,7 +52,7 @@ public class BookOfMormonMain {
 
         //Decide whether to use a hashtag
         String hashtag = null;
-        int rnd = Utils.rand.nextInt(10);
+        int rnd = U.rand.nextInt(10);
         if (rnd <= 3) {
             hashtag = this.getHashTag();
             tweetLength -= (hashtag.length() + 1);
@@ -135,7 +139,7 @@ public class BookOfMormonMain {
         for (String name : names) {
             if (this.hasNameSwap()) {
                 int nOfNames = BomNameFilter.getList().length;
-                String newName = BomNameFilter.getList()[Utils.rand.nextInt(nOfNames)];
+                String newName = BomNameFilter.getList()[U.rand.nextInt(nOfNames)];
                 newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
                 officialTweet = officialTweet.replaceAll(name, newName);
             }
@@ -148,7 +152,7 @@ public class BookOfMormonMain {
         for (String geographical : geographicals) {
             if (this.hasNameSwap()) {
                 int nOfNames = BomGeographyFilter.getList().length;
-                String newGeographical = BomGeographyFilter.getList()[Utils.rand.nextInt(nOfNames)];
+                String newGeographical = BomGeographyFilter.getList()[U.rand.nextInt(nOfNames)];
                 officialTweet = officialTweet.replaceAll(geographical, newGeographical);
             }
         }
@@ -160,7 +164,7 @@ public class BookOfMormonMain {
         for (String pluralGroup : pluralGroups) {
             if (this.hasNameSwap()) {
                 int nOfNames = BomGroupsFilter.getList().length;
-                String newGroup = BomGroupsFilter.getList()[Utils.rand.nextInt(nOfNames)];
+                String newGroup = BomGroupsFilter.getList()[U.rand.nextInt(nOfNames)];
                 officialTweet = officialTweet.replaceAll(pluralGroup, newGroup);
             }
         }
@@ -172,7 +176,7 @@ public class BookOfMormonMain {
         for (String group : groups) {
             if (this.hasNameSwap()) {
                 int nOfNames = BomGroupFilter.getList().length;
-                String newGroup = BomGroupFilter.getList()[Utils.rand.nextInt(nOfNames)];
+                String newGroup = BomGroupFilter.getList()[U.rand.nextInt(nOfNames)];
                 officialTweet = officialTweet.replaceAll(group, newGroup);
             }
         }
@@ -182,7 +186,7 @@ public class BookOfMormonMain {
 
     private List<Sentence> getWords(String officialTweet) {
         //String noPunct = officialTweet.replaceAll("[^\\w\\d\\s]", "");
-        return Utils.getStanfordNlp().parseTextToSentences(officialTweet);
+        return U.getStanfordNlp().parseTextToSentences(officialTweet);
     }
 
     private String useWord2VecAndWordFilters(List<Sentence> sentences, String officialTweet) {
@@ -236,30 +240,31 @@ public class BookOfMormonMain {
         Set<Integer> allWordIndexes = new HashSet<Integer>();
         for (int i = 0; i < allMarkableWordsList.size(); i++)
             allWordIndexes.add(i);
-        HashSet<Integer> markedIndexes = engi.getRandomIndexes(allWordIndexes, .5);
+        Set<Integer> markedIndexes = SongScanner.getRandomIndexes(allWordIndexes, .5);
         Set<Word> markedWords = new HashSet<Word>();
         for(int index : markedIndexes)
             markedWords.add(allMarkableWordsList.get(index));
 
         //Replace marked words in original tweet w/ word2vec
-        ReplacementJob replacementJob = new ReplacementJob();
+        ReplacementManager replacementManager = new ReplacementManager();
         Pair<String,String> pair = this.getOldAndNewThemes();
 
-//        TreeMap<Double,String> treeMap = new TreeMap<>(Utils.getW2vCommander().findSentiment(nonPunctWords, 1));
+//        TreeMap<Double,String> treeMap = new TreeMap<>(U.getW2vCommander().findSentiment(nonPunctWords, 1));
 //        String theme;
 //        if (treeMap.size() > 0)
 //            theme = treeMap.firstEntry().getValue();
 //        else
 //            theme = pair.getFirst();
 
-        WordReplacements wordReplacements = replacementJob.getAnalogousWords(markedWords,
+        WordReplacements wordReplacements = replacementManager.getWordSuggestions(markedWords,
                                                                             sentences,
 //                                                                            this.getBomBibleWordsFilterEquation(),
                                                                             this.getStringFilters(),
                                                                             100,
-                                                                            Utils.getW2vCommander(),
+                                                                            U.getW2vCommander(),
                                                                             pair.getFirst(),
-                                                                            pair.getSecond());
+                                                                            pair.getSecond(),
+                                                                            null);
 
         String[] words = officialTweet.split("[^\\w\\d]");
 
@@ -277,7 +282,7 @@ public class BookOfMormonMain {
         //min is 5
         //max is 140
 
-        double chance = Utils.rand.nextDouble();
+        double chance = U.rand.nextDouble();
         int chars = (int)(Math.pow(chance, .5) * 135 + 5);
         return chars;
     }
@@ -289,21 +294,21 @@ public class BookOfMormonMain {
     }
 
     private boolean hasNameSwap() {
-        double chance = Utils.rand.nextDouble();
+        double chance = U.rand.nextDouble();
         if (chance > .001)
             return true;
         return false;
     }
 
     private boolean hasVerseNum() {
-        double chance = Utils.rand.nextDouble();
+        double chance = U.rand.nextDouble();
         if (chance > .8)
             return true;
         return false;
     }
 
     private boolean hasReference() {
-        double chance = Utils.rand.nextDouble();
+        double chance = U.rand.nextDouble();
         if (chance > .8)
             return true;
         return false;
@@ -312,7 +317,7 @@ public class BookOfMormonMain {
     private String getBoMSentence() {
         List<String> list = new ArrayList();
 
-        String path = Utils.rootPath + "local-data/bom/bom-all-sentences.txt";
+        String path = U.rootPath + "local-data/bom/bom-all-sentences.txt";
         try (BufferedReader br = new BufferedReader(new FileReader(new File(path)))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -348,7 +353,7 @@ public class BookOfMormonMain {
     }
 
     private String getPunctuation() {
-        int punct = Utils.rand.nextInt(2);
+        int punct = U.rand.nextInt(2);
         if (punct == 0)
             return ".";
         if (punct == 1)
@@ -424,7 +429,7 @@ public class BookOfMormonMain {
     }
 
     public VocabList readInVocabList(String path) {
-        String filePath = Utils.rootPath + path;
+        String filePath = U.rootPath + path;
         File file = new File(filePath);
         Set<String> set = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -459,7 +464,7 @@ public class BookOfMormonMain {
     }
 
     private String getHashTag() {
-        int rnd = Utils.rand.nextInt(10);
+        int rnd = U.rand.nextInt(10);
         String[] hashtags;
         if (rnd == 0) {
             hashtags = new String[] {
@@ -882,9 +887,9 @@ public class BookOfMormonMain {
                     "#Christian"
             };
         }
-        String hashtag = hashtags[Utils.rand.nextInt(hashtags.length)];
+        String hashtag = hashtags[U.rand.nextInt(hashtags.length)];
 
-        boolean lowercase = Utils.rand.nextBoolean();
+        boolean lowercase = U.rand.nextBoolean();
         if (lowercase)
             hashtag = hashtag.toLowerCase();
 
@@ -892,7 +897,7 @@ public class BookOfMormonMain {
     }
 
     private Pair<String, String> getOldAndNewThemes() {
-        int rnd = Utils.rand.nextInt(10);
+        int rnd = U.rand.nextInt(10);
         rnd = 15;
         String[] churchProbs = {
                 "homophobia",
@@ -1111,27 +1116,27 @@ public class BookOfMormonMain {
         String oldTheme = "old";
         String newTheme = "new";
         while (!themesInModelVocab) {
-            rnd = Utils.rand.nextInt(5);
+            rnd = U.rand.nextInt(5);
             switch (rnd) {
                 case 0:     //sin to virtue
-                    oldTheme = sins[Utils.rand.nextInt(sins.length)];
-                    newTheme = virtues[Utils.rand.nextInt(virtues.length)];
+                    oldTheme = sins[U.rand.nextInt(sins.length)];
+                    newTheme = virtues[U.rand.nextInt(virtues.length)];
                     break;
                 case 1:     //virtue to category
-                    oldTheme = virtues[Utils.rand.nextInt(virtues.length)];
-                    newTheme = categories[Utils.rand.nextInt(categories.length)];
+                    oldTheme = virtues[U.rand.nextInt(virtues.length)];
+                    newTheme = categories[U.rand.nextInt(categories.length)];
                     break;
                 case 2:     //virtue to churchProb
-                    oldTheme = virtues[Utils.rand.nextInt(virtues.length)];
-                    newTheme = churchProbs[Utils.rand.nextInt(churchProbs.length)];
+                    oldTheme = virtues[U.rand.nextInt(virtues.length)];
+                    newTheme = churchProbs[U.rand.nextInt(churchProbs.length)];
                     break;
                 case 3:     //male to female
                     oldTheme = "masculine";
                     newTheme = "feminine";
                     break;
                 default:     //virtue to sin
-                    oldTheme = virtues[Utils.rand.nextInt(virtues.length)];
-                    newTheme = sins[Utils.rand.nextInt(sins.length)];
+                    oldTheme = virtues[U.rand.nextInt(virtues.length)];
+                    newTheme = sins[U.rand.nextInt(sins.length)];
                     break;
 
             }
@@ -1151,7 +1156,6 @@ public class BookOfMormonMain {
     }
 
 }
-
 
 
 

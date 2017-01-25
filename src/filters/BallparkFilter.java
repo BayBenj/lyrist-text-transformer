@@ -1,8 +1,5 @@
 package filters;
 
-import song.Word;
-import java.util.Set;
-
 public class BallparkFilter extends Filter {
 
 //    //@Override

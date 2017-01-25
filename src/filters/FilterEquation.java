@@ -1,7 +1,5 @@
 package filters;
 
-import song.Word;
-
 import java.util.*;
 
 public abstract class FilterEquation extends ArrayList<FilterObject> {
@@ -17,6 +15,20 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
             return Operator.DIFFERENCE;
         else
             return null;
+    }
+
+    public boolean has(Class filterClass) {
+        for (FilterObject filterObject : this)
+            if (filterObject instanceof Filter && filterObject.getClass() == filterClass)
+                return true;
+        return false;
+    }
+
+    public FilterObject getFirst(Class targetClass) {
+        for (FilterObject filterObject : this)
+            if (filterObject instanceof Filter && filterObject.getClass() == targetClass)
+                return filterObject;
+        return null;
     }
 
 //    public FilterEquation(FilterObject... filterObjects) {
@@ -166,6 +178,8 @@ Map:
     Key:    cosine distance
     Value:  TaggedWord
  */
+
+
 
 
 

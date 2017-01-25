@@ -1,7 +1,5 @@
 package filters;
 
-import song.CharList;
-
 import java.util.*;
 
 public class BadStringFilter extends CharFilter {
@@ -94,7 +92,7 @@ public class BadStringFilter extends CharFilter {
 //    }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             for (char c: s.toCharArray()) {
@@ -111,6 +109,7 @@ public class BadStringFilter extends CharFilter {
         return result;
     }
 }
+
 
 
 

@@ -1,6 +1,6 @@
 package filters;
 
-import song.Word;
+import elements.Word;
 
 import java.util.Collection;
 import java.util.HashSet;

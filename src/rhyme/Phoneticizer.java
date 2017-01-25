@@ -4,15 +4,15 @@ import java.io.*;
 import java.util.*;
 
 import edu.cmu.sphinx.linguist.g2p.G2PConverter;
-import song.Punctuation;
-import song.Word;
-import utils.Utils;
+import elements.Punctuation;
+import elements.Word;
+import utils.U;
 
 public class Phoneticizer {
 
 //    private static final String cmuFilePath = TabDriver.dataDir + "/pron_dict/cmudict-0.7b.txt";
 //    private static final String phonesFilePath = TabDriver.dataDir + "/pron_dict/cmudict-0.7b.phones.reordered.txt";
-    private static final String cmuFilePath = Utils.rootPath + "local-data/phonemes/pron-dict/cmudict-0.7b.txt";
+    private static final String cmuFilePath = U.rootPath + "local-data/phonemes/pron-dict/cmudict-0.7b.txt";
 
     private static Map<String, List<Pronunciation>> cmuDict = loadCMUDict();
     public static Map<List<Phoneme>, Set<String>> lastSylRhymeDict = new HashMap<>();
@@ -21,7 +21,7 @@ public class Phoneticizer {
     private static Map<String, WordSyllables> syllableDict = loadSyllableDicts();
 //    private static Map<String, Pair<Integer, MannerOfArticulation>> phonesDict = loadPhonesDict();
 //    private static List<Pair<String, MannerOfArticulation>> reversePhonesDict = loadReversePhonesDict();
-    private static G2PConverter converter = new G2PConverter(Utils.rootPath + "local-data/phonemes/pron-dict/model.fst.ser");
+    private static G2PConverter converter = new G2PConverter(U.rootPath + "local-data/phonemes/pron-dict/model.fst.ser");
 
     /**
      * Loads CMU dictionary from file into a datastructure
@@ -73,7 +73,7 @@ public class Phoneticizer {
                         assert(cmuDict.containsKey(key.substring(0, parenIdx)));
                         newList.add(phones);
                     }
-                    // Utils.promptEnterKey("");
+                    // U.promptEnterKey("");
                 }
 
                 bf.close();
@@ -90,7 +90,7 @@ public class Phoneticizer {
         Map<String, WordSyllables> result = new HashMap<>();
         for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
             if (entry.getKey().equals("SWIMSUIT")) {
-                Utils.print("stop for test");
+                U.print("stop for test");
             }
             WordSyllables syllables = SyllableParser.algorithmicallyParse(entry.getValue().get(0));
             result.put(entry.getKey(), syllables);  //TODO it gets the top pronunciation, make sure that's right

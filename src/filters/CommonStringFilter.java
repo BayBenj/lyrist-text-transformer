@@ -1,5 +1,6 @@
 package filters;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class CommonStringFilter extends VocabListFilter {
     }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s) ||
@@ -24,6 +25,10 @@ public class CommonStringFilter extends VocabListFilter {
         return result;
     }
 }
+
+
+
+
 
 
 

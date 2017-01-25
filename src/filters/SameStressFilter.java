@@ -1,7 +1,8 @@
 package filters;
 
-import song.Word;
+import elements.Word;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class SameStressFilter extends ModelWordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> originalWords) {
+    public Set<Word> doFilter(Collection<Word> originalWords) {
         Set<Word> result = new HashSet<>();
         for (Word w : originalWords) {
             if (super.getReturnType() == ReturnType.MATCHES && this.getModel().getStresses().equals(w.getStresses()) ||

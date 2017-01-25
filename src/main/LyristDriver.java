@@ -1,27 +1,27 @@
 package main;
 
-import bookofmormon.BookOfMormonMain;
-import filters.FilterUtils;
+import intentions.*;
+import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
-import song.TemplateSongEngineer;
-import song.VocabList;
-import stanford_nlp.StanfordNlp;
-import utils.Utils;
+import songtools.SongScanner;
+import songtools.SongWrapper;
+import songtools.TemplateSongEngineer;
+import stanford.StanfordNlp;
+import utils.U;
 import word2vec.W2vCommander;
-
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LyristDriver {
 
-    //Generates a new song inspired from a system-selected inspiring idea
+    //Generates a new elements inspired from a system-selected inspiring idea
 
         public static void main(String[] args) throws IOException {
 
-            //Set the root path of Lyrist in Utils
+            //Set the root path of Lyrist in U
             File currentDirFile = new File("");
-            Utils.rootPath = currentDirFile.getAbsolutePath() + "/";
+            U.rootPath = currentDirFile.getAbsolutePath() + "/";
 
             //Load arguments
             ProgramArgs.loadProgramArgs(args); //TODO: right now it doesn't want any args
@@ -31,50 +31,29 @@ public class LyristDriver {
 
             //Setup StanfordNlp
             StanfordNlp stanfordNlp = new StanfordNlp();
-            Utils.setStanfordNlp(stanfordNlp);
+            U.setStanfordNlp(stanfordNlp);
 
             //Setup W2vCommander
             W2vCommander w2v  = new W2vCommander("news-lyrics-bom2");
-            Utils.setW2vCommander(w2v);
+            U.setW2vCommander(w2v);
 
             //Setup Phoneticizer
-            Utils.phoneticizer = new Phoneticizer();
+            U.phoneticizer = new Phoneticizer();
 
-            //set common words
-            FilterUtils.setCommonWords(readInCommonWords());
+            //read in vocab lists TODO move this to after I know I will need the filter for it
+            VocabManager.readInVocab();
 
+            //Get template elements
+            SongWrapper templateSong = SongScanner.getTemplateSong("sorrow.txt");
 
-//            //Studio studio = new Studio();
-//
-//            //Composition newSong = studio.generate();
-//
-//            //Utils.print(newSong);
-//
-              //Generate a song
+            //Get elements intentions from programmer input
+            SongIntentions songIntentions = IntentionManager.getSongIntentions(
+                    new LineRhymeScheme("A","B","A","B"), "strength", "English");
+
+            //Generate a new song
             TemplateSongEngineer templateSongEngineer = new TemplateSongEngineer();
-            templateSongEngineer.generateSong();
-//            Utils.print(generatedSong.toString());
-
-
+            templateSongEngineer.generateSong(songIntentions, templateSong);
         }
-
-    private static VocabList readInCommonWords() {
-        String filePath = Utils.rootPath + "local-data/vocab-lists/common-words.txt";
-        File file = new File(filePath);
-        Set<String> set = new HashSet<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null)
-                set.add(line);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new VocabList(set);
-    }
-
-
 
 //    public static void main(String[] args) {
 //		TreeMap<Integer, String> map = new TreeMap<Integer, String>();
@@ -109,7 +88,7 @@ public class LyristDriver {
 
 /*
 
-//Generates a new song inspired from a system-selected inspiring idea
+//Generates a new elements inspired from a system-selected inspiring idea
 
 public class PopDriver {
 	public static void main(String[] args)
@@ -124,6 +103,37 @@ public class PopDriver {
 	}
 }
  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

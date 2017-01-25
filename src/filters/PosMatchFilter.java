@@ -1,7 +1,9 @@
 package filters;
 
-import song.Pos;
-import song.Word;
+import elements.Pos;
+import elements.Word;
+
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +46,7 @@ public class PosMatchFilter extends ModelWordFilter {
 //    }
 
     @Override
-    public Set<Word> doFilter(Set<Word> w2vSuggestions) {
+    public Set<Word> doFilter(Collection<Word> w2vSuggestions) {
         Set<Word> filteredIn = new HashSet<>();
         Pos pos = super.getModel().getPos();
         for (Word w : w2vSuggestions) {
@@ -64,8 +66,6 @@ public class PosMatchFilter extends ModelWordFilter {
 //    }
 
 }
-
-
 
 
 

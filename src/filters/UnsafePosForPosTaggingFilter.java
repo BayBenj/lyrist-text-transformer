@@ -1,8 +1,9 @@
 package filters;
 
-import song.Pos;
-import song.Word;
+import elements.Pos;
+import elements.Word;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +33,8 @@ public class UnsafePosForPosTaggingFilter extends WordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> w2vSuggestions) {
-        Set<Word> filteredIn = new HashSet<Word>();
+    public Set<Word> doFilter(Collection<Word> w2vSuggestions) {
+        Set<Word> filteredIn = new HashSet<>();
         for (Word w : w2vSuggestions) {
             if (super.getReturnType() == ReturnType.MATCHES && unsafePosSet.contains(w.getPos()) ||
                     super.getReturnType() == ReturnType.NON_MATCHES && !unsafePosSet.contains(w.getPos()))

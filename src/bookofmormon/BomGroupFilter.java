@@ -2,7 +2,7 @@ package bookofmormon;
 
 import filters.ReturnType;
 import filters.VocabListFilter;
-import song.VocabList;
+import filters.VocabList;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class BomGroupFilter extends VocabListFilter {
     }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||

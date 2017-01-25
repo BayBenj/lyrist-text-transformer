@@ -3,7 +3,8 @@ package english;
 public enum Gender {
 
     MALE,
-    FEMALE
+    FEMALE,
+    NEUTRAL
 
 }
 

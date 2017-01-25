@@ -1,6 +1,12 @@
 package english;
 
+import rhyme.Phoneticizer;
+import rhyme.Pronunciation;
+import elements.Word;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class DeterminerManager {
@@ -11,9 +17,9 @@ public abstract class DeterminerManager {
     private Set<String> exclamative;
 
     //central
-    private Set<String> articles;
-    private Set<String> demonstratives;
-    private Set<String> possessiveDeterminers;
+    private static Set<String> articles;
+    private static Set<String> demonstratives;
+    public static Set<String> possessiveDeterminers;
     private Set<String> interrogativeDeterminers;
     private Set<String> relativeDeterminers;
     private Set<String> nominalDeterminers;
@@ -26,7 +32,7 @@ public abstract class DeterminerManager {
     private Set<String> primaryQuantifiers;
 
 
-    public void initializeSets() {
+    public static void initializeSets() {
     //pre determiners
 
 
@@ -62,11 +68,86 @@ public abstract class DeterminerManager {
 
     }
 
+    public static String getCorrectIndefiniteArticle(String following) {
+        if (following != null && following.length() > 0) {
+            if (Phoneticizer.cmuDictContains(following)) {
+            Pronunciation followingPronunciation = Phoneticizer.getTopPronunciation(following);
+            char firstChar = following.charAt(0);
+            if (firstChar == 'a' ||
+                    firstChar == 'e' ||
+                    firstChar == 'i' ||
+                    firstChar == 'o' ||
+                    firstChar == 'u')
+                return "an";
+            else
+                return "a";
+            }
+            return getCorrectIndefiniteArticleForOutOfDictionary(following);
+        }
+        return null;
+    }
+
+    public static String getCorrectIndefiniteArticle(Word following) {
+        if (following != null) {
+            if (following.getPhonemes() != null && following.getPhonemes().get(0) != null) {
+                if (following.getPhonemes().get(0).isVowel())
+                    return "an";
+                else
+                    return "a";
+            }
+        }
+        return getCorrectIndefiniteArticle(following.getSpelling());
+    }
+
+    public static String getCorrectIndefiniteArticleForOutOfDictionary(String following) {
+        if (following != null && following.length() > 0) {
+            char firstChar = following.charAt(0);
+            if (    firstChar == 'a' ||
+                    firstChar == 'e' ||
+                    firstChar == 'i' ||
+                    firstChar == 'o' ||
+                    firstChar == 'u' )
+                return "an";
+            else
+                return "a";
+        }
+        return null;
+    }
+
+    public static Person getPerson(String string) {
+        if (string.toLowerCase().equals("my") || string.toLowerCase().equals("our"))
+            return Person.FIRST;
+
+        else if (string.toLowerCase().equals("your") || string.toLowerCase().equals("thy"))
+            return Person.SECOND;
+
+        else if (string.toLowerCase().equals("their") || string.toLowerCase().equals("his") || string.toLowerCase().equals("her") || string.toLowerCase().equals("its"))
+            return Person.FIRST;
+
+        return null;
+    }
+
+    public static String getPronoun(Case case_, Gender gender, Number number, Person person) {
+        if (possessiveDeterminers == null)
+            initializeSets();
+
+////        List<String> possibilities = new ArrayList<>(all);
+////        possibilities.retainAll(getByCase(case_));
+////        possibilities.retainAll(getByGender(gender));
+////        possibilities.retainAll(getByNumber(number));
+////        possibilities.retainAll(getByPerson(person));
+////        possibilities.removeAll(archaic);//TODO update this
+//        if (possibilities.size() == 1)
+//            return possibilities.get(0);
+        else {
+            System.out.println("ERROR");
+            return null;
+        }
+        return null;
+    }
+
+
 }
-
-
-
-
 
 
 

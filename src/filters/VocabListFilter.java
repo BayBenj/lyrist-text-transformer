@@ -1,7 +1,5 @@
 package filters;
 
-import song.VocabList;
-
 public abstract class VocabListFilter extends StringFilter {
 
     protected VocabList vocabList;

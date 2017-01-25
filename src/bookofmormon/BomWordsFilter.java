@@ -2,8 +2,9 @@ package bookofmormon;
 
 import filters.ReturnType;
 import filters.VocabListFilter;
-import song.VocabList;
+import filters.VocabList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -2292,7 +2293,7 @@ public class BomWordsFilter extends VocabListFilter {
             "refuge",
             "covert",
             "rain",
-            "song",
+            "elements",
             "touching",
             "fruitful",
             "hill",
@@ -5576,7 +5577,7 @@ public class BomWordsFilter extends VocabListFilter {
     }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         Set<String> result = new HashSet<>();
         for (String s : originalStrings) {
             if (super.getReturnType() == ReturnType.MATCHES && super.vocabList.contains(s.toLowerCase()) ||

@@ -1,10 +1,10 @@
 //package word2vec;
 //
 //import edu.stanford.nlp.ling.TaggedWord;
-//import external.CommandlineExecutor;
+//import main.CommandlineExecutor;
 //import misc.LyricSegment;
-//import song.Word;
-//import stanford_nlp.StanfordPosTagger;
+//import elements.Word;
+//import stanford.StanfordPosTagger;
 //
 //import java.io.BufferedReader;
 //import java.io.File;
@@ -40,7 +40,7 @@
 //        return close_words;
 //    }
 //
-//    public static ArrayList<TaggedWord> getAnalogousWords(TaggedWord original1, TaggedWord switch1, TaggedWord original2, int resultSize) {
+//    public static ArrayList<TaggedWord> getAnalogousWordSuggestions(TaggedWord original1, TaggedWord switch1, TaggedWord original2, int resultSize) {
 //        String output = getOutputFileName(original1.value() + "-" + switch1.value(), original2.value());
 //        File f = new File(output);
 //        if(!f.exists()) {
@@ -48,7 +48,7 @@
 //            long startTime = System.nanoTime();
 //            CommandlineExecutor.execute(command, output);
 //            long endTime = System.nanoTime();
-//            System.out.println("external.CommandlineExecutor time for " + original2.value() + ": " + ((endTime - startTime) / 1000000) + " milliseconds (" + ((endTime - startTime) / 1000000000) + " seconds).");
+//            System.out.println("main.CommandlineExecutor time for " + original2.value() + ": " + ((endTime - startTime) / 1000000) + " milliseconds (" + ((endTime - startTime) / 1000000000) + " seconds).");
 //        }
 //
 //        ArrayList<String> w2v_results = readW2vOutput(output);
@@ -205,7 +205,7 @@
 ////        }
 ////        lll.add(ll);
 ////        Song ls = new Song(lll);
-////        stanford_nlp.StanfordPosTagger spt = new stanford_nlp.StanfordPosTagger(ls);
+////        stanford.StanfordPosTagger spt = new stanford.StanfordPosTagger(ls);
 ////        ArrayList<TaggedWord> tagged = spt.getPosEz();
 ////        return tagged;
 //
@@ -227,120 +227,6 @@
 //
 //
 //
-///*
-//Where are my replacement lyrics coming from?
-//Pop song lyrics
-//    Would be best, dataset may be too small. Maybe train model on bigger data but favor word found here?
-//Wikipedia
-//Google news
-// */
-//
-//
-///*
-//TODO > Write a method that scans my model and finds every word that is not in a good dictionary. Clean these words out if
-//they are indeed low-quality or gibberish.
-//TODO add a clean parent method for more specific analogous results that gets more specific parts of speech and categories (eating=present progressive, yellow=color, America=country)
-//
-// */
-//
-//
-///*
-//TODO > Find song themes by averaging all words within. Does doc2vec do this?
-// */
-//
-// /*
-//TODO > Write c scripts for every word2vec operation I want
-//  */
-//
-///*
-//TODO > In analogies, experiment with:
-//a is to b as c is to...
-//b is to a as d is to...
-//c is to d as a is to...
-//d id to c as b is to...
-//Are different results yielded? When can I expect the same result?
-// */
-//
-//
-///*
-//TODO >  Optimize paths and file stuff so that Paul can use it
-//*/
-//
-///*
-//TODO > Tell Paul I learned how to decompile third-party tools, it helps a lot.
-// */
-//
-///*
-//TODO > Use some sort of DocumentPreprocessor on my spelling corpora.
-// */
-//
-///*
-//TODO > Eventually streamline C scripts.
-// */
-//
-///*
-//TODO > Eventually document all my code nicely.
-// */
-//
-///*
-//TODO > Do lyric switch by averaging the song's vectors to find the meaning, then by replacing the 'meaning'
-//word with the 'new meaning word'. Then I can use meaning is to new meaning as current word is to ____.
-// */
-//
-///*
-//> Speed up running time if possible w/ Stanford parser
-// */
-//
-///*
-//TODO > Somehow ensure that my vector bins have every word that the pop-star database has
-// */
-//
-///*
-//TODO > Install better part of speech tagger
-// */
-//
-///*
-//TODO > Make original lyrics readable, not from within program
-// */
-//
-///*
-//TODO > Why would it show bad results the first runOnWords through, then good results on the second?
-// */
-//
-///*
-//TODO > Consider weakening theme, multiply it by a theme-weakening factor.
-// */
-//
-///*
-//TODO > Clean and lowercase all my spelling data
-// */
-//
-///*
-//TODO > If cosine distance is low enough, use different replacement rather than an analogous replacement.
-// */
-//
-///*
-//TODO > Use the Hrjee matrix
-// */
-//
-///*
-//TODO > Go through DL4J or Gensim decompiled code to find their c scripts w/ word2vec
-// */
-//
-///*
-//TODO > Look into paying for COCA
-// */
-//
-///*
-//TODO > Understand "extract rhyme scheme"
-// */
-//
-///*
-//TODO > Hava a java class extract data from the vector, then do all word2vec functions for the whole song at once. The main.LyricPack saves needed analogies and send them all at once.
-// */
-//
-///*
-//TODO > Consider allowing for multiple analogies to affect one stanza; this word get analogy A, this other word gets analogy B, etc.
 // */
 //
 //

@@ -1,7 +1,5 @@
 package filters;
 
-import song.VocabList;
-
 import java.util.*;
 
 public class DictionaryFilter extends VocabListFilter {
@@ -45,12 +43,12 @@ public class DictionaryFilter extends VocabListFilter {
 //    }
 
     @Override
-    public Set<String> doFilter(Set<String> originalStrings) {
+    public Set<String> doFilter(Collection<String> originalStrings) {
         for (String s : originalStrings) {
             if (!super.vocabList.contains(s))
                 originalStrings.remove(s);
         }
-        return originalStrings;
+        return (Set)originalStrings;
     }
 
 }

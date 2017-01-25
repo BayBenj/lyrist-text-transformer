@@ -1,7 +1,8 @@
 package filters;
 
-import song.Word;
+import elements.Word;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -104,7 +105,7 @@ public class UnsafeWordFilter extends WordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> w2vSuggestions) {
+    public Set<Word> doFilter(Collection<Word> w2vSuggestions) {
         Set<Word> filteredIn = new HashSet<Word>();
         for (Word w : w2vSuggestions) {
             if (super.getReturnType() == ReturnType.MATCHES && unsafeStrSet.contains(w.toString().toLowerCase()) ||
@@ -114,7 +115,6 @@ public class UnsafeWordFilter extends WordFilter {
         return filteredIn;
     }
 }
-
 
 
 

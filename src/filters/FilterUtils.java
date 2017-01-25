@@ -1,7 +1,5 @@
 package filters;
 
-import song.VocabList;
-
 public class FilterUtils {
 
     private static VocabList commonWords;

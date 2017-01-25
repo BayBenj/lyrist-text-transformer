@@ -9,8 +9,8 @@ package main;
 ////import lyrics.LyricalEngineer;
 ////import lyrics.Lyrics;
 //import managerCHECK.Manager;
-//import song.Song;
-//import song.SongEngineer;
+//import elements.Song;
+//import songtools.SongEngineer;
 ////import structure.Structure;
 ////import structure.StructureEngineer;
 //
@@ -27,8 +27,8 @@ package main;
 //        newComposition.setInspiration(inspiration);
 //
 //        SongEngineer songEngineer = manager.getSongEngineer();
-//        Song song = songEngineer.generateSong(inspiration);
-//        newComposition.setSong(song);
+//        Song elements = songEngineer.generateSong(inspiration);
+//        newComposition.setSong(elements);
 //
 ////        StructureEngineer structureEngineer = manager.getStructureEngineer();
 ////        Structure structure = structureEngineer.generateStructure();

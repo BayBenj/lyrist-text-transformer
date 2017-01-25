@@ -1,8 +1,9 @@
 package filters;
 
 import rhyme.Phoneme;
-import song.Word;
+import elements.Word;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ public class PerfectRhymeFilter extends ModelWordFilter {
     }
 
     @Override
-    public Set<Word> doFilter(Set<Word> originalWords) {
+    public Set<Word> doFilter(Collection<Word> originalWords) {
         if (this.getModel().getSyllables() != null && !this.getModel().getSyllables().isEmpty()) {
             int nModelSyl = this.getModel().getSyllables().size();
             Set<Word> result = new HashSet<>();
@@ -39,11 +40,12 @@ public class PerfectRhymeFilter extends ModelWordFilter {
             return result;
         }
         if (super.getReturnType() == ReturnType.NON_MATCHES)
-            return originalWords;
+            return (Set)originalWords;
         else
             return new HashSet<>();
     }
 }
+
 
 
 
