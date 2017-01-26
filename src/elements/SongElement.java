@@ -54,8 +54,7 @@ public abstract class SongElement {
         return (hasCompleteSpellingStructure() &&
                 hasCompletePosStructure()      &&
                 hasCompletePhonemeStructure()  &&
-                hasCompleteSyllableStructure() &&
-                hasCompleteStressStructure());
+                hasCompleteSyllableStructure());
     }
 
     public boolean hasCompleteStructure(Structure structure) {
@@ -63,8 +62,6 @@ public abstract class SongElement {
         switch(structure) {
             case SYLLABLE:
                 return this.hasCompleteSyllableStructure();
-            case STRESS:
-                return this.hasCompleteStressStructure();
             case PHONEME:
                 return this.hasCompletePhonemeStructure();
             case POS:
@@ -107,15 +104,6 @@ public abstract class SongElement {
         List<SongElement> subElements = this.getSubElements();
         for (SongElement se : subElements) {
             if (!se.hasCompleteSyllableStructure())
-                return false;
-        }
-        return true;
-    }
-
-    public boolean hasCompleteStressStructure() {
-        List<SongElement> subElements = this.getSubElements();
-        for (SongElement se : subElements) {
-            if (!se.hasCompleteStressStructure())
                 return false;
         }
         return true;

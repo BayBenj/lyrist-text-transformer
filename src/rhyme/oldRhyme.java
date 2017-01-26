@@ -26,8 +26,8 @@
 //        List<Syllable> tSyllables = getLastXSyllables(t, 1);
 //        List<Syllable> sSyllables = getLastXSyllables(s, 1);
 //
-////        for(StressedPhoneme[] line1Phone:tPhones) {
-////            for(StressedPhoneme[] line2Phone: sPhones) {
+////        for(VowelPhoneme[] line1Phone:tPhones) {
+////            for(VowelPhoneme[] line2Phone: sPhones) {
 ////                if (Rhymer.scoreRhymeByPatsRules(line1Phone, line2Phone) > RHYME_SCORE_THRESHOLD) {
 ////                    return true;
 ////                }

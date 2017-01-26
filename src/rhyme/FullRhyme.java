@@ -4,9 +4,9 @@ import java.util.List;
 
 public class FullRhyme extends SpecificRhyme {
 
-    public List<StressedPhoneme> perfectRhyme;
+    public List<VowelPhoneme> perfectRhyme;
 
-    public FullRhyme(List<StressedPhoneme> perfectRhyme) {
+    public FullRhyme(List<VowelPhoneme> perfectRhyme) {
         this.perfectRhyme = perfectRhyme;
     }
 

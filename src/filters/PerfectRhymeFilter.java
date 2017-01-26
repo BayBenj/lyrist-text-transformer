@@ -1,6 +1,6 @@
 package filters;
 
-import rhyme.Phoneme;
+import rhyme.PhonemeEnum;
 import elements.Word;
 
 import java.util.Collection;
@@ -26,8 +26,8 @@ public class PerfectRhymeFilter extends ModelWordFilter {
             for (Word w : originalWords) {
                 if (w.getSyllables() != null && !w.getSyllables().isEmpty()) {
                     int nWordSyl = w.getSyllables().size();
-                    List<Phoneme> modelRhyme = this.getModel().getSyllables().get(nModelSyl - 1).getRhyme();
-                    List<Phoneme> wordRhyme = w.getSyllables().get(nWordSyl - 1).getRhyme();
+                    List<PhonemeEnum> modelRhyme = this.getModel().getSyllables().get(nModelSyl - 1).getRhyme();
+                    List<PhonemeEnum> wordRhyme = w.getSyllables().get(nWordSyl - 1).getRhyme();
                     if (    super.getReturnType() == ReturnType.MATCHES && modelRhyme.equals(wordRhyme) ||
                             super.getReturnType() == ReturnType.NON_MATCHES && !modelRhyme.equals(wordRhyme) )
                     result.add(w);

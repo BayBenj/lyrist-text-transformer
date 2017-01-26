@@ -1,6 +1,6 @@
 //package song;
 //
-//import rhyme.Phoneme;
+//import rhyme.PhonemeEnum;
 //
 //import static java.lang.Character.isLowerCase;
 //
@@ -22,8 +22,8 @@
 //    }
 //
 //    public double getProportionVowelLettersAtWord(Word word) {
-//        String spelling = word.getSpelling();
-//        double count = word.getSpelling().length();
+//        String spelling = word.getLowerSpelling();
+//        double count = word.getLowerSpelling().length();
 //        double vowelCount = 0;
 //        double consonantCount = 0;
 //        for (int i = 0; i < spelling.length(); i++)
@@ -36,8 +36,8 @@
 //
 //    public double getProportionConsonantLettersAtWord(Word word) {
 //        //TODO: eliminate code duplication from getProportionVowelLetters
-//        String spelling = word.getSpelling();
-//        double count = word.getSpelling().length();
+//        String spelling = word.getLowerSpelling();
+//        double count = word.getLowerSpelling().length();
 //        double vowelCount = 0;
 //        double consonantCount = 0;
 //        for (int i = 0; i < spelling.length(); i++)

@@ -30,7 +30,7 @@ public class WordSource {
 
     public static Map<Double, String> cmuRhymes(String oldWord) {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
-        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord, 1);
+        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.toUpperCase(), 1);
         Map<Double, String> cmuRhymes = new HashMap<>();
         double extra = 0.0001;
         for (String rhyme : allRhymes) {
@@ -40,13 +40,13 @@ public class WordSource {
         return cmuRhymes;
     }
 
-    public static boolean thingToThing(Object o1, Object o2) {
-        if (o1.getClass() == String.class && o2.getClass() == Word.class ||
-                o2.getClass() == String.class && o1.getClass() == Word.class) {
-            return true;
-        }
-
-    }
+//    public static boolean thingToThing(Object o1, Object o2) {
+//        if (o1.getClass() == String.class && o2.getClass() == Word.class ||
+//                o2.getClass() == String.class && o1.getClass() == Word.class) {
+//            return true;
+//        }
+//
+//    }
 
 }
 

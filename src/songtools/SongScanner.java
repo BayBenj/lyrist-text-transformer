@@ -151,7 +151,7 @@ public abstract class SongScanner {
 //        for (int i = 0; i < originalIndexes.size(); i++) {
 //            Word w = originalIndexes.get(i);
 //            Pos pos = w.getPos();
-//            String spelling = w.getSpelling().toLowerCase();
+//            String spelling = w.getLowerSpelling().toLowerCase();
 //            if (
 ////                    spelling.equals("it's") ||
 ////                    spelling.equals("i'm") ||

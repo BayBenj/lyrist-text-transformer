@@ -40,7 +40,7 @@ public class SongWrapper {
                 ArrayList<String> newLine = new ArrayList<String>();
                 for (int k = 0; k < oldLine.getSize(); k++) {
                     Word oldWord = oldLine.getWords().get(k);
-                    newLine.add(oldWord.getSpelling());
+                    newLine.add(oldWord.getLowerSpelling());
                     this.wordSet.add(oldWord);
                     //this.posMap.put();
                 }
@@ -107,8 +107,6 @@ public class SongWrapper {
         this.sentences = sentences;
     }
 }
-
-
 
 
 

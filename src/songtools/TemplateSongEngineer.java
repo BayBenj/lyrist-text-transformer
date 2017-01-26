@@ -23,27 +23,30 @@ public final class TemplateSongEngineer extends SongEngineer {
 
         this.setIntentionBools(intentions);
         Song templateSong = templateSongWrapper.getSong();
+        ReplacementByAnalogy r = new ReplacementByAnalogy();
 
-        //Filter out words w/ unsafe pos so they can't be marked
-        List<Word> allMarkableWordsList = this.getMarkableWords(templateSong);
-
-        //Get word indexes
-        Set<Integer> allWordIndexes = this.getWordIndexes(allMarkableWordsList);
-
-        //Mark all rhyme scheme words for rhyme replacement
-        Map<Rhyme,Set<Word>> rhymeWordsToReplace = this.markRhymeWordsToReplace(templateSong, (LineRhymeScheme)intentions.getStructuralIntentions().getRhymeScheme());
-
-        //Mark all normal words for normal replacement
-        Set<Word> normalWordsToReplace = this.markNormalWordsToReplace(allWordIndexes, allMarkableWordsList);
-
-        //Find/decide the old theme of this elements
-        String oldTheme = this.decideOldTheme();
-
-        //Decide the new w2v analogy theme
-        String newTheme = this.decideNewTheme(intentions);
-
-        //Replace marked words in template w/ word2vec
-        Song generatedSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateSongWrapper, oldTheme, newTheme, templateSong);
+        Song generatedSong = LyristReplacementManager.normalReplace(templateSongWrapper, r);
+//
+//        //Filter out words w/ unsafe pos so they can't be marked
+//        List<Word> allMarkableWordsList = this.getMarkableWords(templateSong);
+//
+//        //Get word indexes
+//        Set<Integer> allWordIndexes = this.getWordIndexes(allMarkableWordsList);
+//
+//        //Mark all rhyme scheme words for rhyme replacement
+//        Map<Rhyme,Set<Word>> rhymeWordsToReplace = this.markRhymeWordsToReplace(templateSong, (LineRhymeScheme)intentions.getStructuralIntentions().getRhymeScheme());
+//
+//        //Mark all normal words for normal replacement
+//        Set<Word> normalWordsToReplace = this.markNormalWordsToReplace(allWordIndexes, allMarkableWordsList);
+//
+//        //Find/decide the old theme of this elements
+//        String oldTheme = this.decideOldTheme();
+//
+//        //Decide the new w2v analogy theme
+//        String newTheme = this.decideNewTheme(intentions);
+//
+//        //Replace marked words in template w/ word2vec
+//        Song generatedSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateSongWrapper, oldTheme, newTheme, templateSong);
 
         //Manage generated text
         this.manageSongText(generatedSong);
@@ -137,21 +140,21 @@ public final class TemplateSongEngineer extends SongEngineer {
         return newTheme;
     }
 
-    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, SongWrapper templateSongWrapper, String oldTheme, String newTheme, Song templateSong) {
-        ReplacementManager replacementManager = new ReplacementManager();
-        replacementManager.setnSuggestionsToPrint(100);
-        WordReplacements wordReplacements = replacementManager.getWordSuggestions(
-                normalWordsToReplace,
-                rhymeWordsToReplace,
-                templateSongWrapper.getSentences(),
-                FilterManager.sEq(FilterManager.getSafetyStringFilters()),
-                100,
-                U.getW2vCommander(),
-                oldTheme,
-                newTheme,
-                null);
-        return SongMutator.replaceWords(templateSong, wordReplacements);
-    }
+//    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, SongWrapper templateSongWrapper, String oldTheme, String newTheme, Song templateSong) {
+//        LyristReplacementManager replacementManager = new LyristReplacementManager();
+//        replacementManager.setnSuggestionsToPrint(100);
+//        WordReplacements wordReplacements = replacementManager.getWordSuggestions(
+//                normalWordsToReplace,
+//                rhymeWordsToReplace,
+//                templateSongWrapper.getSentences(),
+//                FilterManager.sEq(FilterManager.getSafetyStringFilters()),
+//                100,
+//                U.getW2vCommander(),
+//                oldTheme,
+//                newTheme,
+//                null);
+//        return SongMutator.replaceWords(templateSong, wordReplacements);
+//    }
 
     private void manageSongText(Song generatedSong) {
         // Fix indefinite articles
@@ -403,7 +406,7 @@ TODO > Consider weakening theme, multiply it by a theme-weakening factor.
 TODO > Ensure that my vector bins have every word that the pop-star database has with vocab lists
 TODO > Write distance() script for word2vec models
 
-LyristOperationOld
+LyristReplacement
 TODO > If cosine distance is low enough, use different replacement rather than an analogous replacement.
 TODO > Consider allowing for multiple analogies to affect one stanza; this word get analogy A, this other word gets analogy B, etc.
 
@@ -434,9 +437,6 @@ VBN
 VBP
 VBZ
  */
-
-
-
 
 
 

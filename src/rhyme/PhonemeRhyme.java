@@ -5,10 +5,10 @@ import java.util.List;
 
 public class PhonemeRhyme extends SpecificRhyme {
 
-    public List<Phoneme> phonemeRhyme;
+    public List<PhonemeEnum> phonemeEnumRhyme;
 
-    public PhonemeRhyme(List<Phoneme> phonemeRhyme) {
-        this.phonemeRhyme = phonemeRhyme;
+    public PhonemeRhyme(List<PhonemeEnum> phonemeEnumRhyme) {
+        this.phonemeEnumRhyme = phonemeEnumRhyme;
     }
 
 }

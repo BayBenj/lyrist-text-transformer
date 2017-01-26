@@ -8,6 +8,8 @@ import java.util.Set;
 
 public class WordFilterEquation extends FilterEquation {
 
+    private Word modelWord;
+
     public Set<Word> run() {
         return this.run(new HashSet<>());
     }
@@ -84,11 +86,15 @@ public class WordFilterEquation extends FilterEquation {
         }
         return currentWords;
     }
+
+    public Word getModelWord() {
+        return modelWord;
+    }
+
+    public void setModelWord(Word modelWord) {
+        this.modelWord = modelWord;
+    }
 }
-
-
-
-
 
 
 

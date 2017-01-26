@@ -6,10 +6,10 @@ import java.util.*;
 
 public abstract class SyllableParser {
 
-//    public static WordSyllables parse(Pronunciation stressedPhones) {
+//    public static WordSyllables parse(VowelPronunciation stressedPhones) {
 //        int nSyllables = 0;
-//        for (StressedPhoneme stressedPhoneme : stressedPhones)
-//            if (stressedPhoneme.phoneme.isVowel())
+//        for (VowelPhoneme stressedPhoneme : stressedPhones)
+//            if (stressedPhoneme.phonemeEnum.isVowel())
 //                nSyllables++;
 //
 //        WordSyllables syllables = initialParse(stressedPhones, nSyllables);
@@ -31,30 +31,30 @@ public abstract class SyllableParser {
 //                if (next != null && next.hasOnset() && current != null && current.hasCoda()) {
 //                    //Coda protection rule
 //                    if (    current.getCoda().size() == 1 &&
-//                            (next.getOnset().get(0).phoneme == Phoneme.NG ||
-//                                    next.getOnset().get(0).phoneme == Phoneme.ZH ||
-//                                    next.getOnset().get(0).phoneme == Phoneme.DH) )
+//                            (next.getOnset().get(0).phonemeEnum == PhonemeEnum.NG ||
+//                                    next.getOnset().get(0).phonemeEnum == PhonemeEnum.ZH ||
+//                                    next.getOnset().get(0).phonemeEnum == PhonemeEnum.DH) )
 //                        break ready;
 //
 //                    //Coda protection rule
-//                    if (!current.getCoda().get(0).phoneme.isVoiced() &&
-//                            next.getOnset().get(0).phoneme.isVoiced()) {
+//                    if (!current.getCoda().get(0).phonemeEnum.isVoiced() &&
+//                            next.getOnset().get(0).phonemeEnum.isVoiced()) {
 //                        break ready;
 //                    }
 //
 //                    //Coda protection rule
-//                    if ((current.getCoda().get(current.getCoda().size() - 1).phoneme == Phoneme.M ||
-//                            current.getCoda().get(current.getCoda().size() - 1).phoneme == Phoneme.NG) &&
-//                            Phoneme.getPlace(next.getOnset().get(0).phoneme) != Phoneme.getPlace(current.getCoda().get(current.getCoda().size() - 1).phoneme)) {
+//                    if ((current.getCoda().get(current.getCoda().size() - 1).phonemeEnum == PhonemeEnum.M ||
+//                            current.getCoda().get(current.getCoda().size() - 1).phonemeEnum == PhonemeEnum.NG) &&
+//                            PhonemeEnum.getPlace(next.getOnset().get(0).phonemeEnum) != PhonemeEnum.getPlace(current.getCoda().get(current.getCoda().size() - 1).phonemeEnum)) {
 //                        break ready;
 //                    }
 //                }
 //
 //                if (next != null && next.hasOnset() && current != null) {
 //                    //Coda protection rule
-//                    if (next.getOnset().get(0).phoneme == Phoneme.HH)
+//                    if (next.getOnset().get(0).phonemeEnum == PhonemeEnum.HH)
 //                        break ready;
-//                    Phoneme switched = next.getOnset().get(0).phoneme;
+//                    PhonemeEnum switched = next.getOnset().get(0).phonemeEnum;
 //                    next.getOnset().remove(switched);
 //                    current.getCoda().add(switched);
 //                }
@@ -70,29 +70,29 @@ public abstract class SyllableParser {
 //        return syllables;
 //    }
 
-    private static WordSyllables initialParse(Pronunciation stressedPhonemes, int nSyllables) {
+    private static WordSyllables initialParse(VowelPronunciation stressedPhonemes, int nSyllables) {
         WordSyllables syllables = new WordSyllables();
         Syllable currentSyllable = new Syllable();
 
         //Inital syllable parse
         for (int i = 0; i < stressedPhonemes.size(); i++) {
-            StressedPhoneme stressedPhoneme = stressedPhonemes.get(i);
-            //if phoneme is a vowel
-            if (stressedPhoneme.isVowel()) {
-                currentSyllable.setNucleus(stressedPhoneme);
+            Phoneme phoneme = stressedPhonemes.get(i);
+            //if phonemeEnum is a vowel
+            if (phoneme.isVowel()) {
+                currentSyllable.setNucleus((VowelPhoneme) phoneme);
                 if (syllables.size() < nSyllables - 1) {
                     syllables.add(currentSyllable);
                     currentSyllable = new Syllable();
                 }
             }
-            //if phoneme is a consonant
+            //if phonemeEnum is a consonant
             else {
-                if (!currentSyllable.hasNucleus()) {
-                    currentSyllable.getOnset().add(stressedPhoneme);
-                }
-                else {
-                    currentSyllable.getCoda().add(stressedPhoneme);
-                }
+                if (!currentSyllable.hasNucleus())
+                    currentSyllable.getOnset().add((ConsonantPhoneme) phoneme);
+
+                else
+                    currentSyllable.getCoda().add((ConsonantPhoneme) phoneme);
+
                 if (i == stressedPhonemes.size() - 1) {
                     syllables.add(currentSyllable);
                     break;
@@ -102,18 +102,18 @@ public abstract class SyllableParser {
         return syllables;
     }
 
-    public static WordSyllables algorithmicallyParse(Pronunciation stressedPhones) {
-        int nSyllables = getNSyllables(stressedPhones);
-        Map<Integer,SyllablePart> map = nucleusParse(stressedPhones, nSyllables);
-        onsetParse(map, stressedPhones);
-        codaParse(map, stressedPhones);
-        return formSyllables(map, stressedPhones);
+    public static WordSyllables algorithmicallyParse(Pronunciation phones) {
+        int nSyllables = getNSyllables(phones);
+        Map<Integer,SyllablePart> map = nucleusParse(phones, nSyllables);
+        onsetParse(map, phones);
+        codaParse(map, phones);
+        return formSyllables(map, phones);
     }
 
-    private static int getNSyllables(Pronunciation stressedPhonemes) {
+    private static int getNSyllables(Pronunciation phonemes) {
         int nSyllables = 0;
-        for (StressedPhoneme stressedPhoneme : stressedPhonemes)
-            if (stressedPhoneme.phoneme.isVowel())
+        for (Phoneme phoneme : phonemes)
+            if (phoneme.phonemeEnum.isVowel())
                 nSyllables++;
         return nSyllables;
     }
@@ -121,20 +121,20 @@ public abstract class SyllableParser {
     /**
      * Labels the nuclei, first onset, and last coda of the word.
      */
-    private static Map<Integer,SyllablePart> nucleusParse(Pronunciation stressedPhonemes, int nSyllables) {
+    private static Map<Integer,SyllablePart> nucleusParse(Pronunciation phonemes, int nSyllables) {
         Map<Integer,SyllablePart> wordMap = new HashMap<>();
         int nucleusIndex = 0;
-        for (int i = 0; i < stressedPhonemes.size(); i++) {
-            //if phoneme is a vowel
-            if (stressedPhonemes.get(i).phoneme.isVowel()) {
+        for (int i = 0; i < phonemes.size(); i++) {
+            //if phonemeEnum is a vowel
+            if (phonemes.get(i).phonemeEnum.isVowel()) {
                 wordMap.put(i,SyllablePart.NUCLEUS);
                 nucleusIndex++;
             }
-            //if phoneme is a consonant and comes before the first nucleus
+            //if phonemeEnum is a consonant and comes before the first nucleus
             else if (nucleusIndex == 0) {
                 wordMap.put(i,SyllablePart.ONSET);
             }
-            //if phoneme is a consonant and comes after the last nucleus
+            //if phonemeEnum is a consonant and comes after the last nucleus
             else if (nucleusIndex == nSyllables) {
                 wordMap.put(i,SyllablePart.CODA);
             }
@@ -146,7 +146,7 @@ public abstract class SyllableParser {
      * Builds the longest possible onset for each syllable, according to 13 phonotactic rules of English.
      */
     private static Map<Integer,SyllablePart> onsetParse(Map<Integer,SyllablePart> wordMap,
-                                                        Pronunciation stressedPhonemes) {
+                                                        Pronunciation phonemes) {
         //Build nuclei map
         Map<Integer,SyllablePart> nuclei = new HashMap<>();
         for (Map.Entry<Integer,SyllablePart> entry : wordMap.entrySet()) {
@@ -158,13 +158,13 @@ public abstract class SyllableParser {
         for (Map.Entry<Integer,SyllablePart> entry : nuclei.entrySet()) {
             int i = entry.getKey() - 1;
             if (i >= 0) {
-                List<Phoneme> candidateOnset = new ArrayList<>();
-                candidateOnset.add(stressedPhonemes.get(i).phoneme);
+                List<PhonemeEnum> candidateOnset = new ArrayList<>();
+                candidateOnset.add(phonemes.get(i).phonemeEnum);
                 while (!wordMap.keySet().contains(i) && followsOnsetRules(candidateOnset)) {
                     wordMap.putIfAbsent(i, SyllablePart.ONSET);
                     i--;
-                    if (i >= 0 && i < stressedPhonemes.size())
-                        candidateOnset.add(0, stressedPhonemes.get(i).phoneme);
+                    if (i >= 0 && i < phonemes.size())
+                        candidateOnset.add(0, phonemes.get(i).phonemeEnum);
                     else
                         break;
                 }
@@ -177,7 +177,7 @@ public abstract class SyllableParser {
      * Labels all empty indexes as coda. //TODO this may need to be upgraded
      */
     private static Map<Integer,SyllablePart> codaParse(Map<Integer,SyllablePart> wordMap,
-                                                        Pronunciation stressedPhonemes) {
+                                                        Pronunciation phonemes) {
         //Build nuclei map
         Map<Integer,SyllablePart> nuclei = new HashMap<>();
         for (Map.Entry<Integer,SyllablePart> entry : wordMap.entrySet()) {
@@ -187,7 +187,7 @@ public abstract class SyllableParser {
         }
 
         //Label all empty indexes as coda
-        for (int i = 0; i < stressedPhonemes.size(); i++) {
+        for (int i = 0; i < phonemes.size(); i++) {
             if (!wordMap.containsKey(i)) {
                 wordMap.putIfAbsent(i, SyllablePart.CODA);
             }
@@ -195,14 +195,14 @@ public abstract class SyllableParser {
 
         //Build a nucleusNum->(coda,onset) map
         TreeMap<Integer,SyllablePart> treeMap = new TreeMap<>(wordMap);
-        Map<Integer, Pair<List<Phoneme>,List<Phoneme>>> codas_onsets = new HashMap<>();
-        List<Phoneme> currentCoda = new ArrayList<>();
-        List<Phoneme> currentOnset = new ArrayList<>();
+        Map<Integer, Pair<List<PhonemeEnum>,List<PhonemeEnum>>> codas_onsets = new HashMap<>();
+        List<PhonemeEnum> currentCoda = new ArrayList<>();
+        List<PhonemeEnum> currentOnset = new ArrayList<>();
         int nucleusNum = -1;
         for (Map.Entry<Integer,SyllablePart> entry : treeMap.entrySet()) {
             if (entry.getValue() == SyllablePart.ONSET) {
                 if (nucleusNum > -1) {
-                    currentOnset.add(stressedPhonemes.get(entry.getKey()).phoneme);
+                    currentOnset.add(phonemes.get(entry.getKey()).phonemeEnum);
                 }
             }
             else if (entry.getValue() == SyllablePart.NUCLEUS) {
@@ -215,33 +215,33 @@ public abstract class SyllableParser {
             }
             else if (entry.getValue() == SyllablePart.CODA) {
                 if (nucleusNum < nuclei.size() - 1) {
-                    currentCoda.add(stressedPhonemes.get(entry.getKey()).phoneme);
+                    currentCoda.add(phonemes.get(entry.getKey()).phonemeEnum);
                 }
             }
         }
 
         //For each (coda,onset) pair, ensure coda passes rules. If not, take phonemes from onset until both coda and onset pass rules, or until there is no possible match.
-        for (Map.Entry<Integer, Pair<List<Phoneme>,List<Phoneme>>> entry : codas_onsets.entrySet()) {
+        for (Map.Entry<Integer, Pair<List<PhonemeEnum>,List<PhonemeEnum>>> entry : codas_onsets.entrySet()) {
             if (!followsCodaRules(entry.getValue().getFirst())) {
-                List<Phoneme> candidateCoda = new ArrayList<>(entry.getValue().getFirst());
-                List<Phoneme> candidateOnset = new ArrayList<>(entry.getValue().getSecond());
+                List<PhonemeEnum> candidateCoda = new ArrayList<>(entry.getValue().getFirst());
+                List<PhonemeEnum> candidateOnset = new ArrayList<>(entry.getValue().getSecond());
                 while (!candidateOnset.isEmpty()) {
                     //adding to coda, taking from onset
-                    Phoneme switched = candidateOnset.remove(0);
+                    PhonemeEnum switched = candidateOnset.remove(0);
                     candidateCoda.add(switched);
                     if (followsCodaRules(candidateCoda) && followsOnsetRules(candidateOnset)) {
                         codas_onsets.put(entry.getKey(),new Pair<>(candidateCoda,candidateOnset));
 
                         //update wordMap
-                        for (Phoneme p : entry.getValue().getFirst()) {
+                        for (PhonemeEnum p : entry.getValue().getFirst()) {
                             for (Map.Entry<Integer,SyllablePart> entry2 : nuclei.entrySet()) {
                                 if (entry2.getKey() == entry.getKey()) {
                                     int index = 0;
-                                    for (Phoneme codaPhoneme : entry.getValue().getFirst()) {
+                                    for (PhonemeEnum codaPhonemeEnum : entry.getValue().getFirst()) {
                                         wordMap.put(index + entry.getKey(), SyllablePart.CODA);
                                         index++;
                                     }
-                                    for (Phoneme onsetPhoneme : entry.getValue().getSecond()) {
+                                    for (PhonemeEnum onsetPhonemeEnum : entry.getValue().getSecond()) {
                                         wordMap.put(index + entry.getKey(), SyllablePart.ONSET);
                                         index++;
                                     }
@@ -256,7 +256,7 @@ public abstract class SyllableParser {
         return wordMap;
     }
 
-    private static boolean followsOnsetRules(List<Phoneme> candidateOnset) {
+    private static boolean followsOnsetRules(List<PhonemeEnum> candidateOnset) {
         if (candidateOnset != null && candidateOnset.size() > 0) {
             //non-complex
             boolean passing = onsetRule1(candidateOnset);
@@ -303,28 +303,28 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean onsetRule1(List<Phoneme> onset) {
+    private static boolean onsetRule1(List<PhonemeEnum> onset) {
         //The onset contains only consonants
-        for (Phoneme phoneme : onset)
-            if (phoneme.isVowel())
+        for (PhonemeEnum phonemeEnum : onset)
+            if (phonemeEnum.isVowel())
                 return false;
         return true;
     }
 
-    private static boolean onsetRule2(List<Phoneme> onset) {
+    private static boolean onsetRule2(List<PhonemeEnum> onset) {
         //No NG in onset
-        if (onset.contains(Phoneme.NG))
+        if (onset.contains(PhonemeEnum.NG))
             return false;
         return true;
     }
 
-    private static boolean onsetRule3(List<Phoneme> onset) {
-        //Non-alveolar nasals in onset (M, NG) must be homorganic with the next phoneme TODO next phoneme in onset or in the word???
+    private static boolean onsetRule3(List<PhonemeEnum> onset) {
+        //Non-alveolar nasals in onset (M, NG) must be homorganic with the next phonemeEnum TODO next phonemeEnum in onset or in the word???
         if (onset != null && onset.size() > 1) {
             for (int i = 0; i < onset.size(); i++) {
-                Phoneme phoneme = onset.get(i);
-                if ((phoneme == Phoneme.M || phoneme == Phoneme.NG) && i < onset.size() - 1) {
-                    if (Phoneme.getPlace(phoneme) != Phoneme.getPlace(onset.get(i + 1))) {
+                PhonemeEnum phonemeEnum = onset.get(i);
+                if ((phonemeEnum == PhonemeEnum.M || phonemeEnum == PhonemeEnum.NG) && i < onset.size() - 1) {
+                    if (PhonemeEnum.getPlace(phonemeEnum) != PhonemeEnum.getPlace(onset.get(i + 1))) {
                         return false;
                     }
                 }
@@ -333,7 +333,7 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean onsetRule4(List<Phoneme> onset) {
+    private static boolean onsetRule4(List<PhonemeEnum> onset) {
         //No adjacent, duplicate phonemes in the onset.
         for (int i = 0; i < onset.size(); i++) {
             if (    (i > 0 && onset.get(i) == onset.get(i - 1)) ||
@@ -343,17 +343,17 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean onsetRule5(List<Phoneme> onset) {
+    private static boolean onsetRule5(List<PhonemeEnum> onset) {
         //No affricates in complex onsets
-        for (Phoneme phoneme : onset)
-            if (Phoneme.getManner(phoneme) == MannerOfArticulation.AFFRICATE)
+        for (PhonemeEnum phonemeEnum : onset)
+            if (PhonemeEnum.getManner(phonemeEnum) == MannerOfArticulation.AFFRICATE)
                 return false;
         return true;
     }
 
-    private static boolean onsetRule6(List<Phoneme> onset) {
+    private static boolean onsetRule6(List<PhonemeEnum> onset) {
         //The first consonant in a complex onset must be an obstruent
-        if (onset.get(0) == Phoneme.HH) {   //TODO this is an exception I made for "ex-hume"
+        if (onset.get(0) == PhonemeEnum.HH) {   //TODO this is an exception I made for "ex-hume"
             return true;
         }
         if (!onset.get(0).isObstruent())
@@ -361,30 +361,30 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean onsetRule7(List<Phoneme> onset) {
+    private static boolean onsetRule7(List<PhonemeEnum> onset) {
         //The second consonant in a complex onset must not be a voiced obstruent
         if (onset.get(1).isObstruent() && onset.get(1).isVoiced())
             return false;
         return true;
     }
 
-    private static boolean onsetRule8(List<Phoneme> onset) {
+    private static boolean onsetRule8(List<PhonemeEnum> onset) {
         //If the first consonant in a complex onset is not an /s/, the second must be a liquid or a semivowel
-        if (    onset.get(0) != Phoneme.S &&
-                Phoneme.getManner(onset.get(1)) != MannerOfArticulation.LIQUID &&
-                Phoneme.getManner(onset.get(1)) != MannerOfArticulation.SEMIVOWEL)
+        if (    onset.get(0) != PhonemeEnum.S &&
+                PhonemeEnum.getManner(onset.get(1)) != MannerOfArticulation.LIQUID &&
+                PhonemeEnum.getManner(onset.get(1)) != MannerOfArticulation.SEMIVOWEL)
             return false;
         return true;
     }
 
-    private static boolean onsetRule9(List<Phoneme> onset) {
+    private static boolean onsetRule9(List<PhonemeEnum> onset) {
         //No nasal in first position of a complex onset
-        if (Phoneme.getManner(onset.get(0)) == MannerOfArticulation.NASAL)
+        if (PhonemeEnum.getManner(onset.get(0)) == MannerOfArticulation.NASAL)
             return false;
         return true;
     }
 
-    private static boolean followsCodaRules(List<Phoneme> candidateCoda) {
+    private static boolean followsCodaRules(List<PhonemeEnum> candidateCoda) {
         if (candidateCoda != null && candidateCoda.size() > 0) {
             //non-complex
             boolean passing = codaRule1(candidateCoda);
@@ -427,30 +427,30 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean codaRule1(List<Phoneme> coda) {
+    private static boolean codaRule1(List<PhonemeEnum> coda) {
         //The coda contains only consonants
-        for (Phoneme phoneme : coda)
-            if (phoneme.isVowel())
+        for (PhonemeEnum phonemeEnum : coda)
+            if (phonemeEnum.isVowel())
                 return false;
         return true;
     }
 
-    private static boolean codaRule2(List<Phoneme> coda) {
+    private static boolean codaRule2(List<PhonemeEnum> coda) {
         //No HH in coda
-        if (coda.contains(Phoneme.HH))
+        if (coda.contains(PhonemeEnum.HH))
             return false;
         return true;
     }
 
-    private static boolean codaRule3(List<Phoneme> coda) {
+    private static boolean codaRule3(List<PhonemeEnum> coda) {
         //No semivowels in coda
-        for (Phoneme phoneme : coda)
-            if (Phoneme.getManner(phoneme) == MannerOfArticulation.SEMIVOWEL)
+        for (PhonemeEnum phonemeEnum : coda)
+            if (PhonemeEnum.getManner(phonemeEnum) == MannerOfArticulation.SEMIVOWEL)
                 return false;
         return true;
     }
 
-    private static boolean codaRule4(List<Phoneme> coda) {
+    private static boolean codaRule4(List<PhonemeEnum> coda) {
         //No adjacent, duplicate phonemes in the coda.
         for (int i = 0; i < coda.size(); i++)
             if (    (i > 0 && coda.get(i) == coda.get(i - 1)) ||
@@ -459,31 +459,31 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean codaRule5(List<Phoneme> coda) {
+    private static boolean codaRule5(List<PhonemeEnum> coda) {
         //If there is a complex coda, the second consonant must not be /ŋ/, /ʒ/, or /ð/
-        if (coda.get(1) == Phoneme.NG || coda.get(1) == Phoneme.ZH || coda.get(1) == Phoneme.DH)
+        if (coda.get(1) == PhonemeEnum.NG || coda.get(1) == PhonemeEnum.ZH || coda.get(1) == PhonemeEnum.DH)
             return false;
         return true;
     }
 
-    private static boolean codaRule6(List<Phoneme> coda) {
+    private static boolean codaRule6(List<PhonemeEnum> coda) {
         //If the second consonant in a complex coda is voiced, so is the first
         if (coda.get(1).isVoiced() && !coda.get(0).isVoiced())
             return false;
         return true;
     }
 
-    private static boolean codaRule7(List<Phoneme> coda) {
+    private static boolean codaRule7(List<PhonemeEnum> coda) {
         //Two obstruents in the same coda must share voicing
-        Phoneme obstruent1 = null;
-        Phoneme obstruent2 = null;
-        for (Phoneme phoneme : coda) {
-            if (phoneme.isObstruent()) {
+        PhonemeEnum obstruent1 = null;
+        PhonemeEnum obstruent2 = null;
+        for (PhonemeEnum phonemeEnum : coda) {
+            if (phonemeEnum.isObstruent()) {
                 if (obstruent1 == null) {
-                    obstruent1 = phoneme;
+                    obstruent1 = phonemeEnum;
                 }
                 else {
-                    obstruent2 = phoneme;
+                    obstruent2 = phonemeEnum;
                     break;
                 }
             }
@@ -494,12 +494,12 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static boolean codaRule8(List<Phoneme> coda) {
-        //Non-alveolar nasals (M, NG) must be homorganic with the next phoneme
+    private static boolean codaRule8(List<PhonemeEnum> coda) {
+        //Non-alveolar nasals (M, NG) must be homorganic with the next phonemeEnum
         for (int i = 0; i < coda.size(); i++) {
-            Phoneme phoneme = coda.get(i);
-            if ((phoneme == Phoneme.M || phoneme == Phoneme.NG) && i < coda.size() - 1) {
-                if (Phoneme.getPlace(phoneme) != Phoneme.getPlace(coda.get(i + 1))) {
+            PhonemeEnum phonemeEnum = coda.get(i);
+            if ((phonemeEnum == PhonemeEnum.M || phonemeEnum == PhonemeEnum.NG) && i < coda.size() - 1) {
+                if (PhonemeEnum.getPlace(phonemeEnum) != PhonemeEnum.getPlace(coda.get(i + 1))) {
                     return false;
                 }
             }
@@ -507,7 +507,7 @@ public abstract class SyllableParser {
         return true;
     }
 
-    private static WordSyllables formSyllables(Map<Integer,SyllablePart> wordMap, Pronunciation stressedPhonemes) {
+    private static WordSyllables formSyllables(Map<Integer,SyllablePart> wordMap, Pronunciation phonemes) {
         WordSyllables result = new WordSyllables();
         Syllable currentSyllable = new Syllable();
         SyllablePart lastPart = null;
@@ -518,7 +518,7 @@ public abstract class SyllableParser {
                     result.add(currentSyllable);
                     currentSyllable = new Syllable();
                 }
-                currentSyllable.getOnset().add(stressedPhonemes.get(i));
+                currentSyllable.getOnset().add((ConsonantPhoneme) phonemes.get(i));
                 lastPart = SyllablePart.ONSET;
             }
             else if (entry.getValue() == SyllablePart.NUCLEUS) {
@@ -526,11 +526,11 @@ public abstract class SyllableParser {
                     result.add(currentSyllable);
                     currentSyllable = new Syllable();
                 }
-                currentSyllable.setNucleus(stressedPhonemes.get(i));
+                currentSyllable.setNucleus((VowelPhoneme) phonemes.get(i));
                 lastPart = SyllablePart.NUCLEUS;
             }
             else if (entry.getValue() == SyllablePart.CODA) {
-                currentSyllable.getCoda().add(stressedPhonemes.get(i));
+                currentSyllable.getCoda().add((ConsonantPhoneme) phonemes.get(i));
                 lastPart = SyllablePart.CODA;
             }
             i++;
@@ -555,7 +555,7 @@ public abstract class SyllableParser {
     @No geminates (2 duplicate phonemes in a row. None of these in the onset or coda )
     @No onset /ŋ/ (NG)
     @No /h/ (HH) in the syllable coda
-    @No affricates in complex onsets (more than 1 phoneme)
+    @No affricates in complex onsets (more than 1 phonemeEnum)
     @The first consonant in a complex onset must be a stop
     @The second consonant in a complex onset must not be a voiced stop
     @If the first consonant in a complex onset is not an /s/, the second must be a liquid or a semivowel
@@ -563,7 +563,7 @@ public abstract class SyllableParser {
     @No semivowels (semivowels) in codas
     @If there is a complex coda, the second consonant must not be /ŋ/, /ʒ/, or /ð/
     @If the second consonant in a complex coda is voiced, so is the first
-    @Non-alveolar nasals (M, NG) must be homorganic with the next phoneme
+    @Non-alveolar nasals (M, NG) must be homorganic with the next phonemeEnum
         M - P, B
         NG - G, K
     @Two stops in the same coda must share voicing

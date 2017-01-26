@@ -2,15 +2,11 @@ package elements;
 
 import rhyme.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Word extends SongElement implements Comparable<Word> {
 
     private String spelling = null;
-    private Pronunciation phonemes = null;
+    private VowelPronunciation phonemes = null;
     private WordSyllables syllables = null;
-    private List<Integer> stresses = null;
     private Pos pos = null;
     private NamedEntity ne = null;
     private boolean capitalized = false;
@@ -19,12 +15,16 @@ public class Word extends SongElement implements Comparable<Word> {
         this.setSpelling(s);
     }
 
-    public List<StressedPhoneme> getFullRhyme() {
+    public SyllableGroup getFullRhyme() {
         return this.syllables.getWordRhymeFromStress();
     }
 
-    public String getSpelling() {
+    public String getLowerSpelling() {
         return this.spelling.toLowerCase();
+    }
+
+    public String getUpperSpelling() {
+        return this.spelling.toUpperCase();
     }
 
     public void setSpelling(String spelling) {
@@ -33,7 +33,7 @@ public class Word extends SongElement implements Comparable<Word> {
         this.spelling = spelling.toLowerCase();
     }
 
-    public Pronunciation getPhonemes() {
+    public VowelPronunciation getPhonemes() {
         return this.phonemes;
     }
 
@@ -43,14 +43,6 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public void setSyllables(WordSyllables syllables) {
         this.syllables = syllables;
-    }
-
-    public List<Integer> getStresses() {
-        return this.stresses;
-    }
-
-    private void setStresses(List<Integer> stresses) {
-        this.stresses = stresses;
     }
 
     public Pos getPos() {
@@ -77,15 +69,8 @@ public class Word extends SongElement implements Comparable<Word> {
         this.capitalized = b;
     }
 
-    public void setPhonemes(Pronunciation pronunciation) {
-        this.phonemes = pronunciation;
-        List<Integer> tempStresses = new ArrayList<>();
-        if (pronunciation != null) {
-            for (StressedPhoneme sp : pronunciation) {
-                tempStresses.add(sp.stress);
-            }
-            this.setStresses(tempStresses);
-        }
+    public void setPhonemes(VowelPronunciation vowelPronunciation) {
+        this.phonemes = vowelPronunciation;
     }
 
     @Override
@@ -111,7 +96,7 @@ public class Word extends SongElement implements Comparable<Word> {
 
     @Override
     public boolean hasCompleteSpellingStructure() {
-        if (this.getSpelling() == null || this.getSpelling().equals(""))
+        if (this.getLowerSpelling() == null || this.getLowerSpelling().equals(""))
             return false;
         return true;
     }
@@ -138,17 +123,10 @@ public class Word extends SongElement implements Comparable<Word> {
     }
 
     @Override
-    public boolean hasCompleteStressStructure() {
-        if (this.getStresses() == null || this.getStresses().isEmpty())
-            return false;
-        return true;
-    }
-
-    @Override
     public String toString() {
         if (this.capitalized)
-            return this.getSpelling().substring(0, 1).toUpperCase() + this.getSpelling().substring(1);
-        return this.getSpelling();
+            return this.getLowerSpelling().substring(0, 1).toUpperCase() + this.getLowerSpelling().substring(1);
+        return this.getLowerSpelling();
     }
 
     @Override
@@ -158,33 +136,29 @@ public class Word extends SongElement implements Comparable<Word> {
 
         Word word = (Word) o;
 
-        if (getSpelling() != null ? !getSpelling().equals(word.getSpelling()) : word.getSpelling() != null)
+        if (getLowerSpelling() != null ? !getLowerSpelling().equals(word.getLowerSpelling()) : word.getLowerSpelling() != null)
             return false;
         if (getPhonemes() != null ? !getPhonemes().equals(word.getPhonemes()) : word.getPhonemes() != null)
             return false;
         if (getSyllables() != null ? !getSyllables().equals(word.getSyllables()) : word.getSyllables() != null)
-            return false;
-        if (getStresses() != null ? !getStresses().equals(word.getStresses()) : word.getStresses() != null)
             return false;
         return getPos() == word.getPos();
     }
 
     @Override
     public int hashCode() {
-        int result = getSpelling() != null ? getSpelling().hashCode() : 0;
+        int result = getLowerSpelling() != null ? getLowerSpelling().hashCode() : 0;
         result = 31 * result + (getPhonemes() != null ? getPhonemes().hashCode() : 0);
         result = 31 * result + (getSyllables() != null ? getSyllables().hashCode() : 0);
-        result = 31 * result + (getStresses() != null ? getStresses().hashCode() : 0);
         result = 31 * result + (getPos() != null ? getPos().hashCode() : 0);
         return result;
     }
 
     @Override
     public int compareTo(Word o) {
-        return this.getSpelling().compareTo(o.getSpelling());
+        return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
-
 
 
 

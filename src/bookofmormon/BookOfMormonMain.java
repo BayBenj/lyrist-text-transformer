@@ -4,13 +4,13 @@ import filters.*;
 import main.ProgramArgs;
 import elements.*;
 import elements.Sentence;
+import songtools.LyristReplacementManager;
 import songtools.SongScanner;
 import songtools.TemplateSongEngineer;
 import songtools.WordReplacements;
 import stanford.StanfordNlp;
 import utils.Pair;
 import utils.U;
-import songtools.ReplacementManager;
 import word2vec.W2vCommander;
 
 import java.io.*;
@@ -246,7 +246,7 @@ public class BookOfMormonMain {
             markedWords.add(allMarkableWordsList.get(index));
 
         //Replace marked words in original tweet w/ word2vec
-        ReplacementManager replacementManager = new ReplacementManager();
+        LyristReplacementManager lyristReplacementManager = new LyristReplacementManager();
         Pair<String,String> pair = this.getOldAndNewThemes();
 
 //        TreeMap<Double,String> treeMap = new TreeMap<>(U.getW2vCommander().findSentiment(nonPunctWords, 1));
@@ -256,7 +256,7 @@ public class BookOfMormonMain {
 //        else
 //            theme = pair.getFirst();
 
-        WordReplacements wordReplacements = replacementManager.getWordSuggestions(markedWords,
+        WordReplacements wordReplacements = lyristReplacementManager.getWordSuggestions(markedWords,
                                                                             sentences,
 //                                                                            this.getBomBibleWordsFilterEquation(),
                                                                             this.getStringFilters(),

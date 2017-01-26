@@ -15,16 +15,16 @@ public abstract class SongMutator {
         List<Word> words = se.getAllWords();
         for (int i = 0; i < words.size(); i++) {
             if (            i < words.size() - 1 &&
-                    (words.get(i).getSpelling().equals("a") ||
-                            words.get(i).getSpelling().equals("an"))) {
+                    (words.get(i).getLowerSpelling().equals("a") ||
+                            words.get(i).getLowerSpelling().equals("an"))) {
                 String correctArticle = DeterminerManager.getCorrectIndefiniteArticle(words.get(i + 1));
-                if (!correctArticle.equalsIgnoreCase(words.get(i).getSpelling())) {
+                if (!correctArticle.equalsIgnoreCase(words.get(i).getLowerSpelling())) {
                     Word articleWord = words.get(i);
                     articleWord.setSpelling(correctArticle);
                     articleWord.setPos(Pos.DT);//TODO make sure this is right
                     articleWord.setNe(NamedEntity.O);
-                    articleWord.setPhonemes(Phoneticizer.getPronunciationForWord(articleWord.getSpelling().toUpperCase()));
-                    articleWord.setSyllables(Phoneticizer.getSyllables(articleWord.getSpelling().toUpperCase()));
+                    articleWord.setPhonemes(Phoneticizer.getPronunciationForWord(articleWord.getLowerSpelling().toUpperCase()));
+                    articleWord.setSyllables(Phoneticizer.getSyllables(articleWord.getLowerSpelling().toUpperCase()));
                 }
             }
         }
@@ -41,7 +41,7 @@ public abstract class SongMutator {
 
     private static void capitalizeWord(Word word) {
         //TODO move to CapitalizationManager?
-        StringBuilder sb = new StringBuilder(word.getSpelling());
+        StringBuilder sb = new StringBuilder(word.getLowerSpelling());
         char firstChar = sb.charAt(0);
         String upperStr = Character.toString(Character.toUpperCase(firstChar));
         sb.replace(0, 1, upperStr);
@@ -51,7 +51,7 @@ public abstract class SongMutator {
     public static void lowercaseAllWords(Song generatedSong) {
         List<Word> words = generatedSong.getAllWords();
         for (Word word : words) {
-            String spelling = word.getSpelling();
+            String spelling = word.getLowerSpelling();
             word.setSpelling(spelling.toLowerCase());
             word.setCapitalized(false);
         }
@@ -73,7 +73,7 @@ public abstract class SongMutator {
                         newLine.add(wordReplacements.get(currentWord));
                     else {
                         //TODO: do a more complete copy here. Is that possible?
-                        Word temp = new Word(currentWord.getSpelling());
+                        Word temp = new Word(currentWord.getLowerSpelling());
                         temp.setPhonemes(currentWord.getPhonemes());
                         temp.setSyllables(currentWord.getSyllables());
                         temp.setPos(currentWord.getPos());

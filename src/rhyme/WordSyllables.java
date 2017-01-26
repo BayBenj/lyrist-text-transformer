@@ -1,11 +1,10 @@
 package rhyme;
 
-import java.util.ArrayList;
-import java.util.List;
+public class WordSyllables extends SyllableGroup {
 
-public class WordSyllables extends ArrayList<Syllable> {
+    //Pertains specifically to syllables in 1 word
 
-    public List<StressedPhoneme> getWordRhymeFromStress() {
+    public SyllableGroup getWordRhymeFromStress() {
         //Find the most stressed syllable
         int highestStress = Integer.MIN_VALUE;
         int i = 0;
@@ -21,40 +20,21 @@ public class WordSyllables extends ArrayList<Syllable> {
         //Concatenate all phonemes from the most stressed syllables's rhyme onward
         boolean reachedHighestStress = false;
         i = 0;
-        List<StressedPhoneme> wordRhyme = new ArrayList<>();
+        SyllableGroup wordRhyme = new SyllableGroup();
         for (Syllable syllable : this) {
             if (reachedHighestStress)
-                wordRhyme.addAll(syllable.getStressedPhonemes());
+                wordRhyme.add(syllable);
 
             if (i == mostStressedSyllableIndex) {
                 reachedHighestStress = true;
-                wordRhyme.addAll(syllable.getStressedRhyme());
+                wordRhyme.add(new Syllable(null, syllable.getNucleus(), (ConsonantPronunciation) syllable.getCoda()));
             }
             i++;
         }
         return wordRhyme;
     }
 
-    @Override
-    public String toString() {
-        String sb = "";
-        int i = 0;
-        for (Syllable syllable : this) {
-            if (i != 0)
-                sb += " ";
-            sb += syllable.toString();
-            i++;
-        }
-        return sb;
-    }
 }
-
-
-
-
-
-
-
 
 
 

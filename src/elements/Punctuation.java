@@ -30,6 +30,6 @@ public class Punctuation extends Word {
     public String toString() {
         if (hidden)
             return "";
-        return super.getSpelling();
+        return super.getLowerSpelling();
     }
 }

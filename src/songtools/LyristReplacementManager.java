@@ -5,9 +5,6 @@ import constraints.ConstraintPrioritizer;
 import elements.Song;
 import filters.*;
 import intentions.IndividualAction;
-import intentions.MarkingIntention;
-import intentions.ReplacementIntention;
-import intentions.SourceEnum;
 import main.ProgramArgs;
 import rhyme.*;
 import elements.Punctuation;
@@ -18,177 +15,184 @@ import utils.U;
 import word2vec.W2vCommander;
 import java.util.*;
 
-import static intentions.IndividualAction.PICK_MODEL_RHYME_WORDS;
-
-public abstract class ReplacementManager {
-//TODO eventually make children of this class that represent specifc W2v operation sequences, like [sentiment, similar, analogy, similar]
-//TODO or [analogy, similar] or [similar], etc. Maybe, unless there's a smarter way.
-// TODO: This class should simply execute a sequence of W2vOperations, interface with Filters, and return WordReplacements or new Words.
-
-    public static void normalReplace() {
-        /*
-        markingIntentions.add(MarkingIntention.MARK_ALL_BY_CONSTRAINTS);//need sentences and marking constraints
-        individualActions.add(IndividualAction.W2V_ANALOGY);//need old and new theme, string words
-        individualActions.add(IndividualAction.STRING_FILTERS);//need string filters and strings to filter
-        individualActions.add(IndividualAction.STRINGS_TO_WORDS);//need cosined strings
-        individualActions.add(IndividualAction.WORD_FILTERS);//need word filters and words to filter
-        individualActions.add(IndividualAction.CHOOSE_BEST_SUGGESTION);//need constraint prioritization
-         */
+public abstract class LyristReplacementManager {
+    public static Song normalReplace(SongWrapper songWrapper, ReplacementByAnalogy info) {
+        List<Word> marked = markWithConstraints(songWrapper.getSong(), info.getStringMarkingFilters());
+        WordReplacements wordReplacements = new WordReplacements();
+        for (Sentence s : songWrapper.getSentences()) {
+            for (int w = 0; w < s.size(); w++) {
+                Word oldWord = s.get(w);
+                if (oldWord instanceof Punctuation || !marked.contains(oldWord) || wordReplacements.containsKey(oldWord)) continue;
+                Map<Double, String> cosineStrings = WordSource.w2vAnalogy(info.getW2v(), info.getOldAndNewThemes().getFirst(), info.getOldAndNewThemes().getSecond(), oldWord.getLowerSpelling(), 100);
+                cosineStrings = stringFilters(cosineStrings, info.getStringFilters());
+                Map<Double, Word> cosineWords = stringsToWords(cosineStrings, s, oldWord, w);
+                Word chosen = terminalWordfilters(cosineWords, info.getWordFilters(), oldWord);
+                wordReplacements.put(oldWord, chosen);
+            }
+        }
+        return SongMutator.replaceWords(songWrapper.getSong(), wordReplacements);
     }
 
-    public static void rhymeReplace() {
-        /*
-        //find normal suggestions
-        markingIntentions.add(MarkingIntention.MARK_ALL_BY_CONSTRAINTS);//need sentences and marking constraints
-        individualActions.add(IndividualAction.W2V_ANALOGY);//need old and new theme, string words
-        individualActions.add(IndividualAction.STRING_FILTERS);//need string filters and strings to filter
-        individualActions.add(IndividualAction.ADD_CMU_RHYMES);
-        individualActions.add(IndividualAction.STRINGS_TO_WORDS);//need cosined strings
-        individualActions.add(IndividualAction.WORD_FILTERS);//need word filters and words to filter
-
-        //then get suggestions for words that rhyme with model word
-        markingIntentions.add(MarkingIntention.MARK_LAST_WORD_IN_LINES_BY_RHYME_SCHEME);//need sentences, song, and rhyme scheme
-        individualActions.add(IndividualAction.PICK_MODEL_RHYME_WORDS);
-        individualActions.add(IndividualAction.WORD_FILTERS);//need word filters specific to rhyming w/ model word and words to filter
-        individualActions.add(IndividualAction.CHOOSE_BEST_SUGGESTION);//need constraint prioritization
-
-        //replace old with new
-        ReplacementIntention replacementIntention = ReplacementIntention.REPLACE_MARKED_WITH_NEW;//need old marked words, new words
-
-         */
+    public static void rhymeReplace(SongWrapper songWrapper, ReplacementByAnalogy info) {
+        RhymeSchemeFilter rhymeSchemeFilter= null;
+        List<Word> marked = markWithConstraints(songWrapper.getSong(), info.getStringMarkingFilters());
+        WordReplacements wordReplacements = new WordReplacements();
+        for (Sentence s : songWrapper.getSentences()) {
+            for (int w = 0; w < s.size(); w++) {
+                Word oldWord = s.get(w);
+                if (oldWord instanceof Punctuation || !marked.contains(oldWord) || wordReplacements.containsKey(oldWord)) continue;
+                Map<Double, String> cosineStrings = WordSource.w2vAnalogy(info.getW2v(), info.getOldAndNewThemes().getFirst(), info.getOldAndNewThemes().getSecond(), oldWord.getLowerSpelling(), 100);
+                cosineStrings = stringFilters(cosineStrings, info.getStringFilters());
+                cosineStrings.putAll(WordSource.cmuRhymes(oldWord.getUpperSpelling()));
+                Map<Double, Word> cosineWords = stringsToWords(cosineStrings, s, oldWord, w);
+            }
+        }
+        Map<Rhyme,Set<Word>> rhymeClasses = markRhyme(rhymeSchemeFilter, songWrapper.getSong());
+        rhymeAllMarked(RhymesAndTheirWordSuggestions wordsToRhyme, TreeMap<Integer,Constraint> nonRhymeConstraints, double rhymeThreshold)
+        return SongMutator.replaceWords(songWrapper.getSong(), wordReplacements);
+//        markWithConstraints();
+//        WordSource.w2vAnalogy();
+//        stringFilters();
+//        WordSource.cmuRhymes();
+//        stringsToWords();
+//        markRhyme();
+//        getRhymeModelWords();
+//        wordfilters();
+//        replaceAllMarked();
     }
 
-    public static void replace(SongWrapper songWrapper, LyristOperationOld lyristOperationOld) {
-        //Loop for each lyristOperationOld job:
+    public static void replace(SongWrapper songWrapper, LyristReplacement lyristReplacement) {
+        //Loop for each lyristReplacement job:
         //  mark
         //  get suggestions for each mark
         //  choose one suggestion for each mark
         //return the new song
 
-        List<Word> markedWords = marking(lyristOperationOld.getMarkingIntention());
-        replacement(lyristOperationOld.getReplacementIntention());
+        List<Word> markedWords = marking(lyristReplacement.getMarkingIntention());
+        replacement(lyristReplacement.getReplacementIntention());
         for () {
-            for (IndividualAction intention : lyristOperationOld.getIndividualActions()) {
+            for (IndividualAction intention : lyristReplacement.getIndividualActions()) {
                 insideReplacement(intention);
             }
         }
     }
 
-    public static Map<Integer, Map<Double, String>> getWordSuggestions(SongWrapper songWrapper, LyristOperationOld lyristOperationOld) {
-        Map<Double, String> strings = null;
-        Map<Double, Word> words = null;
-        int nOfSuggestions;
-        Word oldWord = null;
-        Sentence sentence = null;
-        int oldWordIndex;
-        List<Word> markedWords = null;
-        Map<Rhyme,Set<Word>> wordsToRhyme = null;
-        TreeMap<Integer, Constraint> nonRhymeConstraints = null;
-        List<Set<Word>> suggestionsForRhymeClass = null;
-        W2vCommander w2v = lyristOperationOld.getW2v();
-        Word bestWordForRhymeClass = null;
-        for (SourceEnum operationalIntention : lyristOperationOld.getOperationalIntentions()) {
-            switch(operationalIntention) {
-                case MARK:
-                    if (lyristOperationOld.getMarkingFilters().has(RhymeSchemeFilter.class))
-                        wordsToRhyme = markRhyme(((RhymeSchemeFilter) lyristOperationOld.getMarkingFilters().getFirst(RhymeSchemeFilter.class)), songWrapper.getSong());
-                    else
-                        markedWords = marking(songWrapper.getSong(), lyristOperationOld.getMarkingFilters());
-                    break;
-
-                case REPLACE_ALL_MARKED:
-                    replaceAllMarked();
-                    break;
-
-                case RHYME_ALL_MARKED:
-                    rhymeAllMarked();
-                    break;
-
-                case REPLACE_RND_MARKED:
-                    replaceRndMarked();
-                    break;
-
-                case W2V_ANALOGY:
-                    ReplacementByAnalogy rba = (ReplacementByAnalogy) lyristOperationOld;
-                    strings = w2vAnalogy(w2v, rba.getOldAndNewThemes().getFirst(), rba.getOldAndNewThemes().getSecond(), oldWord.toString().toLowerCase(), nOfSuggestions);
-                    break;
-
-                case STRING_FILTERS:
-                    strings = stringFilters(strings, lyristOperationOld.getStringFilters());
-                    break;
-
-                case STRINGS_TO_WORDS:
-                    words = stringsToWords(strings, sentence, oldWord, oldWordIndex);
-                    break;
-
-                case WORD_FILTERS:
-                    words = wordfilters(words, oldWord);
-                    break;
-
-                case PICK_MODEL_RHYME_WORDS:
-                    bestWordForRhymeClass = pickBestRhymeWord(suggestionsForRhymeClass, nonRhymeConstraints, .75);
-                    break;
-
-                case CMU_RHYMES:
-                    strings = cmuRhymes(oldWord.getSpelling().toUpperCase(), strings);
-                    break;
-            }
-        }
-    }
-
-    private static void marking(MarkingIntention intention) {
-        switch (intention) {
-            case MARK_ALL_BY_CONSTRAINTS:
-                markWithConstraints();
-                break;
-            case MARK_LAST_WORD_IN_LINES_BY_RHYME_SCHEME:
-                markRhyme();
-                break;
-        }
-    }
-
-    private static void replacement(ReplacementIntention intention) {
-        switch (intention) {
-            case REPLACE_ALL_MARKED:
-                normalReplace(1);
-                break;
-            case REPLACE_RND_MARKED:
-                normalReplace(1);
-                break;
-            case RHYME_ALL_MARKED:
-                normalReplace(1);
-                rhymeReplace();
-                break;
-        }
-    }
-
-    private static void insideReplacement(IndividualAction intention) {
-        switch (intention) {
-            case W2V_ANALOGY:
-
-                break;
-            case STRING_FILTERS:
-
-                break;
-            case STRINGS_TO_WORDS:
-
-                break;
-            case WORD_FILTERS:
-
-                break;
-            case ADD_CMU_RHYMES:
-
-                break;
-            case PICK_MODEL_RHYME_WORDS:
-
-                break;
-        }
-
-    }
+//    public static Map<Integer, Map<Double, String>> getWordSuggestions(SongWrapper songWrapper, LyristReplacement lyristOperationOld) {
+//        Map<Double, String> strings = null;
+//        Map<Double, Word> words = null;
+//        int nOfSuggestions;
+//        Word oldWord = null;
+//        Sentence sentence = null;
+//        int oldWordIndex;
+//        List<Word> markedWords = null;
+//        Map<Rhyme,Set<Word>> wordsToRhyme = null;
+//        TreeMap<Integer, Constraint> nonRhymeConstraints = null;
+//        List<Set<Word>> suggestionsForRhymeClass = null;
+//        W2vCommander w2v = lyristOperationOld.getW2v();
+//        Word bestWordForRhymeClass = null;
+//        for (SourceEnum operationalIntention : lyristOperationOld.getOperationalIntentions()) {
+//            switch(operationalIntention) {
+//                case MARK:
+//                    if (lyristOperationOld.getMarkingFilters().has(RhymeSchemeFilter.class))
+//                        wordsToRhyme = markRhyme(((RhymeSchemeFilter) lyristOperationOld.getMarkingFilters().getFirst(RhymeSchemeFilter.class)), songWrapper.getSong());
+//                    else
+//                        markedWords = marking(songWrapper.getSong(), lyristOperationOld.getMarkingFilters());
+//                    break;
+//
+//                case REPLACE_ALL_MARKED:
+//                    replaceAllMarked();
+//                    break;
+//
+//                case RHYME_ALL_MARKED:
+//                    rhymeAllMarked();
+//                    break;
+//
+//                case REPLACE_RND_MARKED:
+//                    replaceRndMarked();
+//                    break;
+//
+//                case W2V_ANALOGY:
+//                    ReplacementByAnalogy rba = (ReplacementByAnalogy) lyristOperationOld;
+//                    strings = w2vAnalogy(w2v, rba.getOldAndNewThemes().getFirst(), rba.getOldAndNewThemes().getSecond(), oldWord.toString().toLowerCase(), nOfSuggestions);
+//                    break;
+//
+//                case STRING_FILTERS:
+//                    strings = stringFilters(strings, lyristOperationOld.getStringFilters());
+//                    break;
+//
+//                case STRINGS_TO_WORDS:
+//                    words = stringsToWords(strings, sentence, oldWord, oldWordIndex);
+//                    break;
+//
+//                case WORD_FILTERS:
+//                    words = wordfilters(words, oldWord);
+//                    break;
+//
+//                case PICK_MODEL_RHYME_WORDS:
+//                    bestWordForRhymeClass = pickBestRhymeWord(suggestionsForRhymeClass, nonRhymeConstraints, .75);
+//                    break;
+//
+//                case CMU_RHYMES:
+//                    strings = cmuRhymes(oldWord.getLowerSpelling().toUpperCase(), strings);
+//                    break;
+//            }
+//        }
+//    }
+//    private static void marking(MarkingIntention intention) {
+//        switch (intention) {
+//            case MARK_ALL_BY_CONSTRAINTS:
+//                markWithConstraints();
+//                break;
+//            case MARK_LAST_WORD_IN_LINES_BY_RHYME_SCHEME:
+//                markRhyme();
+//                break;
+//        }
+//    }
+//    private static void replacement(ReplacementIntention intention) {
+//        switch (intention) {
+//            case REPLACE_ALL_MARKED:
+//                normalReplace(1);
+//                break;
+//            case REPLACE_RND_MARKED:
+//                normalReplace(1);
+//                break;
+//            case RHYME_ALL_MARKED:
+//                normalReplace(1);
+//                rhymeReplace();
+//                break;
+//        }
+//    }
+//    private static void insideReplacement(IndividualAction intention) {
+//        switch (intention) {
+//            case W2V_ANALOGY:
+//
+//                break;
+//            case STRING_FILTERS:
+//
+//                break;
+//            case STRINGS_TO_WORDS:
+//
+//                break;
+//            case WORD_FILTERS:
+//
+//                break;
+//            case ADD_CMU_RHYMES:
+//
+//                break;
+//            case PICK_MODEL_RHYME_WORDS:
+//
+//                break;
+//        }
+//
+//    }
 
     private static List<Word> markWithConstraints(Song songToMark, FilterEquation markingFilters) {
         List<Word> allMarkableWordsList = new ArrayList<>(songToMark.getAllWords());
-        if (markingFilters instanceof WordFilterEquation) {
+        if (markingFilters instanceof StringFilterEquation) {
+            StringFilterEquation wordsNotToMark = (StringFilterEquation) markingFilters;
+            allMarkableWordsList.retainAll(wordsNotToMark.removeMatches(new HashSet(songToMark.getAllWords())));
+        }
+        else if (markingFilters instanceof WordFilterEquation) {
             WordFilterEquation wordsNotToMark = (WordFilterEquation) markingFilters;
             allMarkableWordsList.retainAll(wordsNotToMark.removeMatches(new HashSet(songToMark.getAllWords())));
         }
@@ -199,17 +203,14 @@ public abstract class ReplacementManager {
         return filter.doFilter(song);
     }
 
-    private static void replaceAllMarked(List<Word> markedWords) {
-        //get suggestions for each marked word
-        //choose one suggestion as the replacement for each marked word
-    }
-
-    private static void rhymeAllMarked(RhymesAndTheirWordSuggestions wordsToRhyme, TreeMap<Integer,Constraint> nonRhymeConstraints, double rhymeThreshold) {
+    private static HashMap<Rhyme, Map<Integer,Word>> rhymeAllMarked(RhymesAndTheirWordSuggestions wordsToRhyme, TreeMap<Integer,Constraint> nonRhymeConstraints, double rhymeThreshold) {
         //get rhyme models for each rhyme class
         List<Word> rhymeModels = getRhymeModelWords(wordsToRhyme, nonRhymeConstraints, rhymeThreshold);
 
         //get word replacement suggestions using rhyme models
-        constrainSuggestions(rhymeModels, wordsToRhyme);
+        Map<Rhyme, Map<Integer,Word>> replacements = terminalWordfilters();
+
+        //replace using stuff from replacements
     }
 
     private static List<Word> getRhymeModelWords(RhymesAndTheirWordSuggestions wordsToRhyme, TreeMap<Integer,Constraint> nonRhymeConstraints, double rhymeThreshold) {
@@ -244,11 +245,16 @@ public abstract class ReplacementManager {
         return SuggestionHandler.stringSuggestionsToWordSuggestions(stringSuggestionMap, sentence, oldWord, oldWordIndex);
     }
 
-    private static Map<Double, Word> wordfilters(Map<Double, Word> wordSuggestionMap, Word oldWord) {
-        WordFilterEquation wordFilterEquation = FilterManager.wEq(FilterManager.getMirrorPosNeFilters(oldWord));
+    private static Map<Double, Word> wordfilters(Map<Double, Word> wordSuggestionMap, WordFilterEquation wordFilterEquation, Word oldWord) {
         wordSuggestionMap.values().retainAll(wordFilterEquation.removeMatches(new HashSet<>(wordSuggestionMap.values())));//TODO BREAKS ON "It's", have Words know whether they are a contraction, and if so, what contraction they are. Allow Words to return their expansion of 2+ Words.
         U.testPrintln("After Word filtration: " + wordSuggestionMap.size() + " valid suggestions");
         return wordSuggestionMap;
+    }
+
+    private static Word terminalWordfilters(Map<Double, Word> wordSuggestionMap, WordFilterEquation wordFilterEquation, Word oldWord) {
+        wordSuggestionMap.values().retainAll(wordFilterEquation.removeMatches(new HashSet<>(wordSuggestionMap.values())));//TODO BREAKS ON "It's", have Words know whether they are a contraction, and if so, what contraction they are. Allow Words to return their expansion of 2+ Words.
+        U.testPrintln("After Word filtration: " + wordSuggestionMap.size() + " valid suggestions");
+        return ((TreeMap<Double, Word>)wordSuggestionMap).firstEntry().getValue();
     }
 
     private static Word pickBestRhymeWord(List<Set<Word>> suggestionSets, TreeMap<Integer, Constraint> nonRhymeConstraints, double rhymeThreshold) {
@@ -318,6 +324,7 @@ public abstract class ReplacementManager {
 
         return n;
     }
+
 
     public static WordReplacements getWordSuggestions(Set<Word> wordsToReplace,
                                                       Map<Rhyme,Set<Word>> rhymeWordsToReplace,
@@ -459,7 +466,7 @@ public abstract class ReplacementManager {
         U.testPrintln("After string filtration: " + stringSuggestionMap.size() + " valid suggestions");
 
         //Add all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
-        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.getSpelling(), 1);
+        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.getLowerSpelling(), 1);
         double extra = 0.0001;
         for (String rhyme : allRhymes) {
             stringSuggestionMap.put(1.0 + extra, rhyme.toLowerCase());
@@ -522,28 +529,6 @@ public abstract class ReplacementManager {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

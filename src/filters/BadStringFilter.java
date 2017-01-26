@@ -66,7 +66,7 @@ public class BadStringFilter extends CharFilter {
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        for (W2vWordSuggestion wordSuggestion : w2vWordSuggestions) {
 //            Word word = wordSuggestion.getWord();
-//            String spelling = word.getSpelling();
+//            String spelling = word.getLowerSpelling();
 //            for (char c: spelling.toCharArray()) {
 //                if (badCharacterSet.contains(Character.toString(c)) || spelling.equals("")) {
 ////                w2vWordSuggestions.remove(wordSuggestion);
@@ -82,7 +82,7 @@ public class BadStringFilter extends CharFilter {
 
 //    public Set<Word> filterWords(Set<Word> w2vSuggestions, boolean b) {
 //        for (Word w : w2vSuggestions) {
-//            String spelling = w.getSpelling();
+//            String spelling = w.getLowerSpelling();
 //            for (char c: spelling.toCharArray()) {
 //                if (badCharacterSet.contains(c) || spelling.equals(""))
 //                    w2vSuggestions.remove(w);

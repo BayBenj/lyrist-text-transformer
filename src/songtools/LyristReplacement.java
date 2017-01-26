@@ -1,43 +1,45 @@
 package songtools;
 
-import elements.Word;
+import filters.RhymeSchemeFilter;
 import filters.StringFilterEquation;
 import filters.WordFilterEquation;
 import intentions.IndividualAction;
-import intentions.ReplacementIntention;
 import word2vec.W2vCommander;
 import java.util.List;
-import java.util.Set;
 
-public class LyristOperationOld {
-
-    private Set<Word> wordsToFilter;
+public class LyristReplacement {
 
     private StringFilterEquation stringMarkingFilters;
     private WordFilterEquation wordMarkingFilters;
     private List<IndividualAction> individualActions;
     private StringFilterEquation stringFilters;
     private WordFilterEquation wordFilters;
+    private RhymeSchemeFilter rhymeSchemeFilter;
     private W2vCommander w2v = null;
-    ReplacementIntention replacementIntention;
     private double replacementFrequency;
 
-    public LyristOperationOld(StringFilterEquation stringMarkingFilters,
-                              WordFilterEquation wordMarkingFilters,
-                              List<IndividualAction> individualActions,
-                              StringFilterEquation stringFilters,
-                              WordFilterEquation wordFilters,
-                              W2vCommander w2v,
-                              ReplacementIntention replacementIntention,
-                              double replacementFrequency) {
+    public LyristReplacement(StringFilterEquation stringMarkingFilters,
+                             WordFilterEquation wordMarkingFilters,
+                             List<IndividualAction> individualActions,
+                             StringFilterEquation stringFilters,
+                             WordFilterEquation wordFilters,
+                             W2vCommander w2v,
+                             double replacementFrequency) {
         this.stringMarkingFilters = stringMarkingFilters;
         this.wordMarkingFilters = wordMarkingFilters;
         this.individualActions = individualActions;
         this.stringFilters = stringFilters;
         this.wordFilters = wordFilters;
         this.w2v = w2v;
-        this.replacementIntention = replacementIntention;
         this.replacementFrequency = replacementFrequency;
+    }
+
+    public RhymeSchemeFilter getRhymeSchemeFilter() {
+        return rhymeSchemeFilter;
+    }
+
+    public void setRhymeSchemeFilter(RhymeSchemeFilter rhymeSchemeFilter) {
+        this.rhymeSchemeFilter = rhymeSchemeFilter;
     }
 
     public StringFilterEquation getStringMarkingFilters() {
@@ -88,14 +90,6 @@ public class LyristOperationOld {
         this.w2v = w2v;
     }
 
-    public ReplacementIntention getReplacementIntention() {
-        return replacementIntention;
-    }
-
-    public void setReplacementIntention(ReplacementIntention replacementIntention) {
-        this.replacementIntention = replacementIntention;
-    }
-
     public double getReplacementFrequency() {
         return replacementFrequency;
     }
@@ -104,14 +98,6 @@ public class LyristOperationOld {
         this.replacementFrequency = replacementFrequency;
     }
 }
-
-
-
-
-
-
-
-
 
 
 

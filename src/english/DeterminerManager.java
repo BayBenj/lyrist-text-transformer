@@ -1,12 +1,10 @@
 package english;
 
 import rhyme.Phoneticizer;
-import rhyme.Pronunciation;
+import rhyme.VowelPronunciation;
 import elements.Word;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public abstract class DeterminerManager {
@@ -71,7 +69,7 @@ public abstract class DeterminerManager {
     public static String getCorrectIndefiniteArticle(String following) {
         if (following != null && following.length() > 0) {
             if (Phoneticizer.cmuDictContains(following)) {
-            Pronunciation followingPronunciation = Phoneticizer.getTopPronunciation(following);
+            VowelPronunciation followingVowelPronunciation = Phoneticizer.getTopPronunciation(following);
             char firstChar = following.charAt(0);
             if (firstChar == 'a' ||
                     firstChar == 'e' ||
@@ -96,7 +94,7 @@ public abstract class DeterminerManager {
                     return "a";
             }
         }
-        return getCorrectIndefiniteArticle(following.getSpelling());
+        return getCorrectIndefiniteArticle(following.getLowerSpelling());
     }
 
     public static String getCorrectIndefiniteArticleForOutOfDictionary(String following) {

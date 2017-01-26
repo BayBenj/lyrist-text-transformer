@@ -193,9 +193,9 @@ public class StanfordNlp {
                     }
                     else if (spelling.contains("'")) {
                         Word lastWord = tempSentence.get(tempSentence.size() - 1);
-                        lastWord.setSpelling(lastWord.getSpelling() + spelling);
+                        lastWord.setSpelling(lastWord.getLowerSpelling() + spelling);
                         lastWord.setPos(Pos.CONTRACTION_WORD);
-                        String[] fullStrings = ContractionManager.getExpansion(lastWord.getSpelling()+spelling);
+                        String[] fullStrings = ContractionManager.getExpansion(lastWord.getLowerSpelling()+spelling);
                         List<Word> words = new ArrayList<>();
                         if (fullStrings != null && fullStrings.length >= 1) {
                             Word word1 = new Word(fullStrings[0]);
@@ -205,7 +205,7 @@ public class StanfordNlp {
                                 words.add(word2);
                             }
                         }
-                        Word contraction = new ContractionWord(lastWord.getSpelling()+spelling, words);
+                        Word contraction = new ContractionWord(lastWord.getLowerSpelling()+spelling, words);
                     }
                     else {
                         //Make a new word object

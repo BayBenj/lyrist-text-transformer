@@ -1,14 +1,8 @@
 package rhyme;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import edu.cmu.sphinx.tools.aligner.Aligner;
-import utils.Pair;
-
+import elements.Word;
 
 public abstract class Rhymer {
 
@@ -27,22 +21,63 @@ public abstract class Rhymer {
 //    private static List<Pair<String, MannerOfArticulation>> phoneDict = Phoneticizer.loadReversePhonesDict();
 
     public static boolean isPerfectRhyme(String s1, String s2, int nSyl) {
-        List<Phoneme> rhyme1 = Phoneticizer.getRhymeOfLastXSyllables(s1, nSyl);
-        List<Phoneme> rhyme2 = Phoneticizer.getRhymeOfLastXSyllables(s2, nSyl);
+        List<PhonemeEnum> rhyme1 = Phoneticizer.getRhymeOfLastXSyllables(s1, nSyl);
+        List<PhonemeEnum> rhyme2 = Phoneticizer.getRhymeOfLastXSyllables(s2, nSyl);
         if (rhyme1.equals(rhyme2))
             return true;
         return false;
     }
 
-    public static Set<String> getPerfectRhymes(String s1, int nSyl) {
-        List<Phoneme> rhyme = Phoneticizer.getRhymeOfLastXSyllables(s1, nSyl);
-        if (nSyl == 1)
+    public static Set<String> getPerfectRhymes(String s1, int numberOfSyllables) {
+        List<PhonemeEnum> rhyme = Phoneticizer.getRhymeOfLastXSyllables(s1, numberOfSyllables);
+        if (numberOfSyllables == 1)
             return Phoneticizer.lastSylRhymeDict.get(rhyme);
-        else if (nSyl == 2)
+        else if (numberOfSyllables == 2)
             return Phoneticizer.last2SylRhymeDict.get(rhyme);
-        else if (nSyl == 3)
+        else if (numberOfSyllables == 3)
             return Phoneticizer.last3SylRhymeDict.get(rhyme);
         return null;
+    }
+
+    public static double getRhymeScore(Word w1, Word w2) {
+        if (areIdentical(w1,w2))
+            return 2;
+        if (areRhymeIdentical(w1,w2))
+            return 1;
+        if (areVowelAligned(w1,w2)) {
+            double cost = getTweakCost(w1,w2);
+            return 1 - cost;
+        }
+        return 0;
+    }
+
+    public static boolean areIdentical(Word w1, Word w2) {
+        if (w1.getSyllables().equals(w2.getSyllables()))
+            return true;
+        return false;
+    }
+
+    public static boolean areRhymeIdentical(Word w1, Word w2) {
+        if (w1.getFullRhyme().equals(w2.getFullRhyme()))
+            return true;
+        return false;
+    }
+
+    public static boolean areVowelAligned(Word w1, Word w2) {
+        WordSyllables s1 = w1.getSyllables();
+        WordSyllables s2 = w2.getSyllables();
+        if (s1.size() != s2.size())
+            return false;
+        List<VowelPhoneme> v1 = s1.getVowels();
+        List<VowelPhoneme> v2 = s2.getVowels();
+        for (int i = 0; i < s1.size(); i++)
+            if (!v1.get(i).phonemeEnum.equals(v2.get(i).phonemeEnum))
+                return false;
+        return true;
+    }
+
+    public static double getTweakCost(Word w1, Word w2) {
+        return .1;
     }
 
     /**
@@ -56,7 +91,7 @@ public abstract class Rhymer {
 //        // For each line we want to return the number of syllables in the line
 //        // and any rhyming information
 //        int lineCount = words.size();
-//        List<List<StressedPhoneme[]>> wordsPhones = new ArrayList<List<StressedPhoneme[]>>();
+//        List<List<VowelPhoneme[]>> wordsPhones = new ArrayList<List<VowelPhoneme[]>>();
 //
 //        // for each line, store the syllables for the last few words
 //        for (int i = 0; i < lineCount; i++) {
@@ -65,7 +100,7 @@ public abstract class Rhymer {
 //
 //        int[] scheme = new int[lineCount];
 //
-//        List<StressedPhoneme[]> line1Phones, line2Phones;
+//        List<VowelPhoneme[]> line1Phones, line2Phones;
 //        double rhymeScore, maxRhymeScoreForLine, maxRhymeScoreForLines;
 //        int maxJ = -1;
 //        for (int i = 0; i < lineCount; i++) {
@@ -86,8 +121,8 @@ public abstract class Rhymer {
 //                    continue;
 //                }
 //                maxRhymeScoreForLine = -1.0;
-//                for(StressedPhoneme[] line1Phone:line1Phones) {
-//                    for(StressedPhoneme[] line2Phone: line2Phones) {
+//                for(VowelPhoneme[] line1Phone:line1Phones) {
+//                    for(VowelPhoneme[] line2Phone: line2Phones) {
 ////                        rhymeScore = scoreRhymeByPatsRules(line1Phone, line2Phone);
 //                        if (rhymeScore > maxRhymeScoreForLine) {
 //                            maxRhymeScoreForLine = rhymeScore;
@@ -111,11 +146,11 @@ public abstract class Rhymer {
 //        return scheme;
 //    }
 
-//    public static double scoreRhymeByPatsRules(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
-////		StressedPhoneme[] line1LastSyl = Phoneticizer.getLastSyllable(line1Phones,0);
-////		StressedPhoneme[] line1PenultimateSyl = Phoneticizer.getLastSyllable(line1Phones,1);
-////		StressedPhoneme[] line2LastSyl = Phoneticizer.getLastSyllable(line2Phones,0);
-////		StressedPhoneme[] line2PenultimateSyl = Phoneticizer.getLastSyllable(line2Phones,1);
+//    public static double scoreRhymeByPatsRules(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
+////		VowelPhoneme[] line1LastSyl = Phoneticizer.getLastSyllable(line1Phones,0);
+////		VowelPhoneme[] line1PenultimateSyl = Phoneticizer.getLastSyllable(line1Phones,1);
+////		VowelPhoneme[] line2LastSyl = Phoneticizer.getLastSyllable(line2Phones,0);
+////		VowelPhoneme[] line2PenultimateSyl = Phoneticizer.getLastSyllable(line2Phones,1);
 //
 //        if (line2Phones == null || line1Phones.length == 0 || line2Phones.length == 0)
 //            return 0.;
@@ -143,7 +178,7 @@ public abstract class Rhymer {
      * @param line2Phones
      * @return
      */
-//    private static boolean isConsonanceRhyme(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static boolean isConsonanceRhyme(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        int line1Len = line1Phones.length;
 //        int line2Len = line2Phones.length;
 //
@@ -155,15 +190,15 @@ public abstract class Rhymer {
 //            return false;
 //        }
 //
-////        int phone1 = line1Phones[phone1VowelIdx].phoneme;
-////        int phone2 = line2Phones[phone2VowelIdx].phoneme;
+////        int phone1 = line1Phones[phone1VowelIdx].phonemeEnum;
+////        int phone2 = line2Phones[phone2VowelIdx].phonemeEnum;
 ////        if (HirjeeMatrix.score(phone1, phone2) < 0.){
 ////            return false;
 ////        }
 //
 //        for (int i = 1; i < line1Remander; i++) {
-////            phone1 = line1Phones[phone1VowelIdx + i].phoneme;
-////            phone2 = line2Phones[phone2VowelIdx + i].phoneme;
+////            phone1 = line1Phones[phone1VowelIdx + i].phonemeEnum;
+////            phone2 = line2Phones[phone2VowelIdx + i].phonemeEnum;
 ////            if (phone1 != phone2) {
 ////                return false;
 ////            }
@@ -178,7 +213,7 @@ public abstract class Rhymer {
      * @param line2Phones
      * @return
      */
-//    private static boolean isAssonanceRhyme(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static boolean isAssonanceRhyme(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        int phone1VowelIdx = getLastVowelIdx(line1Phones);
 //        int phone2VowelIdx = getLastVowelIdx(line2Phones);
 //
@@ -186,12 +221,12 @@ public abstract class Rhymer {
 //            return false;
 //        }
 //
-////        int phone1 = line1Phones[phone1VowelIdx].phoneme;
-////        int phone2 = line2Phones[phone2VowelIdx].phoneme;
+////        int phone1 = line1Phones[phone1VowelIdx].phonemeEnum;
+////        int phone2 = line2Phones[phone2VowelIdx].phonemeEnum;
 ////        return (phone1 == phone2);
 //    }
 
-//    private static boolean isAdditiveRhyme(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static boolean isAdditiveRhyme(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        int line1Len = line1Phones.length;
 //        int line2Len = line2Phones.length;
 //
@@ -205,8 +240,8 @@ public abstract class Rhymer {
 //
 //        int phone1, phone2;
 //        for (int i = 0; i < line1Remander; i++) {
-//            phone1 = line1Phones[phone1VowelIdx + i].phoneme;
-//            phone2 = line2Phones[phone2VowelIdx + i].phoneme;
+//            phone1 = line1Phones[phone1VowelIdx + i].phonemeEnum;
+//            phone2 = line2Phones[phone2VowelIdx + i].phonemeEnum;
 //            if (phone1 != phone2) {
 //                return false;
 //            }
@@ -215,24 +250,24 @@ public abstract class Rhymer {
 //        return true;
 //    }
 
-//    private static int getLastVowelIdx(StressedPhoneme[] line1Phones) {
+//    private static int getLastVowelIdx(VowelPhoneme[] line1Phones) {
 //        int idx;
 //        for (int i = 1; i <= line1Phones.length; i++) {
 //            idx = line1Phones.length-i;
-//            if (Phoneticizer.isVowel(line1Phones[idx].phoneme))
+//            if (Phoneticizer.isVowel(line1Phones[idx].phonemeEnum))
 //                return idx;
 //        }
 //        return -1;
 //    }
 
-//    private static boolean isFamilyRhyme(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static boolean isFamilyRhyme(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        int line1Len = line1Phones.length;
 //        int line2Len = line2Phones.length;
 //
 //        int phone1, phone2;
 //        for (int pos = 1; pos <= Math.min(line1Len, line2Len); pos++) {
-//            phone1 = line1Phones[line1Len-pos].phoneme;
-//            phone2 = line2Phones[line2Len-pos].phoneme;
+//            phone1 = line1Phones[line1Len-pos].phonemeEnum;
+//            phone2 = line2Phones[line2Len-pos].phonemeEnum;
 //
 //            //vowels (by sound) are identical
 //            if (Phoneticizer.isVowel(phone1)){
@@ -254,14 +289,14 @@ public abstract class Rhymer {
 //        return Phoneticizer.getGeneralCategory(phone1) == Phoneticizer.getGeneralCategory(phone2); // Pat's definition
 //    }
 
-//    private static boolean isPerfectRhyme(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static boolean isPerfectRhyme(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        int line1Len = line1Phones.length;
 //        int line2Len = line2Phones.length;
 //
 //        int phone1, phone2;
 //        for (int pos = 1; pos <= Math.min(line1Len, line2Len); pos++) {
-//            phone1 = line1Phones[line1Len-pos].phoneme;
-//            phone2 = line2Phones[line2Len-pos].phoneme;
+//            phone1 = line1Phones[line1Len-pos].phonemeEnum;
+//            phone2 = line2Phones[line2Len-pos].phonemeEnum;
 //
 //            //vowels (by sound) are identical
 //            if (Phoneticizer.isVowel(phone1)){
@@ -279,17 +314,17 @@ public abstract class Rhymer {
 //        return true;
 //    }
 
-//    private static double scoreRhymingLinesByAlignment(StressedPhoneme[] line1Phones, StressedPhoneme[] line2Phones) {
+//    private static double scoreRhymingLinesByAlignment(VowelPhoneme[] line1Phones, VowelPhoneme[] line2Phones) {
 //        if (line2Phones == null)
 //            return 0.;
 //
 ////		return (alignedRhymeScore(CMULoader.getPhonesForLastSyllables(line1Phones,2), CMULoader.getPhonesForLastSyllables(line2Phones,2)) / Math.max(1, distanceAhead-1));
 //
 //        // 1. do 4 syllable v syllable alignments (just 3? 5?)
-//        StressedPhoneme[] line1Last = Phoneticizer.getLastSyllable(line1Phones,0);
-////		StressedPhoneme[] line1Penultimate = Phoneticizer.getLastSyllable(line1Phones,1);
-//        StressedPhoneme[] line2Last = Phoneticizer.getLastSyllable(line2Phones,0);
-////		StressedPhoneme[] line2Penultimate = Phoneticizer.getLastSyllable(line2Phones,1);
+//        VowelPhoneme[] line1Last = Phoneticizer.getLastSyllable(line1Phones,0);
+////		VowelPhoneme[] line1Penultimate = Phoneticizer.getLastSyllable(line1Phones,1);
+//        VowelPhoneme[] line2Last = Phoneticizer.getLastSyllable(line2Phones,0);
+////		VowelPhoneme[] line2Penultimate = Phoneticizer.getLastSyllable(line2Phones,1);
 //
 ////        double lastVLastScore = alignedRhymeScore(line1Last, line2Last) / Math.max(line1Last.length, line2Last.length);
 ////		double lastVPenultimateScore = 0.0;//alignedRhymeScore(line1Last, line2Penultimate);
@@ -306,7 +341,7 @@ public abstract class Rhymer {
 //    public static void main(String[] args) throws IOException {
 //
 //        String[] words = new String[]{"Megaphone","Xylophone","Acetone","place called home", "bland", "hoax","jokes","folks"};
-//        List<List<StressedPhoneme[]>> stressedPhones = new ArrayList<List<StressedPhoneme[]>>();
+//        List<List<VowelPhoneme[]>> stressedPhones = new ArrayList<List<VowelPhoneme[]>>();
 //        for (int i = 0; i < words.length; i++) {
 //            //TODO: get last 3-4 syllables (i.e., not phones) for each word, not whole thing
 ////			stressedPhones[i] = CMULoader.getPhones(words[i]);
@@ -319,7 +354,7 @@ public abstract class Rhymer {
 ////        Aligner.setMinPercOverlap(.7);
 //        SequencePair.setCosts(1,-1,-20,0);
 //
-//        StressedPhoneme[] word1SPs, word2SPs;
+//        VowelPhoneme[] word1SPs, word2SPs;
 //        if (DEBUG) System.out.println("Simple\tAlign\tWord1\tWord2\tWord1Syls\tWord2Syls");
 //        double score;
 //        for (int i = 0; i < words.length; i++) {
@@ -339,7 +374,7 @@ public abstract class Rhymer {
     /*
      * naive SW alignment
      */
-//    private static double alignedRhymeScore(StressedPhoneme[] word1sPs, StressedPhoneme[] word2sPs) {
+//    private static double alignedRhymeScore(VowelPhoneme[] word1sPs, VowelPhoneme[] word2sPs) {
 ////		System.out.println(Arrays.toString(Phoneticizer.readable(word1sPs)));
 ////		System.out.println(Arrays.toString(Phoneticizer.readable(word2sPs)));
 //
@@ -363,9 +398,9 @@ public abstract class Rhymer {
      * @param j
      * @return
      */
-//    private static double simpleRhymeScore(StressedPhoneme[] word1SPs, StressedPhoneme[] word2SPs) {
-//        StressedPhoneme word1SP;
-//        StressedPhoneme word2SP;
+//    private static double simpleRhymeScore(VowelPhoneme[] word1SPs, VowelPhoneme[] word2SPs) {
+//        VowelPhoneme word1SP;
+//        VowelPhoneme word2SP;
 //        double score, totScore = 0.;
 //        int wrd1SPsLen = word1SPs.length;
 //        int wrd2SPsLen = word2SPs.length;
@@ -373,8 +408,8 @@ public abstract class Rhymer {
 //        for (k = 0; k < Math.min(wrd1SPsLen, wrd2SPsLen); k++) {
 //            word1SP = word1SPs[wrd1SPsLen-k-1];
 //            word2SP = word2SPs[wrd2SPsLen-k-1];
-//            score = hMatrix[word1SP.phoneme][word2SP.phoneme];
-////			System.out.println("\tScore for " + phoneDict.get(word1SP.phoneme).getFirst() + " & " + phoneDict.get(word2SP.phoneme).getFirst() + " = " + score);
+//            score = hMatrix[word1SP.phonemeEnum][word2SP.phonemeEnum];
+////			System.out.println("\tScore for " + phoneDict.get(word1SP.phonemeEnum).getFirst() + " & " + phoneDict.get(word2SP.phonemeEnum).getFirst() + " = " + score);
 //            if (k<1 || score >= 0) {
 //                totScore += score;
 //            }
@@ -389,3 +424,6 @@ public abstract class Rhymer {
 //    }
 
 }
+
+
+

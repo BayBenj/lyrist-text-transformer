@@ -478,7 +478,7 @@ public class DistastefulnessFilter extends VocabListFilter {
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        for (W2vWordSuggestion wordSuggestion : w2vWordSuggestions) {
 //            Word word = wordSuggestion.getWord();
-//            if (dirtyStopSet.contains(word.getSpelling())) {
+//            if (dirtyStopSet.contains(word.getLowerSpelling())) {
 ////                w2vWordSuggestions.remove(wordSuggestion);
 //                filteredOut.add(new W2vWordSuggestion(word, wordSuggestion.getCosineDistance()));
 //            }
@@ -491,7 +491,7 @@ public class DistastefulnessFilter extends VocabListFilter {
 
 //    public Set<Word> filterWords(Set<Word> w2vSuggestions, boolean b) {
 //        for (Word w : w2vSuggestions) {
-//            if (dirtyStopSet.contains(w.getSpelling()))
+//            if (dirtyStopSet.contains(w.getLowerSpelling()))
 //                w2vSuggestions.remove(w);
 //        }
 //        return w2vSuggestions;

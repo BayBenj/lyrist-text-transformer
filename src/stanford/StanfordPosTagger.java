@@ -69,7 +69,7 @@
 //    public void tagPoSForLine(Line line) {
 //        List<HasWord> sentence = new ArrayList<HasWord>();
 //        for (Word w : line.getWords())
-//            sentence.add(new edu.stanford.nlp.ling.Word(w.getSpelling().toLowerCase()));
+//            sentence.add(new edu.stanford.nlp.ling.Word(w.getLowerSpelling().toLowerCase()));
 //        List<TaggedWord> tagged = tagger.tagSentence(sentence);
 //        for (int i = 0; i < line.getSize(); i++) {
 //            line.getWords().get(i).setPos(Pos.valueOf(tagged.get(i).tag()));
@@ -78,11 +78,11 @@
 //    }
 //
 //    public void tagPoSForWord(Word word) {
-//        if (word.getSpelling().equals("")) {
+//        if (word.getLowerSpelling().equals("")) {
 //            word.setPos(Pos.UNKNOWN);
 //            return;
 //        }
-//        String taggedString = tagger.tagString(word.getSpelling().toLowerCase());
+//        String taggedString = tagger.tagString(word.getLowerSpelling().toLowerCase());
 //        taggedString = taggedString.replaceAll("\\s+","");
 //        String[] splitString = taggedString.split("_");
 //        try {
@@ -102,7 +102,7 @@
 //        HashSet<W2vWordSuggestion> result = new HashSet<W2vWordSuggestion>();
 //        for (W2vSuggestion suggestion : suggestions) {
 //            Word word = new Word(suggestion.getString());
-//            String spelling = word.getSpelling();
+//            String spelling = word.getLowerSpelling();
 //            if (    spelling.equals("") ||
 //                    spelling.contains("_") ||
 //                    spelling.contains(",") ||
@@ -176,7 +176,7 @@
 //
 //            for (int i = 0; i < stanza.size(); i++) {
 //                for (int j = 0; j < stanza.get(i).size(); j++) {
-//                    text += stanza.get(i).get(j).getSpelling() + " ";
+//                    text += stanza.get(i).get(j).getLowerSpelling() + " ";
 //                }
 //                text += ".";
 //            }

@@ -4,14 +4,14 @@
 //import java.util.Collections;
 //import java.util.List;
 //
-//import elements.StressedPhoneme;
+//import elements.VowelPhoneme;
 //
 //public class WordPhonemePair extends SequencePair {
 //
 //    public class WordPhonemeAlignmentBuilder extends AlignmentBuilder {
 //
 //        StringBuilder alnWordBldr = new StringBuilder();
-//        List<StressedPhoneme> alnPhoneBldr = new ArrayList<StressedPhoneme>();
+//        List<VowelPhoneme> alnPhoneBldr = new ArrayList<VowelPhoneme>();
 //
 //        @Override
 //        public void appendCharSequence1(int i) {
@@ -35,7 +35,7 @@
 //
 //        @Override
 //        public Alignment renderAlignment() {
-//            return new WordPhonemeAlignment(alnWordBldr.toString(),alnPhoneBldr.toArray(new StressedPhoneme[0]), scores);
+//            return new WordPhonemeAlignment(alnWordBldr.toString(),alnPhoneBldr.toArray(new VowelPhoneme[0]), scores);
 //        }
 //
 //        @Override
@@ -48,9 +48,9 @@
 //
 //    String word;
 //    String wordlc;
-//    StressedPhoneme[] phonemes;
+//    VowelPhoneme[] phonemes;
 //
-//    public WordPhonemePair(String word, StressedPhoneme[] phonemes) {
+//    public WordPhonemePair(String word, VowelPhoneme[] phonemes) {
 //        this.word = word;
 //        this.wordlc = word.toLowerCase();
 //        this.phonemes = phonemes;

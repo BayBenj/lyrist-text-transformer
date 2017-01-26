@@ -23,7 +23,7 @@ public class DictionaryFilter extends VocabListFilter {
 //        HashSet<W2vWordSuggestion> filteredOut = new HashSet<W2vWordSuggestion>();
 //        for (W2vWordSuggestion wordSuggestion : w2vWordSuggestions) {
 //            Word word = wordSuggestion.getWord();
-//            if (!dictionarySet.contains(word.getSpelling())) {
+//            if (!dictionarySet.contains(word.getLowerSpelling())) {
 ////                w2vWordSuggestions.remove(wordSuggestion);
 //                filteredOut.add(new W2vWordSuggestion(word, wordSuggestion.getCosineDistance()));
 //            }
@@ -36,7 +36,7 @@ public class DictionaryFilter extends VocabListFilter {
 
 //    public Set<Word> filterWords(Set<Word> w2vSuggestions, boolean b) {
 //        for (Word w : w2vSuggestions) {
-//            if (!dictionarySet.contains(w.getSpelling()))
+//            if (!dictionarySet.contains(w.getLowerSpelling()))
 //                w2vSuggestions.remove(w);
 //        }
 //        return w2vSuggestions;

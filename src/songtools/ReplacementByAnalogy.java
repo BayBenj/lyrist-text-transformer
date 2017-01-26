@@ -1,6 +1,5 @@
 package songtools;
 
-import filters.FilterEquation;
 import filters.StringFilterEquation;
 import filters.WordFilterEquation;
 import intentions.IndividualAction;
@@ -11,7 +10,7 @@ import word2vec.W2vCommander;
 import java.util.List;
 
 
-public class ReplacementByAnalogy extends LyristOperationOld {
+public class ReplacementByAnalogy extends LyristReplacement {
 
     private Pair<String,String> oldAndNewThemes;
 
@@ -25,16 +24,6 @@ public class ReplacementByAnalogy extends LyristOperationOld {
                                 double replacementFrequency,
                                 Pair<String, String> oldAndNewThemes) {
         super(stringMarkingFilters, wordMarkingFilters, individualActions, stringFilters, wordFilters, w2v, replacementIntention, replacementFrequency);
-        this.setOldAndNewThemes(oldAndNewThemes);
-    }
-
-    public ReplacementByAnalogy(FilterEquation markingFilters,
-                                double replacementFrequency,
-                                List<WordSource> wordSourcesForReplacements,
-                                FilterEquation suggestionFilters,
-                                W2vCommander w2v,
-                                Pair<String, String> oldAndNewThemes) {
-        super(markingFilters, replacementFrequency, wordSourcesForReplacements, suggestionFilters, w2v);
         this.setOldAndNewThemes(oldAndNewThemes);
     }
 
@@ -62,10 +51,6 @@ public class ReplacementByAnalogy extends LyristOperationOld {
                        double replacementFrequency
 
  */
-
-
-
-
 
 
 

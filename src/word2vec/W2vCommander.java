@@ -94,7 +94,7 @@ public class W2vCommander {
     public Map<Double, String> findSum(Set<Word> words, int nOfSuggestions) {
         HashSet<String> strings = new HashSet<>();
         for (Word word : words)
-            strings.add(word.getSpelling().toLowerCase());
+            strings.add(word.getLowerSpelling().toLowerCase());
         return this.findSum(strings, nOfSuggestions, true);
     }
 
