@@ -11,6 +11,9 @@ public class Word extends SongElement implements Comparable<Word> {
     private NamedEntity ne = null;
     private boolean capitalized = false;
 
+    private double cosineDistance = Double.MIN_VALUE;
+    private double rhymeScore = Double.MIN_VALUE;
+
     public Word(String s) {
         this.setSpelling(s);
     }
@@ -71,6 +74,22 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public void setPhonemes(VowelPronunciation vowelPronunciation) {
         this.phonemes = vowelPronunciation;
+    }
+
+    public double getCosineDistance() {
+        return cosineDistance;
+    }
+
+    public void setCosineDistance(double cosineDistance) {
+        this.cosineDistance = cosineDistance;
+    }
+
+    public double getRhymeScore() {
+        return rhymeScore;
+    }
+
+    public void setRhymeScore(double rhymeScore) {
+        this.rhymeScore = rhymeScore;
     }
 
     @Override
@@ -159,9 +178,6 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
-
-
-
 
 
 

@@ -3,7 +3,6 @@ package songtools;
 import filters.StringFilterEquation;
 import filters.WordFilterEquation;
 import intentions.IndividualAction;
-import intentions.ReplacementIntention;
 import utils.Pair;
 import word2vec.W2vCommander;
 
@@ -18,12 +17,12 @@ public class ReplacementByAnalogy extends LyristReplacement {
                                 WordFilterEquation wordMarkingFilters,
                                 List<IndividualAction> individualActions,
                                 StringFilterEquation stringFilters,
-                                WordFilterEquation wordFilters,
+                                WordFilterEquation nonRhymeWordFilters,
+                                WordFilterEquation rhymeWordFilters,
                                 W2vCommander w2v,
-                                ReplacementIntention replacementIntention,
                                 double replacementFrequency,
                                 Pair<String, String> oldAndNewThemes) {
-        super(stringMarkingFilters, wordMarkingFilters, individualActions, stringFilters, wordFilters, w2v, replacementIntention, replacementFrequency);
+        super(stringMarkingFilters, wordMarkingFilters, individualActions, stringFilters, nonRhymeWordFilters, rhymeWordFilters, w2v, replacementFrequency);
         this.setOldAndNewThemes(oldAndNewThemes);
     }
 
@@ -51,10 +50,6 @@ public class ReplacementByAnalogy extends LyristReplacement {
                        double replacementFrequency
 
  */
-
-
-
-
 
 
 

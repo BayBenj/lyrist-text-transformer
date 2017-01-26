@@ -4,11 +4,9 @@ import elements.Song;
 import elements.Word;
 import rhyme.LineRhymeScheme;
 import rhyme.Rhyme;
-import rhyme.RhymesAndTheirWords;
+import rhyme.WordsByRhyme;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class RhymeSchemeFilter extends Filter {
 
@@ -24,18 +22,18 @@ public class RhymeSchemeFilter extends Filter {
         this.setLineRhymeScheme(rhymeScheme);
     }
 
-    public Map<Rhyme,Set<Word>> doFilter(Song song) {
+    public WordsByRhyme doFilter(Song song) {
         if (song != null && !song.getAllWords().isEmpty()) {
             List<Word> words = song.getAllWords();
-            RhymesAndTheirWords rhymesAndTheirWords = new RhymesAndTheirWords();
+            WordsByRhyme wordsByRhyme = new WordsByRhyme();
             for (int w = 0; w < words.size(); w++) {
                 if (super.getReturnType() == ReturnType.MATCHES && lineRhymeScheme.contains(w)) {
                     Word word = words.get(w);
                     Rhyme rhyme = lineRhymeScheme.getRhymeByIndex(w);
-                    rhymesAndTheirWords.putWord(rhyme, word);
+                    wordsByRhyme.putWord(rhyme, word);
                 }
             }
-            return rhymesAndTheirWords;
+            return wordsByRhyme;
         }
         return null;
     }

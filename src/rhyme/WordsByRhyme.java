@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RhymesAndTheirWords extends HashMap<Rhyme, Set<Word>> {
+public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
 
     public boolean contains(Word word) {
         for (Set<Word> set : this.values())

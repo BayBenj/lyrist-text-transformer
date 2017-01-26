@@ -1,6 +1,7 @@
 package songtools;
 
 import filters.RhymeSchemeFilter;
+import filters.RhymeScoreFilter;
 import filters.StringFilterEquation;
 import filters.WordFilterEquation;
 import intentions.IndividualAction;
@@ -13,7 +14,8 @@ public class LyristReplacement {
     private WordFilterEquation wordMarkingFilters;
     private List<IndividualAction> individualActions;
     private StringFilterEquation stringFilters;
-    private WordFilterEquation wordFilters;
+    private WordFilterEquation nonRhymeWordFilters;
+    private RhymeScoreFilter rhymeWordFilter;
     private RhymeSchemeFilter rhymeSchemeFilter;
     private W2vCommander w2v = null;
     private double replacementFrequency;
@@ -22,16 +24,26 @@ public class LyristReplacement {
                              WordFilterEquation wordMarkingFilters,
                              List<IndividualAction> individualActions,
                              StringFilterEquation stringFilters,
-                             WordFilterEquation wordFilters,
+                             WordFilterEquation nonRhymeWordFilters,
+                             RhymeScoreFilter rhymeWordFilter,
                              W2vCommander w2v,
                              double replacementFrequency) {
         this.stringMarkingFilters = stringMarkingFilters;
         this.wordMarkingFilters = wordMarkingFilters;
         this.individualActions = individualActions;
         this.stringFilters = stringFilters;
-        this.wordFilters = wordFilters;
+        this.nonRhymeWordFilters = nonRhymeWordFilters;
+        this.rhymeWordFilter = rhymeWordFilter;
         this.w2v = w2v;
         this.replacementFrequency = replacementFrequency;
+    }
+
+    public RhymeScoreFilter getRhymeWordFilter() {
+        return rhymeWordFilter;
+    }
+
+    public void setRhymeWordFilter(RhymeScoreFilter rhymeWordFilter) {
+        this.rhymeWordFilter = rhymeWordFilter;
     }
 
     public RhymeSchemeFilter getRhymeSchemeFilter() {
@@ -74,12 +86,12 @@ public class LyristReplacement {
         this.stringFilters = stringFilters;
     }
 
-    public WordFilterEquation getWordFilters() {
-        return wordFilters;
+    public WordFilterEquation getNonRhymeWordFilters() {
+        return nonRhymeWordFilters;
     }
 
-    public void setWordFilters(WordFilterEquation wordFilters) {
-        this.wordFilters = wordFilters;
+    public void setNonRhymeWordFilters(WordFilterEquation nonRhymeWordFilters) {
+        this.nonRhymeWordFilters = nonRhymeWordFilters;
     }
 
     public W2vCommander getW2v() {
@@ -98,8 +110,6 @@ public class LyristReplacement {
         this.replacementFrequency = replacementFrequency;
     }
 }
-
-
 
 
 

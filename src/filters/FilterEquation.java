@@ -67,8 +67,8 @@ public abstract class FilterEquation extends ArrayList<FilterObject> {
 ////                    filters.add(new PosMatchFilter());
 ////            else if (filterObject instanceof DistastefulnessFilter)
 ////                    filters.add(new DistastefulnessFilter());
-////            else if (filterObject instanceof RhymeFilter)
-////                    filters.add(new RhymeFilter());
+////            else if (filterObject instanceof RhymeScoreFilter)
+////                    filters.add(new RhymeScoreFilter());
 ////            else if (filterObject instanceof BadStringFilter)
 ////                    filters.add(new BadStringFilter());
 ////            else if (filterObject instanceof NeMatchFilter)

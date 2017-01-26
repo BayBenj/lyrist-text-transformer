@@ -1,11 +1,12 @@
 package rhyme;
 
 import elements.Word;
+
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
-public class RhymesAndTheirWordSuggestions extends HashMap<Rhyme, Map<Integer,Set<Word>>> {
+public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Set<Word>>> {
     //HashMap<rhyme class, Map<instance n of this rhyme class,Set<word suggestion for this instance>>>
 
 //    public boolean contains(Word word) {

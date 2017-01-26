@@ -11,10 +11,7 @@ import main.ProgramArgs;
 import rhyme.Phoneticizer;
 import stanford.StanfordNlp;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public abstract class SuggestionHandler {
 
@@ -144,6 +141,20 @@ public abstract class SuggestionHandler {
         return null;//TODO return empty map instead?
     }
 
+    public static Set<Word> stringSuggestionsToDataWordSuggestions(Map<Double, String> stringMapSuggestions,
+                                                                       Sentence sentence,
+                                                                       Word oldWord,
+                                                                       int oldWordIndex) {
+        Map<Double, Word> wordMap = stringSuggestionsToWordSuggestions(stringMapSuggestions, sentence, oldWord, oldWordIndex);
+        Set<Word> dataWords = new HashSet<>();
+        for (Map.Entry<Double, Word> entry : wordMap.entrySet()) {
+            Word dw = ((Word)entry.getValue());
+            dw.setCosineDistance(entry.getKey());
+            dataWords.add(dw);
+        }
+        return dataWords;
+    }
+
 
     public static Map<Double, String> wordSuggestionsToStringSuggestions(Map<Double, Word> wordMap) {
         if (wordMap.size() > 0) {
@@ -157,7 +168,6 @@ public abstract class SuggestionHandler {
     }
 
 }
-
 
 
 

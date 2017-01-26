@@ -1,7 +1,5 @@
 package rhyme;
 
-import elements.Word;
-
 import java.util.*;
 
 public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
@@ -72,6 +70,8 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
     }
 
 }
+
+
 
 
 
