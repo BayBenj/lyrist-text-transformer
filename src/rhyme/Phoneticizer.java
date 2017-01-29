@@ -38,7 +38,7 @@ public class Phoneticizer {
                 String[] lineSplit, phonesSplit;
                 Pronunciation phones;
                 String line, key;
-                VowelPhoneme sPhone;
+                Phoneme sPhone;
                 int stress, parenIdx;
                 List<Pronunciation> newList = null;
 
@@ -54,10 +54,13 @@ public class Phoneticizer {
                         if (phone.length() == 3) {// we assume that any phonemeEnum with three chars, the third char is the stress
                             stress = Integer.parseInt(phone.substring(2, 3));
                             phone = phone.substring(0, 2);
-                        } else {
-                            stress = -1;
                         }
-                        sPhone = new VowelPhoneme(PhonemeEnum.valueOf(phone), stress); //TODO does valueOf() here work?
+                        else
+                            stress = -1;
+                        if (PhonemeEnum.valueOf(phone).isVowel())
+                            sPhone = new VowelPhoneme(PhonemeEnum.valueOf(phone), stress);
+                        else
+                            sPhone = new ConsonantPhoneme(PhonemeEnum.valueOf(phone));
                         phones.add(sPhone);
                     }
                     // System.out.println(lineSplit[0] + ":" + Arrays.toString(phones));

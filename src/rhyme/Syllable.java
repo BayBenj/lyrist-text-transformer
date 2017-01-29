@@ -17,6 +17,17 @@ public final class Syllable {
         this.coda = coda;
     }
 
+    public Pronunciation getPronunciation() {
+        Pronunciation result = new Pronunciation();
+        if (this.hasOnset())
+            result.addAll(this.getOnset());
+        if (this.hasNucleus())
+            result.add(this.getNucleus());
+        if (this.hasCoda())
+            result.addAll(this.getCoda());
+        return result;
+    }
+
     public VowelPhoneme getVowel() {
         return this.getNucleus();
     }
@@ -149,8 +160,6 @@ public final class Syllable {
 }
 // extends ArrayList<PhonemeEnum>?
 // holds ArrayList<PhonemeEnum>?
-
-
 
 
 

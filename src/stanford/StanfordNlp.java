@@ -27,7 +27,7 @@ public class StanfordNlp {
 
     private static StanfordCoreNLP pipeline;
     private static final String INPUT_TYPE = "annotators";
-    private static final String ANNOTATORS = "tokenize, ssplit, wordsToPos, lemma, ner";
+    private static final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner";
 //    private final String ANNOTATORS = "tokenize, ssplit, wordsToPos, lemma, ner, parse, dcoref";
     //private static final MaxentTagger tagger = new MaxentTagger(U.rootPath + "lib/stanford-parser/3.6.0/libexec/models/wsj-0-18-bidirectional-nodistsim.tagger");
     //private final MaxentTagger tagger = new MaxentTagger(U.rootPath + "local-data/models/wordsToPos-tagger/english-left3words/english-bidirectional-distsim.tagger");

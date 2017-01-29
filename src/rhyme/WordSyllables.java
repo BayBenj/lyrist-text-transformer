@@ -34,8 +34,18 @@ public class WordSyllables extends SyllableGroup {
         return wordRhyme;
     }
 
-}
+    public Pronunciation getPhonemes() {
+        return this.getPronunciation();
+    }
 
+    public Pronunciation getPronunciation() {
+        Pronunciation result = new Pronunciation();
+        for (Syllable s : this)
+            result.addAll(s.getPronunciation());
+        return result;
+    }
+
+}
 
 
 

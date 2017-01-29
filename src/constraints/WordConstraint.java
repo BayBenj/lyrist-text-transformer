@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-public abstract class WordConstraint {
+public abstract class WordConstraint extends Constraint {
 
     //has access to FilterMethods
 
@@ -17,7 +17,6 @@ public abstract class WordConstraint {
 
     public WordConstraint(ReturnType returnType) {
         this.returnType = returnType;
-        this.instanceSpecific = true;
     }
 
     public abstract Set<Word> useWithPresetFields(Collection<Word> wordsToFilter);
@@ -26,7 +25,7 @@ public abstract class WordConstraint {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Equals & contains objs w/ returnTypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    protected static Collection getContained(Collection modelObjects, Collection objectsGettingFiltered, ReturnType returnType) {
+    protected static Collection getContained(Collection<Object> modelObjects, Collection<Object> objectsGettingFiltered, ReturnType returnType) {
         Collection result = new ArrayList();
         for (Object o : objectsGettingFiltered)
             if (doesContain(o, modelObjects, returnType))
@@ -34,7 +33,7 @@ public abstract class WordConstraint {
         return result;
     }
 
-    protected static Collection getContained(Object modelObject, Collection objectsGettingFiltered, ReturnType returnType) {
+    protected static Collection getContained(Object modelObject, Collection<Object> objectsGettingFiltered, ReturnType returnType) {
         Collection result = new ArrayList();
         for (Object o : objectsGettingFiltered)
             if (doesEqual(o, modelObject, returnType))
@@ -44,9 +43,9 @@ public abstract class WordConstraint {
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Equals & contains bools w/ returnTypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    protected static boolean doesContain(Object o, Collection c, ReturnType returnType) {
+    protected static boolean doesContain(Object o, Collection<Object> c, ReturnType returnType) {
         if (returnType == ReturnType.MATCHES && c.contains(o) ||
-                returnType == ReturnType.NON_MATCHES && !c.equals(o))
+                returnType == ReturnType.NON_MATCHES && !c.contains(o))
             return true;
         return false;
     }
@@ -113,6 +112,7 @@ public abstract class WordConstraint {
     }
 
 }
+
 
 
 

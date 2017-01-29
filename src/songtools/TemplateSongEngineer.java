@@ -18,9 +18,11 @@ public final class TemplateSongEngineer extends SongEngineer {
 
         this.setIntentionBools(intentions);
         Song templateSong = templateSongWrapper.getSong();
-        ReplacementByAnalogyInfo r = new ReplacementByAnalogyInfo();
 
-        Song generatedSong = LyristReplacer.normalReplace(templateSongWrapper, r);
+
+        Song normalGeneratedSong = LyristReplacer.normalReplace(templateSongWrapper, NormalReplacementInfo.getExample());
+
+        //Song rhymeGeneratedSong = LyristReplacer.rhymeReplace(templateSongWrapper, RhymeReplacementInfo.getExample());
 //
 //        //Filter out filterWords w/ unsafe wordsToPos so they can't be marked
 //        List<Word> allMarkableWordsList = this.getMarkableWords(templateSong);
@@ -44,14 +46,14 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        Song generatedSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateSongWrapper, oldTheme, newTheme, templateSong);
 
         //Manage generated text
-        this.manageSongText(generatedSong);
+        this.manageSongText(normalGeneratedSong);
 
         //Print both songtools out
-        U.printSideBySide(templateSong, generatedSong);
+        U.printSideBySide(templateSong, normalGeneratedSong);
 
         U.stopTimer();
         U.print("TOTAL RUNNING TIME: " + U.getTotalTime() + "\n");
-        return generatedSong;
+        return normalGeneratedSong;
     }
 
     private void setIntentionBools(SongIntentions intentions) {
@@ -432,6 +434,9 @@ VBN
 VBP
 VBZ
  */
+
+
+
 
 
 

@@ -22,16 +22,16 @@ public class RhymeScoreConstraint extends DoubleConstraint {
         return wordsToRhymeScores(words);
     }
 
+    @Override
+    public Double wordToSpecficDoubleType(Word word) {
+        return word.getRhymeScore();
+    }
+
     private static Map<Word,Double> wordsToRhymeScores(Collection<Word> words) {
         Map<Word,Double> result = new HashMap<>();
         for (Word w : words)
             result.put(w, w.getRhymeScore());
         return result;
-    }
-
-    @Override
-    public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
-        return null;
     }
 
     @Override

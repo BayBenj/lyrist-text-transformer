@@ -1,17 +1,15 @@
 package songtools;
 
 import constraints.WordConstraint;
-import rhyme.RhymeScheme;
 import word2vec.W2vCommander;
 import java.util.Map;
 
-public class LyristReplacementInfo {
+public abstract class LyristReplacementInfo {
 
     private Map<Integer, WordConstraint> markingConstraints;
     private Map<Integer, WordConstraint> wordConstraints;
     private W2vCommander w2v = null;
     private double replacementFrequency;
-    private RhymeScheme rhymeScheme;
 
     public LyristReplacementInfo(Map<Integer, WordConstraint> markingConstraints,
                                  Map<Integer, WordConstraint> wordConstraints,
@@ -21,18 +19,6 @@ public class LyristReplacementInfo {
         this.setWordConstraints(wordConstraints);
         this.setW2v(w2v);
         this.setReplacementFrequency(replacementFrequency);
-    }
-
-    public LyristReplacementInfo(Map<Integer, WordConstraint> markingConstraints,
-                                 Map<Integer, WordConstraint> wordConstraints,
-                                 W2vCommander w2v,
-                                 double replacementFrequency,
-                                 RhymeScheme rhymeScheme) {
-        this.setMarkingConstraints(markingConstraints);
-        this.setWordConstraints(wordConstraints);
-        this.setW2v(w2v);
-        this.setReplacementFrequency(replacementFrequency);
-        this.setRhymeScheme(rhymeScheme);
     }
 
     public Map<Integer, WordConstraint> getMarkingConstraints() {
@@ -67,14 +53,8 @@ public class LyristReplacementInfo {
         this.replacementFrequency = replacementFrequency;
     }
 
-    public RhymeScheme getRhymeScheme() {
-        return rhymeScheme;
-    }
-
-    public void setRhymeScheme(RhymeScheme rhymeScheme) {
-        this.rhymeScheme = rhymeScheme;
-    }
 }
+
 
 
 

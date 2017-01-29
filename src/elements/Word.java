@@ -5,7 +5,6 @@ import rhyme.*;
 public class Word extends SongElement implements Comparable<Word> {
 
     private String spelling = null;
-    private VowelPronunciation phonemes = null;
     private WordSyllables syllables = null;
     private Pos pos = null;
     private Ne ne = null;
@@ -36,8 +35,8 @@ public class Word extends SongElement implements Comparable<Word> {
         this.spelling = spelling.toLowerCase();
     }
 
-    public VowelPronunciation getPhonemes() {
-        return this.phonemes;
+    public Pronunciation getPhonemes() {
+        return this.syllables.getPronunciation();
     }
 
     public WordSyllables getSyllables() {
@@ -70,10 +69,6 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public void setCapitalized(boolean b) {
         this.capitalized = b;
-    }
-
-    public void setPhonemes(VowelPronunciation vowelPronunciation) {
-        this.phonemes = vowelPronunciation;
     }
 
     public double getCosineDistance() {
@@ -157,8 +152,6 @@ public class Word extends SongElement implements Comparable<Word> {
 
         if (getLowerSpelling() != null ? !getLowerSpelling().equals(word.getLowerSpelling()) : word.getLowerSpelling() != null)
             return false;
-        if (getPhonemes() != null ? !getPhonemes().equals(word.getPhonemes()) : word.getPhonemes() != null)
-            return false;
         if (getSyllables() != null ? !getSyllables().equals(word.getSyllables()) : word.getSyllables() != null)
             return false;
         return getPos() == word.getPos();
@@ -167,7 +160,6 @@ public class Word extends SongElement implements Comparable<Word> {
     @Override
     public int hashCode() {
         int result = getLowerSpelling() != null ? getLowerSpelling().hashCode() : 0;
-        result = 31 * result + (getPhonemes() != null ? getPhonemes().hashCode() : 0);
         result = 31 * result + (getSyllables() != null ? getSyllables().hashCode() : 0);
         result = 31 * result + (getPos() != null ? getPos().hashCode() : 0);
         return result;

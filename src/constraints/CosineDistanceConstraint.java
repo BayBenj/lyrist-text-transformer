@@ -2,118 +2,50 @@ package constraints;
 
 import elements.Word;
 import filters.ReturnType;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class CosineDistanceConstraint extends DoubleConstraint {
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Field-dependent~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-//    public Set<Word> equals(Collection<Word> words) {
-//        return this.filterExactRhymeScore(words, dbl, returnType);
-//    }
-
-    public Set<Word> filterByGreaterOrEqual(Collection<Word> words) {
-        return this.filterByGreaterOrEqual(words, dbl, returnType);
+    public CosineDistanceConstraint(NonModelNum comparison) {
+        super(comparison);
+        this.instanceSpecific = true;
     }
 
-//    public Set<Word> lessOrEqual(Collection<Word> words) {
-//        return this.filterLessRhymeScore(words, dbl, returnType);
-//    }
-
-//    public Set<Word> filterByHighest(Collection<Word> words) {
-//        return this.filterByHighest(words);
-//    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Field-independent~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public static Set<Word> filterByGreaterOrEqual(Collection<Word> words, Double score, ReturnType returnType) {
-        Map<Word,Double> map = wordsToCosineDistances(words);
-        map.values().retainAll(filter_goe(map.values(), score, returnType));
-        return map.keySet();
+    public CosineDistanceConstraint(ModelNum comparison) {
+        super(comparison);
     }
 
-    public static Set<Word> filterByHighest(Collection<Word> words) {
-        TreeMap<Word,Double> map = new TreeMap<>(wordsToCosineDistances(words));
-        map.values().retainAll(filter_highest(map.values()));
-        return map.keySet();
+    public CosineDistanceConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
+        super(comparison, dbl, returnType);
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformer~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transforming~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    private static Map<Word,Double> wordsToCosineDistances(Collection<Word> words) {
+    @Override
+    public Map<Word, Double> wordsToSpecficDoubleType(Collection<Word> words) {
+        return wordsToRhymeScores(words);
+    }
+
+    @Override
+    public Double wordToSpecficDoubleType(Word word) {
+        return word.getCosineDistance();
+    }
+
+    private static Map<Word,Double> wordsToRhymeScores(Collection<Word> words) {
         Map<Word,Double> result = new HashMap<>();
         for (Word w : words)
             result.put(w, w.getCosineDistance());
         return result;
     }
 
+    @Override
+    public boolean weaken() {
+        this.weaken(.1);
+        return true;
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

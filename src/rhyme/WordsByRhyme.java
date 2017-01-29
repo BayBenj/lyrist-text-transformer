@@ -20,8 +20,11 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
             Set<Word> words = this.get(rhyme);
             words.add(word);
         }
-        else
-            this.put(rhyme, new HashSet<>());
+        else {
+            Set temp = new HashSet();
+            temp.add(word);
+            this.put(rhyme, temp);
+        }
     }
 
     public Rhyme getRhymeByWord(Word w) {
@@ -32,9 +35,6 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
     }
 
 }
-
-
-
 
 
 

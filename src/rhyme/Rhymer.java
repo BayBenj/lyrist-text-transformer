@@ -39,7 +39,7 @@ public abstract class Rhymer {
         return null;
     }
 
-    public static double getRhymeScore(Word w1, Word w2) {
+    public static double scoreRhyme(Word w1, Word w2) {
         if (areIdentical(w1,w2))
             return 2;
         if (areRhymeIdentical(w1,w2))

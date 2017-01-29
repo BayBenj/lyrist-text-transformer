@@ -40,15 +40,12 @@ public class LyristDriver {
             //Setup Phoneticizer
             U.phoneticizer = new Phoneticizer();
 
-            //read in vocab lists TODO move this to after I know I will need the filterByMultiple for it
-            VocabManager.readInVocab();
-
             //Get template elements
             SongWrapper templateSong = SongScanner.getTemplateSong("sorrow.txt");
 
             //Get elements intentions from programmer input
             SongIntentions songIntentions = IntentionManager.getSongIntentions(
-                    new LineRhymeScheme("A","B","A","B"), "strength", "English");
+                    new LineRhymeScheme("A","B","A","B"), "happiness", "English");
 
             //Generate a new song
             TemplateSongEngineer templateSongEngineer = new TemplateSongEngineer();
@@ -103,6 +100,9 @@ public class PopDriver {
 	}
 }
  */
+
+
+
 
 
 

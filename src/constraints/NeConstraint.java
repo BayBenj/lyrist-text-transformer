@@ -9,15 +9,20 @@ import java.util.*;
 public class NeConstraint extends ObjectConstraint {
 
     public NeConstraint(Collection<Ne> nes, ReturnType returnType) {
-        super(nes, returnType);
+        super(returnType);
+        this.objects = new HashSet<>(neToNeObjects(nes).values());
     }
 
     public NeConstraint(Ne ne, ReturnType returnType) {
-        super(ne, returnType);
+        super(returnType);
+        Set<Object> set = new HashSet<>();
+        set.add(ne);
+        this.objects = set;
     }
 
     public NeConstraint(ReturnType returnType) {
         super(returnType);
+        this.instanceSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,6 +36,14 @@ public class NeConstraint extends ObjectConstraint {
     public Map<Word, Object> wordsToSpecificObjectType(Collection<Word> words) {
         return wordsToNeObjects(words);
     }
+
+    protected static Map<Ne,Object> neToNeObjects(Collection<Ne> ne) {
+        Map<Ne,Object> result = new HashMap<>();
+        for (Ne n : ne)
+            result.put(n, n);
+        return result;
+    }
+
 
     protected static Object wordToNeObject(Word word) {
         return wordToNe(word);

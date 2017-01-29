@@ -2,8 +2,6 @@ package songtools;
 
 import constraints.WordConstraint;
 import constraints.WordConstraintManager;
-import rhyme.LineRhymeScheme;
-import rhyme.RhymeScheme;
 import utils.U;
 import word2vec.W2vCommander;
 import java.util.Map;
@@ -25,33 +23,11 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
         this.setNewTheme(newTheme);
     }
 
-    public ReplacementByAnalogyInfo(Map<Integer, WordConstraint> markingConstraints,
-                                    Map<Integer, WordConstraint> wordConstraints,
-                                    W2vCommander w2v,
-                                    double replacementFrequency,
-                                    RhymeScheme rhymeScheme,
-                                    String oldTheme,
-                                    String newTheme) {
-        super(markingConstraints, wordConstraints, w2v, replacementFrequency, rhymeScheme);
-        this.setOldTheme(oldTheme);
-        this.setNewTheme(newTheme);
-    }
-
     public static ReplacementByAnalogyInfo getNormal() {
         return new ReplacementByAnalogyInfo(null,
                                             WordConstraintManager.getNormal(),
                                             U.getW2vCommander(),
                                             1,
-                                            "depression",
-                                            "happiness");
-    }
-
-    public static ReplacementByAnalogyInfo getRhyme() {
-        return new ReplacementByAnalogyInfo(null,
-                                            WordConstraintManager.getRhyme(),
-                                            U.getW2vCommander(),
-                                            1,
-                                            new LineRhymeScheme("A","B","A","B"),
                                             "depression",
                                             "happiness");
     }
@@ -87,6 +63,10 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
                        double replacementFrequency
 
  */
+
+
+
+
 
 
 

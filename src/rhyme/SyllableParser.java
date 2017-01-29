@@ -112,9 +112,13 @@ public abstract class SyllableParser {
 
     private static int getNSyllables(Pronunciation phonemes) {
         int nSyllables = 0;
-        for (Phoneme phoneme : phonemes)
+        for (Phoneme phoneme : phonemes) {
+            if (phoneme.phonemeEnum == null) {
+                System.out.println("stop for test");
+            }
             if (phoneme.phonemeEnum.isVowel())
                 nSyllables++;
+        }
         return nSyllables;
     }
 

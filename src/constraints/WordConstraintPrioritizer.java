@@ -1,36 +1,74 @@
 package constraints;
 
 import elements.Word;
-import utils.U;
-
+import songtools.WordsToSuggestions;
+import songtools.WordReplacements;
 import java.util.*;
 
 public abstract class WordConstraintPrioritizer {
 
-    public static Word useConstraintsTo1(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
-        TreeSet<Word> results = (TreeSet<Word>)useConstraints(constraints, candidates, original);
-        if (U.notNullnotEmpty(results))
-            return results.first();
-        return null;
+    public static WordReplacements useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, WordsToSuggestions candidates) {
+        WordReplacements result = new WordReplacements();
+        for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet())
+            result.put(entry.getKey(), useConstraintsTo1ByWeakening(constraints, entry.getKey(), entry.getValue()));
+        return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
-        TreeSet<Word> results = (TreeSet<Word>)useConstraintsByWeakening(constraints, candidates, original);
-        if (U.notNullnotEmpty(results))
-            return results.first();
-        return null;
+    public static Word useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, Collection<Word> candidates) {
+        Word result = useConstraintsTo1ByWeakening(constraints, null, candidates);
+        return result;
     }
 
-    public static Set<Word> useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
-        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
-        Set<Word> remaining = new HashSet<>();
+    public static WordsToSuggestions useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, WordsToSuggestions candidates) {
+        WordsToSuggestions result = new WordsToSuggestions();
+        for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet()) {
+            Set<Word> temp = useConstraintsByWeakening(constraints, entry.getKey(), entry.getValue());
+            result.put(entry.getKey(), temp);
+        }
+        return result;
+    }
+
+    public static Set<Word> useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, Collection<Word> originals) {
+        Set<Word> result = new HashSet<>(originals);
         for (int c = 0; c < constraints.size(); c++) {
             WordConstraint wordConstraint = constraints.get(c);
             if (!wordConstraint.isEnabled()) continue;
-            if (wordConstraint.isInstanceSpecific())
-                remaining.retainAll(wordConstraint.useInstanceSpecific(candidates, original));
+            if (!wordConstraint.isInstanceSpecific())
+                result.retainAll(wordConstraint.useWithPresetFields(originals));
+            else {
+                for (Word w : originals)
+                    result.retainAll(wordConstraint.useInstanceSpecific(originals, w));
+            }
+            if (result.isEmpty()) {
+                if (wordConstraint.isEnforced())
+                    return null;
+                //weaken or disable constraint
+                if (!wordConstraint.weaken())
+                    wordConstraint.disable();
+                //recurse, start filtering process over with weaker filters
+                return useConstraintsByWeakening(constraints, originals);
+            }
+        }
+        return result;
+    }
+
+    public static Word useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, Word original, Collection<Word> candidates) {
+        TreeSet<Word> results = new TreeSet<>(useConstraintsByWeakening(constraints, original, candidates));
+        if (results != null && !results.isEmpty())
+            return results.first();
+        return null;
+    }
+
+    public static Set<Word> useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, Word original, Collection<Word> candidates) {
+        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
+        Set<Word> remaining = new HashSet(candidates);
+        for (int c = 0; c < constraints.size(); c++) {
+            WordConstraint wordConstraint = constraints.get(c);
+            if (!wordConstraint.isEnabled()) continue;
+            if (!wordConstraint.isInstanceSpecific())
+                remaining.retainAll(wordConstraint.useWithPresetFields(remaining));
             else
-                remaining.retainAll(wordConstraint.useWithPresetFields(candidates));
+                remaining.retainAll(wordConstraint.useInstanceSpecific(remaining, original));
             if (remaining.isEmpty()) {
                 if (wordConstraint.isEnforced())
                     return null;
@@ -38,7 +76,7 @@ public abstract class WordConstraintPrioritizer {
                 if (!wordConstraint.weaken())
                     wordConstraint.disable();
                 //recurse, start filtering process over with weaker filters
-                return useConstraintsByWeakening(constraints, candidates, original);
+                return useConstraintsByWeakening(constraints, original, candidates);
             }
         }
         if (!remaining.isEmpty())
@@ -46,21 +84,21 @@ public abstract class WordConstraintPrioritizer {
         return null;
     }
 
-    public static Set<Word> useConstraints(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
-        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
-        Set<Word> remaining = new HashSet<>();
-        for (int c = 0; c < constraints.size(); c++) {
-            WordConstraint wordConstraint = constraints.get(c);
-            if (!wordConstraint.isEnabled()) continue;
-            if (wordConstraint.isInstanceSpecific())
-                remaining.retainAll(wordConstraint.useInstanceSpecific(candidates, original));
-            else
-                remaining.retainAll(wordConstraint.useWithPresetFields(candidates));
-            if (remaining.isEmpty())
-                return remaining;
-        }
-        return remaining;
-    }
+//    public static Set<Word> useConstraints(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
+//        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
+//        Set<Word> remaining = new HashSet<>();
+//        for (int c = 0; c < constraints.size(); c++) {
+//            WordConstraint wordConstraint = constraints.get(c);
+//            if (!wordConstraint.isEnabled()) continue;
+//            if (wordConstraint.isInstanceSpecific())
+//                remaining.retainAll(wordConstraint.useInstanceSpecific(candidates, original));
+//            else
+//                remaining.retainAll(wordConstraint.useWithPresetFields(candidates));
+//            if (remaining.isEmpty())
+//                return remaining;
+//        }
+//        return remaining;
+//    }
 
 //    private static TreeMap<Integer, WordConstraint> weakenOrRemoveLastConstraint(TreeMap<Integer, WordConstraint> constraints) {
 //        //constraints should be coming in with lowest priority first
@@ -69,6 +107,13 @@ public abstract class WordConstraintPrioritizer {
 //        else
 //            constraints.remove(constraints.firstKey());;
 //        return constraints;
+//    }
+
+//    public static Word useConstraintsTo1(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
+//        TreeSet<Word> results = (TreeSet<Word>)useConstraints(constraints, candidates, original);
+//        if (U.notNullnotEmpty(results))
+//            return results.first();
+//        return null;
 //    }
 
 }
@@ -94,7 +139,6 @@ Continuous constraints may be weakened or strengthened.
 4. Highest rhyme dbl
 5. Highest cosine distance
  */
-
 
 
 

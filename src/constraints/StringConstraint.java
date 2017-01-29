@@ -9,12 +9,12 @@ public class StringConstraint extends ObjectConstraint {
 
     public StringConstraint(Collection<String> strings, ReturnType returnType) {
         super(returnType);
-        this.objects = (HashSet)stringsToStringObjects(strings).values();
+        this.objects = new HashSet<>(stringsToStringObjects(strings).values());
     }
 
     public StringConstraint(Set<Word> words, ReturnType returnType) {
         super(returnType);
-        this.objects = (HashSet)wordsToStringObjects(words).values();
+        this.objects = new HashSet<>(wordsToStringObjects(words).values());
     }
 
     public StringConstraint(ReturnType returnType) {
@@ -49,26 +49,22 @@ public class StringConstraint extends ObjectConstraint {
         Map<Word, String> var = wordsToString(words);
         Map<Word,Object> result = new HashMap<>();
         for (Map.Entry<Word,String> entry : var.entrySet())
-            result.put(entry.getKey(), entry.getKey().toString());
+            result.put(entry.getKey(), entry.getKey().getLowerSpelling());
         return result;
     }
 
     protected static String wordToString(Word word) {
-        return word.toString();
+        return word.getLowerSpelling();
     }
 
     protected static Map<Word,String> wordsToString(Collection<Word> words) {
         Map<Word,String> result = new HashMap<>();
         for (Word w : words)
-            result.put(w, w.toString());
+            result.put(w, w.getLowerSpelling());
         return result;
     }
 
 }
-
-
-
-
 
 
 

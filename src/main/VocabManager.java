@@ -1,20 +1,13 @@
 package main;
 
-import filters.FilterUtils;
-import filters.VocabList;
 import utils.U;
-
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class VocabManager {
 
-    public static void readInVocab() {
-        FilterUtils.setCommonWords(readIn("common-filterWords.txt"));
-    }
-
-    private static VocabList readIn(String fileName) {
+    public static VocabList readIn(String fileName) {
         String filePath = U.rootPath + "local-data/vocab-lists/" + fileName;
         File file = new File(filePath);
         Set<String> set = new HashSet<>();
@@ -31,9 +24,6 @@ public abstract class VocabManager {
     }
 
 }
-
-
-
 
 
 

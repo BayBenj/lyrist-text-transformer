@@ -4,12 +4,12 @@ public abstract class Phoneme {
 
     public PhonemeEnum phonemeEnum;
 
-    public boolean isVowel() {
-        return phonemeEnum.isVowel();
-    }
-
     public Phoneme(PhonemeEnum phonemeEnum) {
         this.phonemeEnum = phonemeEnum;
+    }
+
+    public boolean isVowel() {
+        return phonemeEnum.isVowel();
     }
 
     public boolean isVoiced() {

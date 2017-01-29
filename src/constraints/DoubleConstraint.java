@@ -17,6 +17,11 @@ public abstract class DoubleConstraint extends WordConstraint {
         this.dbl = dbl;
     }
 
+    public DoubleConstraint(ModelNum comparison) {
+        super(null);
+        this.modelComparison = comparison;
+    }
+
     public DoubleConstraint(NonModelNum comparison) {
         super(null);
         this.nonModelComparison = comparison;
@@ -25,17 +30,25 @@ public abstract class DoubleConstraint extends WordConstraint {
     @Override
     public Set<Word> useWithPresetFields(Collection<Word> wordsToFilter) {
         switch ((int)dbl) {
-            case -1:
-                return this.decideNonModelComparison(wordsToFilter);
             default:
-                return this.decideModelComparison(wordsToFilter);
+                Set<Word> set = this.decideModelComparison(wordsToFilter);
+                return set;
         }
+    }
+
+    @Override
+    public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
+        this.dbl = (this.wordToSpecficDoubleType(specificWord));
+        return this.useWithPresetFields(wordsToFilter);
     }
 
     private Set<Word> decideModelComparison(Collection<Word> wordsToFilter) {
         switch (modelComparison) {
             case GREATER_OR_EQUAL:
                 return filterByGreaterOrEqual(wordsToFilter);
+            case HIGHEST:
+                Set<Word> set = filterByHighest(wordsToFilter);
+                return set;
             default:
                 return null;
         }
@@ -78,7 +91,9 @@ public abstract class DoubleConstraint extends WordConstraint {
 //        return map.keySet();
 //    }
 
-    public abstract Map<Word,Double> wordsToSpecficDoubleType(Collection<Word> wordsToFilter);
+    public abstract Map<Word,Double> wordsToSpecficDoubleType(Collection<Word> words);
+
+    public abstract Double wordToSpecficDoubleType(Word word);
 
     @Override
     public abstract boolean weaken();
@@ -137,9 +152,6 @@ public abstract class DoubleConstraint extends WordConstraint {
         this.dbl = dbl;
     }
 }
-
-
-
 
 
 

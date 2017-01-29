@@ -1,5 +1,6 @@
 package english;
 
+import elements.Punctuation;
 import rhyme.Phoneticizer;
 import rhyme.VowelPronunciation;
 import elements.Word;
@@ -69,7 +70,7 @@ public abstract class DeterminerManager {
     public static String getCorrectIndefiniteArticle(String following) {
         if (following != null && following.length() > 0) {
             if (Phoneticizer.cmuDictContains(following)) {
-            VowelPronunciation followingVowelPronunciation = Phoneticizer.getTopPronunciation(following);
+            //VowelPronunciation followingVowelPronunciation = Phoneticizer.getTopPronunciation(following);
             char firstChar = following.charAt(0);
             if (firstChar == 'a' ||
                     firstChar == 'e' ||
@@ -86,8 +87,8 @@ public abstract class DeterminerManager {
     }
 
     public static String getCorrectIndefiniteArticle(Word following) {
-        if (following != null) {
-            if (following.getPhonemes() != null && following.getPhonemes().get(0) != null) {
+        if (following != null && !(following instanceof Punctuation)) {
+            if (following.getSyllables() != null && following.getPhonemes() != null && following.getPhonemes().get(0) != null) {
                 if (following.getPhonemes().get(0).isVowel())
                     return "an";
                 else

@@ -234,7 +234,7 @@ public abstract class W2vOperations {
         for (a = 0; a < number_of_suggestions_to_show; a++) {
             if (a == 0 && number_of_suggestions_to_show > 1)
                 U.testPrint("\tword2vec found " + number_of_suggestions_to_show + " filterWords.");
-            suggestions.put(-1 * closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
+            suggestions.put(closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
         }
         return suggestions;
     }

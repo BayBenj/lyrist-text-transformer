@@ -1,13 +1,17 @@
 package songtools;
 
+import constraints.WordConstraint;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import english.Person;
+import filters.ReturnType;
+import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
 import elements.*;
+import rhyme.Rhyme;
+import rhyme.WordsByRhyme;
 import stanford.StanfordNlp;
 import utils.U;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,11 +22,10 @@ public abstract class SongScanner {
     public static SongWrapper getTemplateSong(String fileString) {
         String rawTemplateText = readFileToText(fileString);
         rawTemplateText = SongMutator.expandAllContractions(rawTemplateText);
-        rawTemplateText = SongMutator.personToPerson(rawTemplateText, Person.FIRST, Person.SECOND);
-        rawTemplateText = SongMutator.stringToString(rawTemplateText, "my", "your");
+//        rawTemplateText = SongMutator.personToPerson(rawTemplateText, Person.FIRST, Person.SECOND);
+//        rawTemplateText = SongMutator.stringToString(rawTemplateText, "my", "your");
         StanfordNlp stanford = U.getStanfordNlp();
         List<Sentence> parsedSentences = stanford.parseTextToSentences(rawTemplateText);
-        setPronunciationsForSentences(parsedSentences);
         setSyllablesForSentences(parsedSentences);
         SongWrapper templateSongWrapper = sentencesToSongWrapper(rawTemplateText, parsedSentences);
         return templateSongWrapper;
@@ -43,14 +46,6 @@ public abstract class SongScanner {
         catch (IOException e) {
             e.printStackTrace();
             return null;
-        }
-    }
-
-    public static void setPronunciationsForSentences(List<Sentence> sentences) {
-        for (Sentence sentence : sentences) {
-            for (Word word : sentence) {
-                word.setPhonemes(Phoneticizer.getPronunciationForWord(word));
-            }
         }
     }
 
@@ -251,8 +246,23 @@ public abstract class SongScanner {
         return positionedWords;
     }
 
-}
+    public static WordsByRhyme getRhymeSchemeWords(Song songToMark, LineRhymeScheme rhymeScheme) {
+        if (songToMark != null && !songToMark.getAllWords().isEmpty()) {
+            List<Word> words = songToMark.getAllWords();
+            WordsByRhyme wordsByRhyme = new WordsByRhyme();
+            for (int w = 0; w < words.size(); w++) {
+                if (rhymeScheme.contains(w)) {
+                    Word word = words.get(w);
+                    Rhyme rhyme = rhymeScheme.getRhymeByIndex(w);
+                    wordsByRhyme.putWord(rhyme, word);
+                }
+            }
+            return wordsByRhyme;
+        }
+        return null;
+    }
 
+}
 
 
 

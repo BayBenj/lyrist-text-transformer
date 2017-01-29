@@ -23,7 +23,6 @@ public abstract class SongMutator {
                     articleWord.setSpelling(correctArticle);
                     articleWord.setPos(Pos.DT);//TODO make sure this is right
                     articleWord.setNe(Ne.O);
-                    articleWord.setPhonemes(Phoneticizer.getPronunciationForWord(articleWord.getLowerSpelling().toUpperCase()));
                     articleWord.setSyllables(Phoneticizer.getSyllables(articleWord.getLowerSpelling().toUpperCase()));
                 }
             }
@@ -74,7 +73,6 @@ public abstract class SongMutator {
                     else {
                         //TODO: do a more complete copy here. Is that possible?
                         Word temp = new Word(currentWord.getLowerSpelling());
-                        temp.setPhonemes(currentWord.getPhonemes());
                         temp.setSyllables(currentWord.getSyllables());
                         temp.setPos(currentWord.getPos());
                         temp.setNe(currentWord.getNe());
