@@ -32,7 +32,7 @@ public class PerfectRhymeFilter extends ModelWordFilter {
                             super.getReturnType() == ReturnType.NON_MATCHES && !modelRhyme.equals(wordRhyme) )
                     result.add(w);
                 }
-                //Removes words with no syllables
+                //Removes filterWords with no syllables
                 else if (super.getReturnType() == ReturnType.NON_MATCHES) {
                     result.add(w);
                 }

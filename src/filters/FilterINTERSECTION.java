@@ -1,4 +1,4 @@
-package filters;
-
-public class FilterINTERSECTION extends FilterOperator {
-}
+//package filters;
+//
+//public class FilterINTERSECTION extends FilterOperator {
+//}

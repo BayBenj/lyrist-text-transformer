@@ -1,6 +1,6 @@
 package elements;
 
-public enum NamedEntity {
+public enum Ne {
 
     PERSON, ORGANIZATION, LOCATION, O, ORDINAL, DATE, TIME, DURATION, MISC, SET, UNKNOWN, NUMBER, WEEKDAY
 

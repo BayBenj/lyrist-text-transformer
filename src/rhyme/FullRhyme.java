@@ -2,7 +2,7 @@ package rhyme;
 
 import java.util.List;
 
-public class FullRhyme extends SpecificRhyme {
+public class FullRhyme extends Rhyme {
 
     public List<VowelPhoneme> perfectRhyme;
 

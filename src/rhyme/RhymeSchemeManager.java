@@ -78,25 +78,25 @@ public abstract class RhymeSchemeManager {
         return getAlternatingScheme(nLines, 1, nLines);
     }
 
-    public static LineRhymeScheme merge(LineRhymeScheme... rhymeSchemes) {
-        List<Rhyme> lineRhymes = new ArrayList<>();
-        for (LineRhymeScheme lineRhymeScheme : rhymeSchemes)
-            lineRhymes.addAll(lineRhymeScheme);
-        return new LineRhymeScheme(lineRhymes);
-    }
+//    public static LineRhymeScheme merge(LineRhymeScheme... rhymeSchemes) {
+//        List<Rhyme> lineRhymes = new ArrayList<>();
+//        for (LineRhymeScheme lineRhymeScheme : rhymeSchemes)
+//            lineRhymes.addAll(lineRhymeScheme);
+//        return new LineRhymeScheme(lineRhymes);
+//    }
+//
+//    public static LineRhymeScheme getReflection(LineRhymeScheme rhymeScheme) {
+//        List<Rhyme> lineRhymes = new ArrayList<>();
+//        for (int i = rhymeScheme.size() - 1; i > 0; i--) {
+//            lineRhymes.add(rhymeScheme.get(i));
+//        }
+//        return new LineRhymeScheme(lineRhymes);
+//    }
 
-    public static LineRhymeScheme getReflection(LineRhymeScheme rhymeScheme) {
-        List<Rhyme> lineRhymes = new ArrayList<>();
-        for (int i = rhymeScheme.size() - 1; i > 0; i--) {
-            lineRhymes.add(rhymeScheme.get(i));
-        }
-        return new LineRhymeScheme(lineRhymes);
-    }
-
-    public static LineRhymeScheme getChiasmus(LineRhymeScheme rhymeScheme) {
-        rhymeScheme.addAll(getReflection(rhymeScheme));
-        return rhymeScheme;
-    }
+//    public static LineRhymeScheme getChiasmus(LineRhymeScheme rhymeScheme) {
+//        rhymeScheme.putAll(getReflection(rhymeScheme));
+//        return rhymeScheme;
+//    }
 
     public static LineRhymeScheme getLimerick() {
         return new LineRhymeScheme("A","A","B","B","A");

@@ -1,4 +1,4 @@
-package filters;
-
-public class FilterUNION extends FilterOperator {
-}
+//package filters;
+//
+//public class FilterUNION extends FilterOperator {
+//}

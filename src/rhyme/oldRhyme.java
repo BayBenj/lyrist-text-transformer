@@ -11,8 +11,8 @@
 //    private static final long serialVersionUID = 1L;
 //    private static final double RHYME_SCORE_THRESHOLD = .6;
 //
-//    public Rhyme(int line, int pos) {
-//        super(line,pos);
+//    public Rhyme(int line, int wordsToPos) {
+//        super(line,wordsToPos);
 //    }
 //
 //    public boolean isSatisfiedBy(String t) {

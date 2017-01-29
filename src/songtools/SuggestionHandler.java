@@ -1,12 +1,12 @@
 package songtools;
 
-import constraints.Constraint;
+import constraints.WordConstraint;
 import elements.Sentence;
 import elements.Word;
-import filters.Filter;
-import filters.FilterObject;
-import filters.StringFilterEquation;
-import filters.WordFilterEquation;
+//import filters.Filter;
+//import filters.FilterObject;
+//import filters.StringFilterEquation;
+//import filters.WordFilterEquation;
 import main.ProgramArgs;
 import rhyme.Phoneticizer;
 import stanford.StanfordNlp;
@@ -18,18 +18,18 @@ public abstract class SuggestionHandler {
     private int defaultSuggestionNum = 100;
     private int defaultRhymeSuggestionNum = 1000;
 
-    //takes in word suggestions, uses filters and constraints to return individual words
+    //takes in word suggestions, uses filters and constraints to return individual filterWords
 
     //TODO make notOldWord and notRedundantWord into their own filters
 
-    //Prioritize: closeness to analogy point, rhyme, pos, named entity, all other filters (dirty words, etc)
+    //Prioritize: closeness to analogy point, rhyme, wordsToPos, named entity, all other filters (dirty filterWords, etc)
     //Prioritize: replacement on all by analogy, replacement on rhyme scheme by rhyme
     public static Word pickReplacementWord(TreeMap<Double, Word> wordSuggestions, WordReplacements wordReplacements, Word oldWord) {
         Word chosenWord;
         try {
             chosenWord = wordSuggestions.firstEntry().getValue();
 
-            //prevent the same suggestion from being used twice TODO make this a prioritized filter, just like everything else
+            //prevent the instanceSpecific suggestion from being used twice TODO make this a prioritized filterByMultiple, just like everything else
             while (wordReplacements.containsValue(chosenWord)) {
                 wordSuggestions.remove(wordSuggestions.firstKey());
                 chosenWord = wordSuggestions.firstEntry().getValue();
@@ -50,7 +50,7 @@ public abstract class SuggestionHandler {
         return chosenWord;
     }
 
-    public static Word pickReplacementWord(TreeMap<Integer, Constraint> constraints, Set<Word> words) {
+    public static Word pickReplacementWord(TreeMap<Integer, WordConstraint> constraints, Set<Word> words) {
         //TODO implement this
         return null;
     }
@@ -69,51 +69,51 @@ public abstract class SuggestionHandler {
         return closestWord;
     }
 
-    public static Map<Double, String> useStringFilters(Map<Double, String> strings, StringFilterEquation filters) {
-        StringFilterEquation currentEquation = new StringFilterEquation();
-        Set<String> currentResults = null;
-        Set<String> previousResults = null;
-        for (FilterObject filterObject : filters) {
-            currentEquation.add(filterObject);
-            if (filterObject instanceof Filter) {
-                previousResults = currentResults;
-                currentResults = currentEquation.run(strings.values());
-            }
-            if (currentResults == null || currentResults.size() == 0) {
-                currentResults = previousResults;
-                break;//TODO decide if one filter is too restrictive if it should be skipped and lower prioirity filters be used
-            }
-        }
-        if (currentResults != null && currentResults.size() > 0) {
-            strings.values().retainAll(currentResults);
-            return strings;
-        }
-        //nothing got through the filters
-        return null;
-    }
-
-    public static Map<Double, Word> useWordFilters(Map<Double, Word> words, WordFilterEquation filters) {
-        WordFilterEquation currentEquation = new WordFilterEquation();
-        Set<Word> currentResults = null;
-        Set<Word> previousResults = null;
-        for (FilterObject filterObject : filters) {
-            currentEquation.add(filterObject);
-            if (filterObject instanceof Filter) {
-                previousResults = currentResults;
-                currentResults = currentEquation.run(words.values());
-            }
-            if (currentResults == null || currentResults.size() == 0) {
-                currentResults = previousResults;
-                break;//TODO decide if one filter is too restrictive if it should be skipped and lower prioirity filters be used
-            }
-        }
-        if (currentResults != null && currentResults.size() > 0) {
-            words.values().retainAll(currentResults);
-            return words;
-        }
-        //nothing got through the filters
-        return null;
-    }
+//    public static Map<Double, String> useStringFilters(Map<Double, String> strings, StringFilterEquation filters) {
+//        StringFilterEquation currentEquation = new StringFilterEquation();
+//        Set<String> currentResults = null;
+//        Set<String> previousResults = null;
+//        for (FilterObject filterObject : filters) {
+//            currentEquation.add(filterObject);
+//            if (filterObject instanceof Filter) {
+//                previousResults = currentResults;
+//                currentResults = currentEquation.run(strings.values());
+//            }
+//            if (currentResults == null || currentResults.size() == 0) {
+//                currentResults = previousResults;
+//                break;//TODO decide if one filterByMultiple is too restrictive if it should be skipped and lower prioirity filters be used
+//            }
+//        }
+//        if (currentResults != null && currentResults.size() > 0) {
+//            strings.values().retainAll(currentResults);
+//            return strings;
+//        }
+//        //nothing got through the filters
+//        return null;
+//    }
+//
+//    public static Map<Double, Word> useWordFilters(Map<Double, Word> words, WordFilterEquation filters) {
+//        WordFilterEquation currentEquation = new WordFilterEquation();
+//        Set<Word> currentResults = null;
+//        Set<Word> previousResults = null;
+//        for (FilterObject filterObject : filters) {
+//            currentEquation.add(filterObject);
+//            if (filterObject instanceof Filter) {
+//                previousResults = currentResults;
+//                currentResults = currentEquation.run(words.values());
+//            }
+//            if (currentResults == null || currentResults.size() == 0) {
+//                currentResults = previousResults;
+//                break;//TODO decide if one filterByMultiple is too restrictive if it should be skipped and lower prioirity filters be used
+//            }
+//        }
+//        if (currentResults != null && currentResults.size() > 0) {
+//            words.values().retainAll(currentResults);
+//            return words;
+//        }
+//        //nothing got through the filters
+//        return null;
+//    }
 
     public static Map<Double, Word> stringSuggestionsToWordSuggestions(Map<Double, String> stringMapSuggestions,
                                                                        Sentence sentence,

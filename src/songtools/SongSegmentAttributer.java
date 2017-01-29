@@ -80,14 +80,14 @@
 //    Adjective density
 //    Pronoun density
 //    Other Pos density
-//    Mean number of syllables in words
-//    Standard deviation on mean number of syllables in words
+//    Mean number of syllables in filterWords
+//    Standard deviation on mean number of syllables in filterWords
 //    Top 5 phonemes
 //    Top 5 vowel phonemes
 //    Top 5 consonant phonemes
 //    Stress density
 //    Some metric that combines stress with syllable density
-//    Ratio of slang words to in-dictionary words
+//    Ratio of slang filterWords to in-dictionary filterWords
 //
 //
 //Differences between original and template on all these attributes. This requires scanning attributes of the first elements too.

@@ -1,33 +1,31 @@
 package songtools;
 
-import constraints.ConstraintPrioritizer;
+import constraints.WordConstraintManager;
+import constraints.WordConstraintPrioritizer;
 import elements.*;
-import filters.*;
 import rhyme.*;
 import utils.U;
-
 import java.util.*;
 
-public abstract class LyristReplacementManager {
-    public static Song normalReplace(SongWrapper songWrapper, ReplacementByAnalogy info) {
+public abstract class LyristReplacer {
+
+    public static Song normalReplace(SongWrapper songWrapper, ReplacementByAnalogyInfo info) {
         List<Word> marked = markWithConstraints(songWrapper.getSong(), info.getStringMarkingFilters());
-        OldWordsToSuggestions oldWordsToSuggestions = new OldWordsToSuggestions();
+        WordReplacements wordReplacements = new WordReplacements();
         for (Sentence s : songWrapper.getSentences()) {
             for (int w = 0; w < s.size(); w++) {
                 Word oldWord = s.get(w);
-                if (oldWord instanceof Punctuation || !marked.contains(oldWord) || oldWordsToSuggestions.containsKey(oldWord)) continue;
+                if (oldWord instanceof Punctuation || !marked.contains(oldWord) || wordReplacements.containsKey(oldWord)) continue;
                 Map<Double, String> cosineStrings = WordSource.w2vAnalogy(info.getW2v(), info.getOldAndNewThemes().getFirst(), info.getOldAndNewThemes().getSecond(), oldWord.getLowerSpelling(), 100);
-                cosineStrings = stringFilters(cosineStrings, info.getStringFilters());
                 Set<Word> cosineWords = stringsToWords(cosineStrings, s, oldWord, w);
-                Word chosen = terminalWordfilters(cosineWords, info.getNonRhymeWordFilters(), oldWord);
-                oldWordsToSuggestions.put(oldWord, chosen);
+                Word chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(WordConstraintManager.getNormal(), cosineWords, oldWord);
+                wordReplacements.put(oldWord, chosen);
             }
         }
-        WordReplacements wordReplacements = new WordReplacements();
         return SongMutator.replaceWords(songWrapper.getSong(), wordReplacements);
     }
 
-    public static Song rhymeReplace(SongWrapper songWrapper, ReplacementByAnalogy info) {
+    public static Song rhymeReplace(SongWrapper songWrapper, ReplacementByAnalogyInfo info) {
         WordsByRhyme oldWordsByRhyme = markRhyme(info.getRhymeSchemeFilter(), songWrapper.getSong());
         OldWordsToSuggestions oldWordsToSuggestions = new OldWordsToSuggestions();
         List<Word> marked = markWithConstraints(songWrapper.getSong(), info.getStringMarkingFilters());
@@ -135,15 +133,15 @@ public abstract class LyristReplacementManager {
     }
 
     private static Word weakenFiltersUntilBestRhymingWord(List<Set<Word>> suggestionSets, WordFilterEquation nonRhymeFilters, double rhymeThreshold) {
-        //returns the model for rhyme class A, that all other words of rhyme class A will have to rhyme with
+        //returns the model for rhyme class A, that all other filterWords of rhyme class A will have to rhyme with
         //if rhyme priority > other word selection priorities
 
-        //pick 1 suggestion that rhymes with the most / best other A words
+        //pick 1 suggestion that rhymes with the most / best other A filterWords
         Word bestRhymingWord = chooseBestWordForRhyming(suggestionSets, nonRhymeFilters, rhymeThreshold);
 
         //priority loop weakens constraints each time there is no result. This weakens other constraints at the price of optimizing rhyme.
         while (bestRhymingWord == null) {
-            nonRhymeFilters = ConstraintPrioritizer.weakenOrRemoveLastConstraint(nonRhymeFilters);
+            nonRhymeFilters = WordConstraintPrioritizer.weakenOrRemoveLastConstraint(nonRhymeFilters);
             bestRhymingWord = chooseBestWordForRhyming(suggestionSets, nonRhymeFilters, rhymeThreshold);
         }
         return bestRhymingWord;
@@ -153,7 +151,7 @@ public abstract class LyristReplacementManager {
         //Chooses the best word in its rhyme scheme (best = most rhymeable)
         //Attempts to optimize all constraints in choice of rhyming word
 
-        //input all suggestions for rhyme A words
+        //input all suggestions for rhyme A filterWords
         Word bestRhymer = null;
         int mostRhymes = Integer.MIN_VALUE;
         Set<Word> bestNonRhymeWords = new HashSet<>();
@@ -162,16 +160,16 @@ public abstract class LyristReplacementManager {
         for (Set<Word> suggestionSet : suggestionSets)
             bestNonRhymeWords.add(terminalWordfilters(nonRhymeFilters, suggestionSet));
 
-        //Of those words, find the word with the most rhymes
+        //Of those filterWords, find the word with the most rhymes
         int wordNum = 0;
         for (Word candidateBestWord : bestNonRhymeWords) {
-            //Get all words from other suggestion sets, NOT including suggestionSet of chosen word
+            //Get all filterWords from other suggestion sets, NOT including suggestionSet of chosen word
             Set<Word> allWordsFromOtherSets = new HashSet<>();
             for (int setNum = 0; setNum < suggestionSets.size(); setNum++)
                 if (setNum != wordNum)
                     allWordsFromOtherSets.addAll(suggestionSets.get(wordNum));
 
-            //See how many of those words rhyme with the candidate bestRhymer TODO later score according to whether the set's best Words rhyme?
+            //See how many of those filterWords rhyme with the candidate bestRhymer TODO later dbl according to whether the set's best Words rhyme?
             int nRhymes = getNRhymingWords(candidateBestWord, suggestionSets.get(wordNum), rhymeThreshold);
             if (nRhymes > mostRhymes) {
                 mostRhymes = nRhymes;
@@ -214,7 +212,7 @@ public abstract class LyristReplacementManager {
                                                       //,WordFilterEquation wordFilterEquation
                                             ) {
         //TODO > make suggestion tagging use the original template sentence with the new word in the old word's place.
-        //TODO > if the above technique lets too many wrong words through, change it.
+        //TODO > if the above technique lets too many wrong filterWords through, change it.
 
         Set<Word> allRhymeWords = new HashSet<>();
         for (Set<Word> set : rhymeWordsToReplace.values())
@@ -227,7 +225,7 @@ public abstract class LyristReplacementManager {
             int oldWordIndex = 0;
             for(Word oldWord : sentence) {
                 if (oldWord.getClass() != Punctuation.class) {
-                    // Replace words that are marked for replacement
+                    // Replace filterWords that are marked for replacement
                     if (    wordsToReplace.contains(oldWord) &&
                             !wordReplacements.containsKey(oldWord)) {
                         Word chosenWord = this.getReplacementWordSuggestions(
@@ -243,7 +241,7 @@ public abstract class LyristReplacementManager {
                         //Assign the word replacement
                         wordReplacements.put(oldWord, chosenWord);
                     }
-                    // Replace words that are on the rhyme scheme
+                    // Replace filterWords that are on the rhyme scheme
                     if (allRhymeWords.contains(oldWord)) {
                         Word chosenWord = this.getReplacementRhymingWordSuggestions(
                                 wordReplacements,
@@ -286,7 +284,7 @@ public abstract class LyristReplacementManager {
         stringSuggestionMap.values().retainAll(stringFilterEquation.removeMatches(new HashSet<>(stringSuggestionMap.values())));
         U.testPrintln("After string filtration: " + stringSuggestionMap.size() + " valid suggestions");
 
-        //w2v suggestions -> words
+        //w2v suggestions -> filterWords
         Map<Double, Word> wordSuggestionMap = SuggestionHandler.stringSuggestionsToWordSuggestions(stringSuggestionMap, sentence, oldWord, oldWordIndex);
 
         //Use Word filters
@@ -349,7 +347,7 @@ public abstract class LyristReplacementManager {
             extra += 0.0001;
         }
 
-        //Tag pos and ne on word2vec's suggestions
+        //Tag wordsToPos and filterNe on word2vec's suggestions
         Map<Double, Word> wordSuggestionMap = new TreeMap<>();
         if (stringSuggestionMap.size() > 0) {
             wordSuggestionMap = StanfordNlp.tagWordsWithSentenceContextWithDoubles(
@@ -406,6 +404,38 @@ public abstract class LyristReplacementManager {
 */
 
 }
+
+
+/*
+Fix:
+    Filters
+    Constraints (make these into enums? Something that can call a method for its specific filterByMultiple)
+make functions as modular as possible,
+get normal replacement and rhyme replacement to work fully.
+
+> Rename "Filters" to "Constraints"; Filters are the methods inside FilterMethods.
+Constraints can access certain methods in FilterMethods.
+Constraints can return their enum?
+Constraints can weaken themselves, return bool
+Constraints can strengthen themselves, return bool
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

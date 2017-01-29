@@ -89,10 +89,10 @@
 //    //TODO: change to private
 //    public static ArrayList<TaggedWord> cleanPos(ArrayList<TaggedWord> unclean, TaggedWord modelWord) {
 //        ArrayList<TaggedWord> clean = new ArrayList<TaggedWord>();
-//        String pos = modelWord.tag();
+//        String wordsToPos = modelWord.tag();
 //        for (int i = 0; i < unclean.size(); i++) {
 //            TaggedWord uncleanWord = unclean.get(i);
-//            if (uncleanWord.tag().equals(pos))
+//            if (uncleanWord.tag().equals(wordsToPos))
 //                clean.add(uncleanWord);
 //        }
 //        return clean;

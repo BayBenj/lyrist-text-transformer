@@ -189,7 +189,7 @@ public abstract class W2vOperations {
         if (number_of_suggestions_to_show > 1 && !word.equals("NO_WORD_YET"))
             U.testPrint("Finding word2vec suggestions similar to [" + word + "]...");
 
-        // Fill words with blank values
+        // Fill filterWords with blank values
         for (a = 0; a < number_of_suggestions_to_show; a++)
             closest_words[toIntExact(a)] = "";
 
@@ -233,7 +233,7 @@ public abstract class W2vOperations {
         Map<Double, String> suggestions = new HashMap<>();
         for (a = 0; a < number_of_suggestions_to_show; a++) {
             if (a == 0 && number_of_suggestions_to_show > 1)
-                U.testPrint("\tword2vec found " + number_of_suggestions_to_show + " words.");
+                U.testPrint("\tword2vec found " + number_of_suggestions_to_show + " filterWords.");
             suggestions.put(-1 * closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
         }
         return suggestions;
@@ -317,7 +317,7 @@ public abstract class W2vOperations {
 //
 //        String closest_word = getClosestWord(model, new W2vPoint(summedPoint, "[N/A]", inputWordVocabPositions, nOfPoints) );
 //
-//        U.testPrint("\tThe summed words gave the word: [" + closest_word + "]");
+//        U.testPrint("\tThe summed filterWords gave the word: [" + closest_word + "]");
 //
 //        return new W2vPoint(summedPoint, closest_word, inputWordVocabPositions, nOfPoints);
 //    }
@@ -431,7 +431,7 @@ public abstract class W2vOperations {
 
         prePrint(type, strings);
 
-        //Ensure that word2vec model contains all inputted words
+        //Ensure that word2vec model contains all inputted filterWords
         for (a = 0; a < nOfPoints; a++) {
             outerloop:
             for (b = 0; b < numberOfWordsInVector; b++) {
@@ -508,10 +508,10 @@ public abstract class W2vOperations {
     private static void postPrint(OperationType type, String closest_word) {
         switch (type) {
             case SUM:
-                U.testPrint("\tThe summed words added up to the word: [" + closest_word + "]");
+                U.testPrint("\tThe summed filterWords added up to the word: [" + closest_word + "]");
                 break;
             case AVERAGE:
-                U.testPrint("\tThe averaged words gave the word: [" + closest_word + "]");
+                U.testPrint("\tThe averaged filterWords gave the word: [" + closest_word + "]");
                 break;
             case ANALOGY:
                 U.testPrint("\tThe best analogous word was: [" + closest_word + "]");

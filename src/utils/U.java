@@ -27,6 +27,11 @@ public class U {//Utils
     private static long startTime;
     private static long endTime;
 
+    public static boolean notNullnotEmpty(Collection c) {
+        if (c == null || c.isEmpty())
+            return false;
+        return true;
+    }
 
     public static void startTimer() {
         startTime = System.nanoTime();

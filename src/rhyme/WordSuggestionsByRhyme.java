@@ -18,8 +18,8 @@ public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Set<Word>>> {
 //
 //    public void putWord(Rhyme rhyme, Word word) {
 //        if (this.containsKey(rhyme) && this.get(rhyme) != null && !this.get(rhyme).isEmpty()) {
-//            Set<Word> words = this.get(rhyme);
-//            words.add(word);
+//            Set<Word> filterWords = this.get(rhyme);
+//            filterWords.add(word);
 //        }
 //        else
 //            this.put(rhyme, new HashSet<>());

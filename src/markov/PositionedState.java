@@ -44,7 +44,7 @@ public class PositionedState {
 	}
 	
 	public String toString() {
-		return "pos " + position + " state " + stateIndex;
+		return "wordsToPos " + position + " state " + stateIndex;
 	}
 }
 

@@ -20,8 +20,8 @@ TODO: decide name and purpose
 
     dream               a very cool name, sounds like it means wacky, complex ideas for intentions and goals that Lyrist gets.
     plan                the concrete rules that Lyrist is bound to adhere to, or at least log or downscore a rule value whenever it breaks a rule. Could help customize filtration.
-                        Example content: stanza structure, rhyme scheme, exclude a particular word, score above .7 on flamboyancy,
-                            score below .2 on similarity to template, completely change half the lines of a stanza by using n-grams
+                        Example content: stanza structure, rhyme scheme, exclude a particular word, dbl above .7 on flamboyancy,
+                            dbl below .2 on similarity to template, completely change half the lines of a stanza by using n-grams
                             Rule: correct grammar only. Rule: pre-50's words only. Rule: 3 stanzas all in limmerick form
 
 

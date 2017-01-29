@@ -72,28 +72,28 @@
 //            sentence.add(new edu.stanford.nlp.ling.Word(w.getLowerSpelling().toLowerCase()));
 //        List<TaggedWord> tagged = tagger.tagSentence(sentence);
 //        for (int i = 0; i < line.getSize(); i++) {
-//            line.getWords().get(i).setPos(Pos.valueOf(tagged.get(i).tag()));
+//            line.getWords().get(i).setParts(Pos.valueOf(tagged.get(i).tag()));
 //        }
 ////        return line;
 //    }
 //
 //    public void tagPoSForWord(Word word) {
 //        if (word.getLowerSpelling().equals("")) {
-//            word.setPos(Pos.UNKNOWN);
+//            word.setParts(Pos.UNKNOWN);
 //            return;
 //        }
 //        String taggedString = tagger.tagString(word.getLowerSpelling().toLowerCase());
 //        taggedString = taggedString.replaceAll("\\s+","");
 //        String[] splitString = taggedString.split("_");
 //        try {
-//            word.setPos(Pos.valueOf(splitString[splitString.length - 1].toUpperCase()));
+//            word.setParts(Pos.valueOf(splitString[splitString.length - 1].toUpperCase()));
 //        }
 //        catch (IllegalArgumentException e) {
 //            e.printStackTrace();
 //            System.out.println("Word: " + word.toString());
 //            System.out.println("taggedString: " + taggedString);
 //            System.out.println("splitString: " + splitString);
-//            word.setPos(Pos.UNKNOWN);
+//            word.setParts(Pos.UNKNOWN);
 //        }
 ////        return word;
 //    }
@@ -107,14 +107,14 @@
 //                    spelling.contains("_") ||
 //                    spelling.contains(",") ||
 //                    spelling.contains("'") ){
-//                word.setPos(Pos.UNKNOWN);
+//                word.setParts(Pos.UNKNOWN);
 //            }
 //            else {
 //                String taggedString = tagger.tagString(spelling).toLowerCase();
 //                taggedString = taggedString.replaceAll("\\s+","");
 //                String[] splitString = taggedString.split("_");
 //                try {
-//                    word.setPos(Pos.valueOf(splitString[splitString.length - 1].toUpperCase()));
+//                    word.setParts(Pos.valueOf(splitString[splitString.length - 1].toUpperCase()));
 //                }
 //                catch (IllegalArgumentException e) {
 //                    System.out.println("COULDN'T FIND THE POS FOR A WORD!");
@@ -122,7 +122,7 @@
 //                    System.out.println("Word: " + spelling);
 //                    System.out.println("taggedString: " + taggedString);
 //                    System.out.println("splitString: " + splitString);
-//                    word.setPos(Pos.UNKNOWN);
+//                    word.setParts(Pos.UNKNOWN);
 //                }
 //            }
 //            result.add(new W2vWordSuggestion(word, suggestion.getCosineDistance()));

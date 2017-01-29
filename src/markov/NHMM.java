@@ -15,8 +15,8 @@ public class NHMM<T> extends AbstractMarkovModel<T>{
 	T [] states;
 	double[] logPriors;
 	double[][][] logTransitions; // first 2d matrix represents transitions from first to second position
-	int[][] inSupport; // first matrix represents the number of non-zero transition probabilities to the ith state at pos 1 in the seq 
-	int[][] outSupport; // first matrix represents the number of non-zero transition probabilities from the ith state at pos 0 in the seq
+	int[][] inSupport; // first matrix represents the number of non-zero transition probabilities to the ith state at wordsToPos 1 in the seq
+	int[][] outSupport; // first matrix represents the number of non-zero transition probabilities from the ith state at wordsToPos 0 in the seq
 	Map<T, Integer> stateIndex;
 	Random rand = new Random();
 	

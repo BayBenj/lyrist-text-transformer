@@ -4,7 +4,7 @@ import filters.*;
 import main.ProgramArgs;
 import elements.*;
 import elements.Sentence;
-import songtools.LyristReplacementManager;
+import songtools.LyristReplacer;
 import songtools.SongScanner;
 import songtools.TemplateSongEngineer;
 import songtools.WordReplacements;
@@ -38,8 +38,8 @@ public class BookOfMormonMain {
         U.setW2vCommander(w2v);
 
         BookOfMormonMain bom = new BookOfMormonMain();
-        FilterUtils.setBibleWords(bom.readInVocabList("local-data/bom/bible-words-all.txt"));
-        FilterUtils.setCommonWords(bom.readInVocabList("local-data/vocab-lists/common-words.txt"));
+        FilterUtils.setBibleWords(bom.readInVocabList("local-data/bom/bible-filterWords-all.txt"));
+        FilterUtils.setCommonWords(bom.readInVocabList("local-data/vocab-lists/common-filterWords.txt"));
         FilterUtils.setModelWords(bom.readInVocabList("local-data/w2v/models/vocab-lists/news-lyrics-bom.txt"));
 
         for (int i = 0; i < 20; i++) {
@@ -62,16 +62,16 @@ public class BookOfMormonMain {
         String officialTweet = this.stitchSentences(tweetLength);
         String originalsentences = new String(officialTweet);
 
-        //Get sentences of words
+        //Get sentences of filterWords
         List<Sentence> sentences = this.getWords(officialTweet);
 
-        //Use words in word2vec and filters
+        //Use filterWords in word2vec and filters
         officialTweet = this.useWord2VecAndWordFilters(sentences, officialTweet);
 
         //capitalize first letter
         officialTweet = this.capitalizeFirst(officialTweet);
 
-        //Split into words, use string filters
+        //Split into filterWords, use string filters
         String[] words = officialTweet.split("[^\\w\\d]");
         officialTweet = this.useStringFilters(words, officialTweet);
 
@@ -145,7 +145,7 @@ public class BookOfMormonMain {
             }
         }
 
-        //Swap geographical words
+        //Swap geographical filterWords
         stringFilters = new StringFilterEquation();
         stringFilters.add(new BomGeographyFilter(ReturnType.MATCHES));
         Set<String> geographicals = stringFilters.run(new HashSet<>(Arrays.asList(words)));
@@ -192,7 +192,7 @@ public class BookOfMormonMain {
     private String useWord2VecAndWordFilters(List<Sentence> sentences, String officialTweet) {
         TemplateSongEngineer engi = new TemplateSongEngineer();
 
-        //Get all words
+        //Get all filterWords
         Set<String> nonPunctWords = new HashSet<>();
         Map<String, Word> allWords = new HashMap<>();
         for (Sentence sentence : sentences) {
@@ -212,7 +212,7 @@ public class BookOfMormonMain {
             }
         }
 
-        //Find words that aren't in the model's vocabulary
+        //Find filterWords that aren't in the model's vocabulary
         StringFilterEquation stringFilter = new StringFilterEquation();
         stringFilter.add(new FilterINTERSECTION());
         stringFilter.add(new W2vModelVocabFilter(ReturnType.NON_MATCHES));
@@ -220,7 +220,7 @@ public class BookOfMormonMain {
         Set<String> stringsInModel = new HashSet<>(allWords.keySet());
         stringsInModel.removeAll(badStringsInModel);
 
-        //Find safe words
+        //Find safe filterWords
         WordFilterEquation wordFilterEquation = new WordFilterEquation();
         wordFilterEquation.add(new FilterINTERSECTION());
         wordFilterEquation.add(new UnsafePosForPosTaggingFilter(ReturnType.MATCHES));
@@ -236,7 +236,7 @@ public class BookOfMormonMain {
             }
         }
 
-        //Mark all markable words from template
+        //Mark all markable filterWords from template
         Set<Integer> allWordIndexes = new HashSet<Integer>();
         for (int i = 0; i < allMarkableWordsList.size(); i++)
             allWordIndexes.add(i);
@@ -245,8 +245,8 @@ public class BookOfMormonMain {
         for(int index : markedIndexes)
             markedWords.add(allMarkableWordsList.get(index));
 
-        //Replace marked words in original tweet w/ word2vec
-        LyristReplacementManager lyristReplacementManager = new LyristReplacementManager();
+        //Replace marked filterWords in original tweet w/ word2vec
+        LyristReplacer lyristReplacer = new LyristReplacer();
         Pair<String,String> pair = this.getOldAndNewThemes();
 
 //        TreeMap<Double,String> treeMap = new TreeMap<>(U.getW2vCommander().findSentiment(nonPunctWords, 1));
@@ -256,7 +256,7 @@ public class BookOfMormonMain {
 //        else
 //            theme = pair.getFirst();
 
-        WordReplacements wordReplacements = lyristReplacementManager.getWordSuggestions(markedWords,
+        WordReplacements wordReplacements = lyristReplacer.getWordSuggestions(markedWords,
                                                                             sentences,
 //                                                                            this.getBomBibleWordsFilterEquation(),
                                                                             this.getStringFilters(),

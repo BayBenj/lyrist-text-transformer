@@ -1,13 +1,8 @@
 package songtools;
 
-import filters.*;
 import intentions.SongIntentions;
 import elements.*;
-import rhyme.LineRhymeScheme;
-import rhyme.Rhyme;
 import utils.U;
-
-import java.util.*;
 
 public final class TemplateSongEngineer extends SongEngineer {
 
@@ -23,20 +18,20 @@ public final class TemplateSongEngineer extends SongEngineer {
 
         this.setIntentionBools(intentions);
         Song templateSong = templateSongWrapper.getSong();
-        ReplacementByAnalogy r = new ReplacementByAnalogy();
+        ReplacementByAnalogyInfo r = new ReplacementByAnalogyInfo();
 
-        Song generatedSong = LyristReplacementManager.normalReplace(templateSongWrapper, r);
+        Song generatedSong = LyristReplacer.normalReplace(templateSongWrapper, r);
 //
-//        //Filter out words w/ unsafe pos so they can't be marked
+//        //Filter out filterWords w/ unsafe wordsToPos so they can't be marked
 //        List<Word> allMarkableWordsList = this.getMarkableWords(templateSong);
 //
 //        //Get word indexes
 //        Set<Integer> allWordIndexes = this.getWordIndexes(allMarkableWordsList);
 //
-//        //Mark all rhyme scheme words for rhyme replacement
+//        //Mark all rhyme scheme filterWords for rhyme replacement
 //        Map<Rhyme,Set<Word>> rhymeWordsToReplace = this.markRhymeWordsToReplace(templateSong, (LineRhymeScheme)intentions.getStructuralIntentions().getRhymeScheme());
 //
-//        //Mark all normal words for normal replacement
+//        //Mark all normal filterWords for normal replacement
 //        Set<Word> normalWordsToReplace = this.markNormalWordsToReplace(allWordIndexes, allMarkableWordsList);
 //
 //        //Find/decide the old theme of this elements
@@ -45,7 +40,7 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        //Decide the new w2v analogy theme
 //        String newTheme = this.decideNewTheme(intentions);
 //
-//        //Replace marked words in template w/ word2vec
+//        //Replace marked filterWords in template w/ word2vec
 //        Song generatedSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateSongWrapper, oldTheme, newTheme, templateSong);
 
         //Manage generated text
@@ -76,72 +71,72 @@ public final class TemplateSongEngineer extends SongEngineer {
             providedCulturalIntentions = true;
     }
 
-    private Set<Integer> getWordIndexes(List<Word> allMarkableWordsList) {
-        Set<Integer> allWordIndexes = new HashSet<>();
-        for (int i = 0; i < allMarkableWordsList.size(); i++)
-            allWordIndexes.add(i);
-        return allWordIndexes;
-    }
-
-    private List<Word> getMarkableWords(Song templateSong) {
-        WordFilterEquation wordFilterEquation = FilterManager.wEq(FilterManager.getTaggingSafetyFilters());
-        List<Word> allMarkableWordsList = new ArrayList<>(templateSong.getAllWords());
-        allMarkableWordsList.retainAll(wordFilterEquation.removeMatches(new HashSet(templateSong.getAllWords())));
-        return allMarkableWordsList;
-    }
-
-    private Set<Word> markNormalWordsToReplace(Set<Integer> allWordIndexes, List<Word> allMarkableWordsList) {
-        Set<Integer> normalIndexesToReplace = SongScanner.getRandomIndexes(allWordIndexes, 1);
-        Set<Word> normalWordsToReplace = new HashSet<>();
-        Set<String> sentimentWords = new HashSet<>();
-        for (int index : normalIndexesToReplace) {
-            normalWordsToReplace.add(allMarkableWordsList.get(index));
-            sentimentWords.add(allMarkableWordsList.get(index).toString().toLowerCase());
-        }
-        return normalWordsToReplace;
-    }
-
-    private Map<Rhyme,Set<Word>> markRhymeWordsToReplace(Song song, LineRhymeScheme rhymeScheme) {
-        List<Stanza> stanzas = song.getStanzas();
-        List<Line> lines = new ArrayList<>();
-        for (Stanza stanza : stanzas) {
-            lines.addAll(stanza.getLines());
-        }
-        //TODO check if # of lines = length of rhyme scheme?
-        Map<Rhyme,Set<Word>> rhymeWordsToReplace = new HashMap<>();
-
-        for (Map.Entry<Rhyme, Set<Integer>> entry : rhymeScheme.entrySet()) {
-            for (Integer i : entry.getValue()) {
-                Line line = lines.get(i);
-                if (rhymeWordsToReplace.containsKey(entry.getKey())) {
-                    Set<Word> words = rhymeWordsToReplace.get(entry.getKey());
-                    words.add(line.getAllWords().get(line.getSize() - 1));
-                }
-                else {
-                    Set<Word> words = new HashSet<>();
-                    words.add(line.getAllWords().get(line.getSize() - 1));
-                    rhymeWordsToReplace.put(entry.getKey(), words);
-                }
-            }
-        }
-        return rhymeWordsToReplace;
-    }
-
-    private String decideOldTheme() {
-        String oldTheme = "sorrow";//default
-        //oldTheme = ((TreeMap<Double,String>)U.getW2vCommander().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the same as the old theme?)
-        return oldTheme;
-    }
-
-    private String decideNewTheme(SongIntentions intentions) {
-        String newTheme = "happiness";//default
-        if (providedEmotionalIntentions)
-            newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
-        return newTheme;
-    }
+//    private Set<Integer> getWordIndexes(List<Word> allMarkableWordsList) {
+//        Set<Integer> allWordIndexes = new HashSet<>();
+//        for (int i = 0; i < allMarkableWordsList.size(); i++)
+//            allWordIndexes.add(i);
+//        return allWordIndexes;
+//    }
+//
+//    private List<Word> getMarkableWords(Song templateSong) {
+//        WordFilterEquation wordFilterEquation = FilterManager.wEq(FilterManager.getTaggingSafetyFilters());
+//        List<Word> allMarkableWordsList = new ArrayList<>(templateSong.getAllWords());
+//        allMarkableWordsList.retainAll(wordFilterEquation.removeMatches(new HashSet(templateSong.getAllWords())));
+//        return allMarkableWordsList;
+//    }
+//
+//    private Set<Word> markNormalWordsToReplace(Set<Integer> allWordIndexes, List<Word> allMarkableWordsList) {
+//        Set<Integer> normalIndexesToReplace = SongScanner.getRandomIndexes(allWordIndexes, 1);
+//        Set<Word> normalWordsToReplace = new HashSet<>();
+//        Set<String> sentimentWords = new HashSet<>();
+//        for (int index : normalIndexesToReplace) {
+//            normalWordsToReplace.add(allMarkableWordsList.get(index));
+//            sentimentWords.add(allMarkableWordsList.get(index).toString().toLowerCase());
+//        }
+//        return normalWordsToReplace;
+//    }
+//
+//    private Map<Rhyme,Set<Word>> markRhymeWordsToReplace(Song song, LineRhymeScheme rhymeScheme) {
+//        List<Stanza> stanzas = song.getStanzas();
+//        List<Line> lines = new ArrayList<>();
+//        for (Stanza stanza : stanzas) {
+//            lines.addAll(stanza.getLines());
+//        }
+//        //TODO check if # of lines = length of rhyme scheme?
+//        Map<Rhyme,Set<Word>> rhymeWordsToReplace = new HashMap<>();
+//
+//        for (Map.Entry<Rhyme, Set<Integer>> entry : rhymeScheme.entrySet()) {
+//            for (Integer i : entry.getValue()) {
+//                Line line = lines.get(i);
+//                if (rhymeWordsToReplace.containsKey(entry.getKey())) {
+//                    Set<Word> words = rhymeWordsToReplace.get(entry.getKey());
+//                    words.add(line.getAllWords().get(line.getSize() - 1));
+//                }
+//                else {
+//                    Set<Word> words = new HashSet<>();
+//                    words.add(line.getAllWords().get(line.getSize() - 1));
+//                    rhymeWordsToReplace.put(entry.getKey(), words);
+//                }
+//            }
+//        }
+//        return rhymeWordsToReplace;
+//    }
+//
+//    private String decideOldTheme() {
+//        String oldTheme = "sorrow";//default
+//        //oldTheme = ((TreeMap<Double,String>)U.getW2vCommander().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the instanceSpecific as the old theme?)
+//        return oldTheme;
+//    }
+//
+//    private String decideNewTheme(SongIntentions intentions) {
+//        String newTheme = "happiness";//default
+//        if (providedEmotionalIntentions)
+//            newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
+//        return newTheme;
+//    }
 
 //    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, SongWrapper templateSongWrapper, String oldTheme, String newTheme, Song templateSong) {
-//        LyristReplacementManager replacementManager = new LyristReplacementManager();
+//        LyristReplacer replacementManager = new LyristReplacer();
 //        replacementManager.setnSuggestionsToPrint(100);
 //        WordReplacements wordReplacements = replacementManager.getWordSuggestions(
 //                normalWordsToReplace,
@@ -406,7 +401,7 @@ TODO > Consider weakening theme, multiply it by a theme-weakening factor.
 TODO > Ensure that my vector bins have every word that the pop-star database has with vocab lists
 TODO > Write distance() script for word2vec models
 
-LyristReplacement
+LyristReplacementInfo
 TODO > If cosine distance is low enough, use different replacement rather than an analogous replacement.
 TODO > Consider allowing for multiple analogies to affect one stanza; this word get analogy A, this other word gets analogy B, etc.
 

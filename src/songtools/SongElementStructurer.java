@@ -25,7 +25,7 @@
 //            List<TaggedWord> taggedWords = U.getStanfordNlp().tagPosForRawSong(rawSong);
 //            List<Word> allWords = element.getAllWords();
 //            for (int i = 0; i < allWords.size(); i++) {
-//                allWords.get(i).setPos(Pos.valueOf(taggedWords.get(i).tag()));
+//                allWords.get(i).setParts(Pos.valueOf(taggedWords.get(i).tag()));
 //            }
 //        }
 //    }

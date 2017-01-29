@@ -1,7 +1,7 @@
-package filters;
-
-public enum FilterType {
-
-    MODEL, WORD
-
-}
+//package filters;
+//
+//public enum FilterType {
+//
+//    MODEL, WORD
+//
+//}

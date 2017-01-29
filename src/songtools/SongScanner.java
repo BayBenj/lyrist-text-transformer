@@ -89,7 +89,7 @@ public abstract class SongScanner {
                 ArrayList<String> rawWords = new ArrayList<>(Arrays.asList(rawLine.split("\\s")));
                 for (int k = 0; k < rawWords.size(); k++) {
 
-                    // if current sentence is the same as the parsed sentence
+                    // if current sentence is the instanceSpecific as the parsed sentence
                     if (currentStringSentence.toString().equals(parsedSentences.get(currentSentenceIndex).toString().replaceAll("[^\\w\\d\\s]", ""))) {
                         currentStringSentence = new Sentence();
                         sentenceWordIndex = 0;
@@ -128,7 +128,7 @@ public abstract class SongScanner {
                 String spelling = token.get(CoreAnnotations.TextAnnotation.class);
                 Word resultWord = new Word(spelling);
                 resultWord.setPos(Pos.valueOf(token.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
-                resultWord.setNe(NamedEntity.valueOf(token.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
+                resultWord.setNe(Ne.valueOf(token.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
                 resultSentence.add(resultWord);
             }
             resultSentences.add(resultSentence);
@@ -150,7 +150,7 @@ public abstract class SongScanner {
 //        //Remove blacklisted indexes from whiteListIndexes
 //        for (int i = 0; i < originalIndexes.size(); i++) {
 //            Word w = originalIndexes.get(i);
-//            Pos pos = w.getPos();
+//            Pos wordsToPos = w.getParts();
 //            String spelling = w.getLowerSpelling().toLowerCase();
 //            if (
 ////                    spelling.equals("it's") ||
@@ -177,38 +177,38 @@ public abstract class SongScanner {
 ////                    spelling.equals("haven't") ||
 //
 //                    // manageable parts of speech
-//                    (       pos != Pos.CD &&
-//                            pos != Pos.JJ &&
-//                            pos != Pos.JJR &&
-//                            pos != Pos.JJS &&
-//                            pos != Pos.NN &&
-//                            pos != Pos.NNS &&
-//                            pos != Pos.NNP &&
-//                            pos != Pos.NNPS &&
-//                            pos != Pos.RB &&
-//                            pos != Pos.RBR &&
-//                            pos != Pos.RBS &&
-//                            pos != Pos.UH
+//                    (       wordsToPos != Pos.CD &&
+//                            wordsToPos != Pos.JJ &&
+//                            wordsToPos != Pos.JJR &&
+//                            wordsToPos != Pos.JJS &&
+//                            wordsToPos != Pos.NN &&
+//                            wordsToPos != Pos.NNS &&
+//                            wordsToPos != Pos.NNP &&
+//                            wordsToPos != Pos.NNPS &&
+//                            wordsToPos != Pos.RB &&
+//                            wordsToPos != Pos.RBR &&
+//                            wordsToPos != Pos.RBS &&
+//                            wordsToPos != Pos.UH
 //
 ////                            &&
-////                            pos != Pos.VB &&
-////                            pos != Pos.VBD &&
-////                            pos != Pos.VBG &&
-////                            pos != Pos.VBN &&
-////                            pos != Pos.VBP &&
-////                            pos != Pos.VBZ
+////                            wordsToPos != Pos.VB &&
+////                            wordsToPos != Pos.VBD &&
+////                            wordsToPos != Pos.VBG &&
+////                            wordsToPos != Pos.VBN &&
+////                            wordsToPos != Pos.VBP &&
+////                            wordsToPos != Pos.VBZ
 //
 //                            // tricky parts of speech
-////                    pos == Pos.TO ||
-////                    pos == Pos.IN ||
-////                    pos == Pos.PRP ||
-////                    pos == Pos.WRB ||
-////                    pos == Pos.CC ||
-////                    pos == Pos.DT ||
-////                    pos == Pos.EX ||
-////                    pos == Pos.EX ||
-////                    pos == Pos.PRP$ ||
-////                    pos == Pos.UNKNOWN
+////                    wordsToPos == Pos.TO ||
+////                    wordsToPos == Pos.IN ||
+////                    wordsToPos == Pos.PRP ||
+////                    wordsToPos == Pos.WRB ||
+////                    wordsToPos == Pos.CC ||
+////                    wordsToPos == Pos.DT ||
+////                    wordsToPos == Pos.EX ||
+////                    wordsToPos == Pos.EX ||
+////                    wordsToPos == Pos.PRP$ ||
+////                    wordsToPos == Pos.UNKNOWN
 //                    )
 //                    )
 //                whiteListIndexes.remove(i);

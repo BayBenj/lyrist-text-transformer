@@ -1,7 +1,7 @@
-package filters;
-
-public enum Operator {
-
-    UNION, INTERSECTION, DIFFERENCE
-
-}
+//package filters;
+//
+//public enum Operator {
+//
+//    UNION, INTERSECTION, DIFFERENCE
+//
+//}

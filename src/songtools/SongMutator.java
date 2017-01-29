@@ -22,7 +22,7 @@ public abstract class SongMutator {
                     Word articleWord = words.get(i);
                     articleWord.setSpelling(correctArticle);
                     articleWord.setPos(Pos.DT);//TODO make sure this is right
-                    articleWord.setNe(NamedEntity.O);
+                    articleWord.setNe(Ne.O);
                     articleWord.setPhonemes(Phoneticizer.getPronunciationForWord(articleWord.getLowerSpelling().toUpperCase()));
                     articleWord.setSyllables(Phoneticizer.getSyllables(articleWord.getLowerSpelling().toUpperCase()));
                 }
@@ -113,10 +113,10 @@ public abstract class SongMutator {
         all other punctuation is hidden
          */
         //TODO implement
-//        List<Word> words = se.getAllWords();
-//        for (int i = 0; i < words.size(); i++) {
-//            if (words.get(i) instanceof Punctuation) {
-//                ((Punctuation) words.get(i)).unhide();
+//        List<Word> filterWords = se.getAllWords();
+//        for (int i = 0; i < filterWords.size(); i++) {
+//            if (filterWords.get(i) instanceof Punctuation) {
+//                ((Punctuation) filterWords.get(i)).unhide();
 //            }
 //        }
     }
@@ -151,7 +151,7 @@ public abstract class SongMutator {
                 String expansion = builder.toString();
                 if (capitalized)
                     expansion = expansion.substring(0, 1).toUpperCase() + expansion.substring(1);
-                rawString = rawString.replaceAll(string, expansion);//TODO ensure to only replace full words, not the letter sequence inside
+                rawString = rawString.replaceAll(string, expansion);//TODO ensure to only replace full filterWords, not the letter sequence inside
             }
         }
         return rawString;

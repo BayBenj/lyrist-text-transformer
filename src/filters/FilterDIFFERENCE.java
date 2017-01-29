@@ -1,4 +1,4 @@
-package filters;
-
-public class FilterDIFFERENCE extends FilterOperator {
-}
+//package filters;
+//
+//public class FilterDIFFERENCE extends FilterOperator {
+//}

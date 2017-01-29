@@ -1,8 +1,16 @@
 package rhyme;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pronunciation extends ArrayList<Phoneme> {
+
+    public List<PhonemeEnum> getPhonemeEnums() {
+        List<PhonemeEnum> result = new ArrayList<>();
+        for (Phoneme p : this)
+            result.add(p.getPhonemeEnum());
+        return result;
+    }
 
     @Override
     public String toString() {

@@ -1,293 +1,293 @@
-package filters;
-
-import java.util.*;
-
-public abstract class FilterEquation extends ArrayList<FilterObject> {
-
-    protected Operator currentOperator = Operator.INTERSECTION;
-
-    protected Operator getOperatorEnum(FilterOperator operator) {
-        if (operator instanceof FilterINTERSECTION)
-            return Operator.INTERSECTION;
-        else if (operator instanceof FilterUNION)
-            return Operator.UNION;
-        else if (operator instanceof FilterDIFFERENCE)
-            return Operator.DIFFERENCE;
-        else
-            return null;
-    }
-
-    public boolean has(Class filterClass) {
-        for (FilterObject filterObject : this)
-            if (filterObject instanceof Filter && filterObject.getClass() == filterClass)
-                return true;
-        return false;
-    }
-
-    public FilterObject getFirst(Class targetClass) {
-        for (FilterObject filterObject : this)
-            if (filterObject instanceof Filter && filterObject.getClass() == targetClass)
-                return filterObject;
-        return null;
-    }
-
-//    public FilterEquation(FilterObject... filterObjects) {
-//        this.setFilterEquation(filterObjects);
-//    }
-
-//    //TODO > Find better way than passing in a class for this method
-//    public void setFilterEquation(List<FilterObject> filterObjects) {
-//        for (FilterObject filterObject : filterObjects)
-//            this.add(filterObject);
+//package filters;
+//
+//import java.util.*;
+//
+//public abstract class FilterEquation extends ArrayList<FilterObject> {
+//
+//    protected Operator currentOperator = Operator.INTERSECTION;
+//
+//    protected Operator getOperatorEnum(FilterOperator operator) {
+//        if (operator instanceof FilterINTERSECTION)
+//            return Operator.INTERSECTION;
+//        else if (operator instanceof FilterUNION)
+//            return Operator.UNION;
+//        else if (operator instanceof FilterDIFFERENCE)
+//            return Operator.DIFFERENCE;
+//        else
+//            return null;
 //    }
 //
-//    //TODO > Find better way than passing in a class for this method
-//    public void setFilterEquation(FilterObject... filterObjects) {
-//        for (FilterObject filterObject : filterObjects)
-//            this.add(filterObject);
-////        Set<Filter> filters = new HashSet<>();
-////        for (FilterObject filterObject : filterObjects) {
-////            if (filterObject instanceof FilterOperator) {
+//    public boolean has(Class filterClass) {
+//        for (FilterObject filterObject : this)
+//            if (filterObject instanceof Filter && filterObject.getClass() == filterClass)
+//                return true;
+//        return false;
+//    }
+//
+//    public FilterObject getFirst(Class targetClass) {
+//        for (FilterObject filterObject : this)
+//            if (filterObject instanceof Filter && filterObject.getClass() == targetClass)
+//                return filterObject;
+//        return null;
+//    }
+//
+////    public FilterEquation(FilterObject... filterObjects) {
+////        this.setFilterEquation(filterObjects);
+////    }
+//
+////    //TODO > Find better way than passing in a class for this method
+////    public void setFilterEquation(List<FilterObject> filterObjects) {
+////        for (FilterObject filterObject : filterObjects)
+////            this.add(filterObject);
+////    }
 ////
-////            }
-////            else if (filterObject instanceof Filter) {
+////    //TODO > Find better way than passing in a class for this method
+////    public void setFilterEquation(FilterObject... filterObjects) {
+////        for (FilterObject filterObject : filterObjects)
+////            this.add(filterObject);
+//////        Set<Filter> filters = new HashSet<>();
+//////        for (FilterObject filterObject : filterObjects) {
+//////            if (filterObject instanceof FilterOperator) {
+//////
+//////            }
+//////            else if (filterObject instanceof Filter) {
+//////
+//////            }
 ////
-////            }
+////
+////
+////
+//////            if (filterObject instanceof DictionaryFilter)
+//////                    filters.add(new DictionaryFilter());
+//////            else if (filterObject instanceof FrequencyFilter)
+//////                    filters.add(new FrequencyFilter());
+//////            else if (filterObject instanceof BallparkFilter)
+//////                    filters.add(new BallparkFilter());
+//////            else if (filterObject instanceof PosMatchFilter)
+//////                    filters.add(new PosMatchFilter());
+//////            else if (filterObject instanceof DistastefulnessFilter)
+//////                    filters.add(new DistastefulnessFilter());
+//////            else if (filterObject instanceof RhymeScoreFilter)
+//////                    filters.add(new RhymeScoreFilter());
+//////            else if (filterObject instanceof BadStringFilter)
+//////                    filters.add(new BadStringFilter());
+//////            else if (filterObject instanceof NeMatchFilter)
+//////                    filters.add(new NeMatchFilter());
+//////            else if (filterObject instanceof UnsafePosForPosTaggingFilter)
+//////                    filters.add(new UnsafePosForPosTaggingFilter());
+//////            else {
+//////                System.out.println("ERROR, DIDN'T RECOGNIZE FILTER NAME!");
+//////                //TODO throw Filter not found Exception
+//////            }
+//////        }
+//////        this.setFilterObjects(filters);
+////    }
 //
-//
-//
-//
-////            if (filterObject instanceof DictionaryFilter)
-////                    filters.add(new DictionaryFilter());
-////            else if (filterObject instanceof FrequencyFilter)
-////                    filters.add(new FrequencyFilter());
-////            else if (filterObject instanceof BallparkFilter)
-////                    filters.add(new BallparkFilter());
-////            else if (filterObject instanceof PosMatchFilter)
-////                    filters.add(new PosMatchFilter());
-////            else if (filterObject instanceof DistastefulnessFilter)
-////                    filters.add(new DistastefulnessFilter());
-////            else if (filterObject instanceof RhymeScoreFilter)
-////                    filters.add(new RhymeScoreFilter());
-////            else if (filterObject instanceof BadStringFilter)
-////                    filters.add(new BadStringFilter());
-////            else if (filterObject instanceof NeMatchFilter)
-////                    filters.add(new NeMatchFilter());
-////            else if (filterObject instanceof UnsafePosForPosTaggingFilter)
-////                    filters.add(new UnsafePosForPosTaggingFilter());
-////            else {
-////                System.out.println("ERROR, DIDN'T RECOGNIZE FILTER NAME!");
-////                //TODO throw Filter not found Exception
-////            }
+////    public FiltrationResults filterWordSuggestions(Set<W2vWordSuggestion> unfilteredWords) {
+////        Utils.testPrintln("Entering filterWordSuggestions");
+////        ArrayList<HashSet<W2vWordSuggestion>> filteredInMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
+////        ArrayList<HashSet<W2vWordSuggestion>> filteredOutMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
+////        for (WordFilter wordFilter : this.filterObjects) {
+////            FiltrationResults filtrationResults = wordFilter.filterWords(unfilteredWords);
+////            filteredInMaps.add(filtrationResults.getFilteredIn());
+////            filteredOutMaps.add(filtrationResults.getFilteredOut());
 ////        }
-////        this.setFilterObjects(filters);
-//    }
-
-//    public FiltrationResults filterWordSuggestions(Set<W2vWordSuggestion> unfilteredWords) {
-//        Utils.testPrintln("Entering filterWordSuggestions");
-//        ArrayList<HashSet<W2vWordSuggestion>> filteredInMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
-//        ArrayList<HashSet<W2vWordSuggestion>> filteredOutMaps = new ArrayList<HashSet<W2vWordSuggestion>>();
-//        for (WordFilter wordFilter : this.filterObjects) {
-//            FiltrationResults filtrationResults = wordFilter.filterWords(unfilteredWords);
-//            filteredInMaps.add(filtrationResults.getFilteredIn());
-//            filteredOutMaps.add(filtrationResults.getFilteredOut());
-//        }
-//        HashSet<W2vWordSuggestion> intersectionIn = new HashSet<W2vWordSuggestion>();
-//        HashSet<W2vWordSuggestion> intersectionOut = new HashSet<W2vWordSuggestion>();
-//        intersectionIn.retainAll(filteredInMaps);
-//        intersectionOut.retainAll(filteredOutMaps);
-//        return new FiltrationResults(intersectionIn, intersectionOut);
-//        //TODO: Make sure this map intersection works
-//    }
+////        HashSet<W2vWordSuggestion> intersectionIn = new HashSet<W2vWordSuggestion>();
+////        HashSet<W2vWordSuggestion> intersectionOut = new HashSet<W2vWordSuggestion>();
+////        intersectionIn.retainAll(filteredInMaps);
+////        intersectionOut.retainAll(filteredOutMaps);
+////        return new FiltrationResults(intersectionIn, intersectionOut);
+////        //TODO: Make sure this map intersection works
+////    }
+////
+////    public FiltrationResults filterWordSuggestionsWithModel(Set<W2vWordSuggestion> unfilteredWords, Word modelWord) {
+////        Utils.testPrintln("Entering filterWordSuggestionsWithModel");
+////        ArrayList<HashSet<W2vWordSuggestion>> filteredInSets = new ArrayList<HashSet<W2vWordSuggestion>>();
+////        ArrayList<HashSet<W2vWordSuggestion>> filteredOutSets = new ArrayList<HashSet<W2vWordSuggestion>>();
+////        for (WordFilter wordFilter : this.filterObjects) {
+////            FiltrationResults filtrationResults;
+////            //TODO FIX THIS AWFUL FILTRATION SYSTEM
+////            if (wordFilter instanceof PosMatchFilter) {
+////                PosMatchFilter filterWithModel = (PosMatchFilter)wordFilter;
+////                filtrationResults =  filterWithModel.filterWords(unfilteredWords, modelWord);
+////
+////            }
+////            else if (wordFilter instanceof NeMatchFilter) {
+////                NeMatchFilter filterWithModel = (NeMatchFilter)wordFilter;
+////                filtrationResults = filterWithModel.filterWords(unfilteredWords, modelWord);
+////            }
+////            else {
+////                filtrationResults = wordFilter.filterWords(unfilteredWords);
+////            }
+////            filteredInSets.add(filtrationResults.getFilteredIn());
+////            filteredOutSets.add(filtrationResults.getFilteredOut());
+////        }
+////        HashSet<W2vWordSuggestion> intersectionIn = filteredInSets.get(0);
+////        HashSet<W2vWordSuggestion> unionOut = filteredOutSets.get(0);
+////        for (int i = 1; i < this.filterObjects.size(); i++) {
+////            intersectionIn.retainAll(filteredInSets.get(i));
+////            unionOut.addAll(filteredOutSets.get(i));
+////        }
+////        return new FiltrationResults(intersectionIn, unionOut);
+////        //TODO: Make sure this map intersection works
+////    }
 //
-//    public FiltrationResults filterWordSuggestionsWithModel(Set<W2vWordSuggestion> unfilteredWords, Word modelWord) {
-//        Utils.testPrintln("Entering filterWordSuggestionsWithModel");
-//        ArrayList<HashSet<W2vWordSuggestion>> filteredInSets = new ArrayList<HashSet<W2vWordSuggestion>>();
-//        ArrayList<HashSet<W2vWordSuggestion>> filteredOutSets = new ArrayList<HashSet<W2vWordSuggestion>>();
-//        for (WordFilter wordFilter : this.filterObjects) {
-//            FiltrationResults filtrationResults;
-//            //TODO FIX THIS AWFUL FILTRATION SYSTEM
-//            if (wordFilter instanceof PosMatchFilter) {
-//                PosMatchFilter filterWithModel = (PosMatchFilter)wordFilter;
-//                filtrationResults =  filterWithModel.filterWords(unfilteredWords, modelWord);
 //
-//            }
-//            else if (wordFilter instanceof NeMatchFilter) {
-//                NeMatchFilter filterWithModel = (NeMatchFilter)wordFilter;
-//                filtrationResults = filterWithModel.filterWords(unfilteredWords, modelWord);
-//            }
-//            else {
-//                filtrationResults = wordFilter.filterWords(unfilteredWords);
-//            }
-//            filteredInSets.add(filtrationResults.getFilteredIn());
-//            filteredOutSets.add(filtrationResults.getFilteredOut());
-//        }
-//        HashSet<W2vWordSuggestion> intersectionIn = filteredInSets.get(0);
-//        HashSet<W2vWordSuggestion> unionOut = filteredOutSets.get(0);
-//        for (int i = 1; i < this.filterObjects.size(); i++) {
-//            intersectionIn.retainAll(filteredInSets.get(i));
-//            unionOut.addAll(filteredOutSets.get(i));
-//        }
-//        return new FiltrationResults(intersectionIn, unionOut);
-//        //TODO: Make sure this map intersection works
-//    }
-
-
-}
-
-
-/*
-TODO > Change ArrayList<TaggedWord> to HashSet<TaggedWord>, figure out how to use comparators
- */
-
-
-
-
-
-/*
-Similar to villain
-Original suggestions: bretch, baddie, terrible
-POS filterWords: returns bretch, baddie
-Dirty word filterWords: baddie, terrible
-
-Intersect sets for baddie
-
-Set<String> s1;
-Set<String> s2;
-Set<String> s3;
-Set<String> intersection = new HashSet<String>();
-ArrayList<Set<String>> individualFilteredSuggestions = new ArrayList<Set<String>>();
-individualFilteredSuggestions.add(s1);
-individualFilteredSuggestions.add(s2);
-individualFilteredSuggestions.add(s3);
-
-intersection.retainAll(individualFilteredSuggestions);
- */
-
-
-/*
-The way to store uncosined lyrics
-Set:
-    TaggedWord
- */
-
-
-/*
-The way to store cosined lyrics
-Map:
-    Key:    cosine distance
-    Value:  TaggedWord
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//}
+//
+//
+///*
+//TODO > Change ArrayList<TaggedWord> to HashSet<TaggedWord>, figure out how to use comparators
+// */
+//
+//
+//
+//
+//
+///*
+//Similar to villain
+//Original suggestions: bretch, baddie, terrible
+//POS filterWords: returns bretch, baddie
+//Dirty word filterWords: baddie, terrible
+//
+//Intersect sets for baddie
+//
+//Set<String> s1;
+//Set<String> s2;
+//Set<String> s3;
+//Set<String> intersection = new HashSet<String>();
+//ArrayList<Set<String>> individualFilteredSuggestions = new ArrayList<Set<String>>();
+//individualFilteredSuggestions.add(s1);
+//individualFilteredSuggestions.add(s2);
+//individualFilteredSuggestions.add(s3);
+//
+//intersection.retainAll(individualFilteredSuggestions);
+// */
+//
+//
+///*
+//The way to store uncosined lyrics
+//Set:
+//    TaggedWord
+// */
+//
+//
+///*
+//The way to store cosined lyrics
+//Map:
+//    Key:    cosine distance
+//    Value:  TaggedWord
+// */
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//

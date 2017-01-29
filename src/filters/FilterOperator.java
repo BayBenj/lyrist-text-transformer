@@ -1,4 +1,4 @@
-package filters;
-
-public abstract class FilterOperator extends FilterObject {
-}
+//package filters;
+//
+//public abstract class FilterOperator extends FilterObject {
+//}

@@ -18,7 +18,7 @@ public class SparseNHMM<T> extends AbstractMarkovModel<T>{
 	T [] states;
 	Map<Integer, Double> logPriors;
 	List<Map<Integer, Map<Integer,Double>>> logTransitions; // first 2d matrix represents transitions from first to second position
-	List<Map<Integer, Integer>> inSupport; // first matrix represents the number of non-zero transition probabilities to the ith state at pos 1 in the seq 
+	List<Map<Integer, Integer>> inSupport; // first matrix represents the number of non-zero transition probabilities to the ith state at wordsToPos 1 in the seq
 	Map<T, Integer> stateIndex;
 	Random rand = new Random();
 	

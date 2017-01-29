@@ -3,7 +3,7 @@ package rhyme;
 import java.util.List;
 
 
-public class PhonemeRhyme extends SpecificRhyme {
+public class PhonemeRhyme extends Rhyme {
 
     public List<PhonemeEnum> phonemeEnumRhyme;
 

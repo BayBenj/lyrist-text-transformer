@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class VocabManager {
 
     public static void readInVocab() {
-        FilterUtils.setCommonWords(readIn("common-words.txt"));
+        FilterUtils.setCommonWords(readIn("common-filterWords.txt"));
     }
 
     private static VocabList readIn(String fileName) {

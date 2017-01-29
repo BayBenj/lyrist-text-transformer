@@ -21,7 +21,7 @@ public class StructuralIntention extends RecursiveIntention {
 			Syllables
 			Stresses
 		Full patterns
-			Grammatical structure (more general than pos)
+			Grammatical structure (more general than wordsToPos)
 			Rhyme scheme (more general than phonemes)
 			Meter (more general than syllables)
 		Structural stats

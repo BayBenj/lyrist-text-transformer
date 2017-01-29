@@ -78,7 +78,7 @@ public class Word2VecTester {
     private static Map<Double, String> sum() {
         String originalWords = "";
         String word = "";
-        System.out.print("Original words, type DONE when done: ");
+        System.out.print("Original filterWords, type DONE when done: ");
         while (!word.equals("DONE")) {
             originalWords += " " + word;
             word = input.next();
@@ -102,7 +102,7 @@ public class Word2VecTester {
     private static Map<Double, String> average() {
         String originalWords = "";
         String word = "";
-        System.out.print("Original words, type DONE when done: ");
+        System.out.print("Original filterWords, type DONE when done: ");
         while (!word.equals("DONE")) {
             originalWords += " " + word;
             word = input.next();

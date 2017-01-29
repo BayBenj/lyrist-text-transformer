@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SyllableGroup extends ArrayList<Syllable> {
 
-    //Can represent the syllables of 1 or more words
+    //Can represent the syllables of 1 or more filterWords
 
     public List<VowelPhoneme> getVowels() {
         List<VowelPhoneme> vowels = new ArrayList<>();

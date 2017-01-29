@@ -27,10 +27,10 @@ public class StanfordNlp {
 
     private static StanfordCoreNLP pipeline;
     private static final String INPUT_TYPE = "annotators";
-    private static final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner";
-//    private final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner, parse, dcoref";
+    private static final String ANNOTATORS = "tokenize, ssplit, wordsToPos, lemma, ner";
+//    private final String ANNOTATORS = "tokenize, ssplit, wordsToPos, lemma, ner, parse, dcoref";
     //private static final MaxentTagger tagger = new MaxentTagger(U.rootPath + "lib/stanford-parser/3.6.0/libexec/models/wsj-0-18-bidirectional-nodistsim.tagger");
-    //private final MaxentTagger tagger = new MaxentTagger(U.rootPath + "local-data/models/pos-tagger/english-left3words/english-bidirectional-distsim.tagger");
+    //private final MaxentTagger tagger = new MaxentTagger(U.rootPath + "local-data/models/wordsToPos-tagger/english-left3words/english-bidirectional-distsim.tagger");
     private static DocumentPreprocessor documentPreprocessor;
     private static final TokenizerFactory<CoreLabel> ptbTokenizerFactory = PTBTokenizer.factory(new CoreLabelTokenFactory(), "untokenizable=noneKeep");
     AbstractSequenceClassifier<CoreLabel> classifier = null;
@@ -162,7 +162,7 @@ public class StanfordNlp {
         for (CoreMap tempCoreMap : sentences) {
             Sentence tempSentence = new Sentence();
             tempSentence.setCoreMap(tempCoreMap);
-            // traversing the words in the current sentence
+            // traversing the filterWords in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
             for (CoreLabel token : tempCoreMap.get(CoreAnnotations.TokensAnnotation.class)) {
                 // this is the text of the token
@@ -181,10 +181,10 @@ public class StanfordNlp {
 
                     try {
                         Pos.valueOf(pos);
-                        NamedEntity.valueOf(ne);
+                        Ne.valueOf(ne);
                     }
                     catch (IllegalArgumentException e) {
-                        //System.out.println("BAD POS OR NE TOKEN: " + pos + " or " + ne + " FOR THE WORD: " + spelling);
+                        //System.out.println("BAD POS OR NE TOKEN: " + wordsToPos + " or " + filterNe + " FOR THE WORD: " + spelling);
                         //e.printStackTrace();
                         spelling = "";
                     }
@@ -211,14 +211,14 @@ public class StanfordNlp {
                         //Make a new word object
                         Word tempWord = new Word(spelling);
                         tempWord.setPos(Pos.valueOf(pos));
-                        tempWord.setNe(NamedEntity.valueOf(ne));
+                        tempWord.setNe(Ne.valueOf(ne));
 
                         //Add it to the sentence object
                         tempSentence.add(tempWord);
                     }
                 }
 
-                //System.out.println("token: " + spelling + " pos: " + pos + " ne:" + ne);
+                //System.out.println("token: " + spelling + " wordsToPos: " + wordsToPos + " filterNe:" + filterNe);
             }
 
             mySentences.add(tempSentence);
@@ -274,20 +274,20 @@ public class StanfordNlp {
 //                    e.printStackTrace();
 //                }
 //                try {
-//                    contextualSuggestedWord.setPos(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
+//                    contextualSuggestedWord.setParts(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
 //                } catch (IllegalArgumentException e) {
 //                    e.printStackTrace();
 //                    System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
 //                    System.out.println(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class));
-//                    contextualSuggestedWord.setPos(Pos.UNKNOWN);
+//                    contextualSuggestedWord.setParts(Pos.UNKNOWN);
 //                }
 //                try {
-//                    contextualSuggestedWord.setNe(NamedEntity.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
+//                    contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
 //                } catch (IllegalArgumentException e) {
 //                    e.printStackTrace();
 //                    System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
 //                    System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
-//                    contextualSuggestedWord.setNe(NamedEntity.UNKNOWN);
+//                    contextualSuggestedWord.setNe(Ne.UNKNOWN);
 //                }
 //            }
             result.add(word);
@@ -365,7 +365,7 @@ public class StanfordNlp {
             }
             //Set Named Entity
             try {
-                contextualSuggestedWord.setNe(NamedEntity.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
+                contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
             }
             catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
@@ -373,7 +373,7 @@ public class StanfordNlp {
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
                 }
-                contextualSuggestedWord.setNe(NamedEntity.UNKNOWN);
+                contextualSuggestedWord.setNe(Ne.UNKNOWN);
             }
 
             //Manage capitalization
@@ -424,12 +424,12 @@ public class StanfordNlp {
                 contextualSuggestedWord.setPos(Pos.UNKNOWN);
             }
             try {
-                contextualSuggestedWord.setNe(NamedEntity.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
+                contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                 System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
-                contextualSuggestedWord.setNe(NamedEntity.UNKNOWN);
+                contextualSuggestedWord.setNe(Ne.UNKNOWN);
             }
         }
         if (Character.isUpperCase(oldString.charAt(0)))
@@ -439,7 +439,7 @@ public class StanfordNlp {
 }
 
 /*
-Decide how to hold data on words and their corresponding sentences:
+Decide how to hold data on filterWords and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */

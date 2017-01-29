@@ -14,7 +14,7 @@ public class Phoneticizer {
 //    private static final String phonesFilePath = TabDriver.dataDir + "/pron_dict/cmudict-0.7b.phones.reordered.txt";
     private static final String cmuFilePath = U.rootPath + "local-data/phonemes/pron-dict/cmudict-0.7b.txt";
 
-    private static Map<String, List<VowelPronunciation>> cmuDict = loadCMUDict();
+    private static Map<String, List<Pronunciation>> cmuDict = loadCMUDict();
     public static Map<List<PhonemeEnum>, Set<String>> lastSylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last2SylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last3SylRhymeDict = new HashMap<>();
@@ -26,7 +26,7 @@ public class Phoneticizer {
     /**
      * Loads CMU dictionary from file into a datastructure
      */
-    public static Map<String, List<VowelPronunciation>> loadCMUDict() {
+    public static Map<String, List<Pronunciation>> loadCMUDict() {
 //        loadPhonesDict();
 
         if (cmuDict == null) {
@@ -36,11 +36,11 @@ public class Phoneticizer {
                 BufferedReader bf = new BufferedReader(new FileReader(cmuFilePath));
 
                 String[] lineSplit, phonesSplit;
-                VowelPronunciation phones;
+                Pronunciation phones;
                 String line, key;
                 VowelPhoneme sPhone;
                 int stress, parenIdx;
-                List<VowelPronunciation> newList = null;
+                List<Pronunciation> newList = null;
 
                 while ((line = bf.readLine()) != null) {
                     if (line.startsWith(";;;"))
@@ -48,7 +48,7 @@ public class Phoneticizer {
 
                     lineSplit = line.split("  ");
                     phonesSplit = lineSplit[1].split(" ");
-                    phones = new VowelPronunciation();
+                    phones = new Pronunciation();
 
                     for (String phone : phonesSplit) {
                         if (phone.length() == 3) {// we assume that any phonemeEnum with three chars, the third char is the stress
@@ -88,7 +88,7 @@ public class Phoneticizer {
 
     public static Map<String, WordSyllables> loadSyllableDicts() {
         Map<String, WordSyllables> result = new HashMap<>();
-        for (Map.Entry<String, List<VowelPronunciation>> entry : cmuDict.entrySet()) {
+        for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
             if (entry.getKey().equals("SWIMSUIT")) {
                 U.print("stop for test");
             }
@@ -101,12 +101,12 @@ public class Phoneticizer {
                 if (oldSet1 == null)
                     oldSet1 = new HashSet<>();
                 oldSet1.add(entry.getKey());
-                lastSylRhymeDict.put(ultimate.getRhyme(), oldSet1);
+                lastSylRhymeDict.put(ultimate.getRhyme().getPhonemeEnums(), oldSet1);
                 if (nSyl > 1) {
                     List<List<PhonemeEnum>> list1 = new ArrayList<>();
                     Syllable penultimate = syllables.get(syllables.size() - 2);
-                    list1.add(penultimate.getRhyme());
-                    list1.add(ultimate.getPhonemes());
+                    list1.add(penultimate.getRhyme().getPhonemeEnums());
+                    list1.add(ultimate.getPhonemes().getPhonemeEnums());
                     Set<String> oldSet2 = lastSylRhymeDict.get(list1);
                     if (oldSet2 == null)
                         oldSet2 = new HashSet<>();
@@ -115,9 +115,9 @@ public class Phoneticizer {
                     if (nSyl > 2) {
                         List<List<PhonemeEnum>> list2 = new ArrayList<>();
                         Syllable antepenultimate = syllables.get(syllables.size() - 3);
-                        list2.add(antepenultimate.getRhyme());
-                        list2.add(penultimate.getPhonemes());
-                        list2.add(ultimate.getPhonemes());
+                        list2.add(antepenultimate.getRhyme().getPhonemeEnums());
+                        list2.add(penultimate.getPhonemes().getPhonemeEnums());
+                        list2.add(ultimate.getPhonemes().getPhonemeEnums());
                         Set<String> oldSet3 = lastSylRhymeDict.get(list2);
                         if (oldSet3 == null)
                             oldSet3 = new HashSet<>();
@@ -137,9 +137,9 @@ public class Phoneticizer {
             List<Syllable> syllables = getSyllables(s);
             List<Syllable> shavedSyllables = getLastXSyllables(syllables, x);
             List<PhonemeEnum> rhymeOfLastXSyllables = new ArrayList<>();
-            rhymeOfLastXSyllables.addAll(shavedSyllables.get(0).getRhyme());
+            rhymeOfLastXSyllables.addAll(shavedSyllables.get(0).getRhyme().getPhonemeEnums());
             for (int i = 1; i < shavedSyllables.size(); i++)
-                rhymeOfLastXSyllables.addAll(shavedSyllables.get(i).getPhonemes());
+                rhymeOfLastXSyllables.addAll(shavedSyllables.get(i).getPhonemes().getPhonemeEnums());
             return rhymeOfLastXSyllables;
         }
     }
@@ -245,9 +245,9 @@ public class Phoneticizer {
         tests = new String[]{"Potatoes, tomatoes, windy","hey-you, i.o.u. nu__in","namaste","schtoikandikes","lichtenstein","avadacadabrax"};
         for (String test : tests) {
             System.out.println("VowelPronunciation for \"" + test + "\"");
-            List<VowelPronunciation> phones = getPronunciations(test);
-            for (List<VowelPhoneme> vowelPhonemes : phones) {
-                System.out.println("\t" + Arrays.toString(readable(vowelPhonemes)));
+            List<Pronunciation> phones = getPronunciations(test);
+            for (List<Phoneme> phonemes : phones) {
+                System.out.println("\t" + Arrays.toString(readable(phonemes)));
             }
         }
     }
@@ -269,16 +269,16 @@ public class Phoneticizer {
      */
 //    private static Set<String> stopRhymes = new HashSet<String>(Arrays.asList("AW","OH"));
 
-    public static List<VowelPronunciation> getPronunciations(String s) {
+    public static List<Pronunciation> getPronunciations(String s) {
         boolean contains = cmuDict.containsKey(s);
         //TOMATO    T AH0-M EY1-T OW2
         //CREATION  K R IY0-EY1-SH AH0 N
-        List<VowelPronunciation> vowelPronunciations = cmuDict.get(s);
-        return vowelPronunciations;
+        List<Pronunciation> pronunciations = cmuDict.get(s);
+        return pronunciations;
     }
 
-    public static VowelPronunciation getTopPronunciation(String s) {
-        List<VowelPronunciation> result = getPronunciations(s);
+    public static Pronunciation getTopPronunciation(String s) {
+        List<Pronunciation> result = getPronunciations(s);
         if (result != null && !result.isEmpty())
             return getPronunciations(s).get(0);
         return null;
@@ -315,8 +315,8 @@ public class Phoneticizer {
          * @param string
          * @return
          */
-    public static List<VowelPronunciation> getPronunciationsMultipleWords(String string) {
-        List<VowelPronunciation> prevPhones = null, nextPhones, vowelPronunciationChoices;
+    public static List<Pronunciation> getPronunciationsMultipleWords(String string) {
+        List<Pronunciation> prevPhones = null, nextPhones, vowelPronunciationChoices;
 
         for (String s : string.toUpperCase().trim().split("[^A-Z0-9']+")) {
             prevPhones.add(getTopPronunciation(s));
@@ -346,11 +346,14 @@ public class Phoneticizer {
 //        return reversePhonesDict.get(phoneInt).getFirst();
 //    }
 
-    public static String[] readable(List<VowelPhoneme> word1sPs) {
+    public static String[] readable(List<Phoneme> word1sPs) {
         String[] returnVal = new String[word1sPs.size()];
 
         for (int i = 0; i < returnVal.length; i++) {
-            returnVal[i] = word1sPs.get(i).phonemeEnum.toString() + ":" + word1sPs.get(i).stress;
+            if (word1sPs.get(i) instanceof VowelPhoneme)
+                returnVal[i] = word1sPs.get(i).phonemeEnum.toString() + ":" + ((VowelPhoneme)word1sPs.get(i)).stress;
+            else
+                returnVal[i] = word1sPs.get(i).phonemeEnum.toString();
         }
 
         return returnVal;
@@ -362,11 +365,11 @@ public class Phoneticizer {
 //
 //        List<VowelPhoneme[]> returnList = new ArrayList<VowelPhoneme[]>(), pronunciationChoices;
 //        Map<VowelPhoneme[],Integer> prevPhones = null, nextPhones = null;
-//        String[] words = string.toUpperCase().trim().split("[^A-Z0-9']+");
+//        String[] filterWords = string.toUpperCase().trim().split("[^A-Z0-9']+");
 //        int vowelCount, vowelCountForPrevPhone, start;
 //        String s;
-//        for (int i = words.length-1; i >= 0; i--) {
-//            s = words[i];
+//        for (int i = filterWords.length-1; i >= 0; i--) {
+//            s = filterWords[i];
 //            if (s.length() == 0 || stopRhymes.contains(s)) continue;
 //            pronunciationChoices = cmuDict.get(s);
 //
@@ -513,14 +516,14 @@ public class Phoneticizer {
         return cmuDict.containsKey(word.toUpperCase());
     }
 
-    public static VowelPronunciation getPronunciationForWord(String string) {
+    public static Pronunciation getPronunciationForWord(String string) {
         if (string != null && string.length() > 0 && string.matches("\\w+")) {
             return getTopPronunciation(string.toUpperCase());
         }
         return null;
     }
 
-    public static VowelPronunciation getPronunciationForWord(Word word) {
+    public static Pronunciation getPronunciationForWord(Word word) {
         if (word.getClass() != Punctuation.class) {
             return getPronunciationForWord(word.getLowerSpelling());
         }
@@ -542,9 +545,6 @@ public class Phoneticizer {
     }
 
 }
-
-
-
 
 
 

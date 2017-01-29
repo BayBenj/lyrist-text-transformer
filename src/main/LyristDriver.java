@@ -40,7 +40,7 @@ public class LyristDriver {
             //Setup Phoneticizer
             U.phoneticizer = new Phoneticizer();
 
-            //read in vocab lists TODO move this to after I know I will need the filter for it
+            //read in vocab lists TODO move this to after I know I will need the filterByMultiple for it
             VocabManager.readInVocab();
 
             //Get template elements

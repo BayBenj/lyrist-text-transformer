@@ -8,7 +8,7 @@ public class Word extends SongElement implements Comparable<Word> {
     private VowelPronunciation phonemes = null;
     private WordSyllables syllables = null;
     private Pos pos = null;
-    private NamedEntity ne = null;
+    private Ne ne = null;
     private boolean capitalized = false;
 
     private double cosineDistance = Double.MIN_VALUE;
@@ -56,11 +56,11 @@ public class Word extends SongElement implements Comparable<Word> {
         this.pos = pos;
     }
 
-    public NamedEntity getNe() {
+    public Ne getNe() {
         return ne;
     }
 
-    public void setNe(NamedEntity ne) {
+    public void setNe(Ne ne) {
         this.ne = ne;
     }
 

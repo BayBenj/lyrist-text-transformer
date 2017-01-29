@@ -81,7 +81,7 @@ public class BomWordsFilter extends VocabListFilter {
             "at",
             "jerusalem",
             "his",
-            "same",
+            "instanceSpecific",
             "there",
             "prophets",
             "prophesying",
@@ -364,7 +364,7 @@ public class BomWordsFilter extends VocabListFilter {
             "neither",
             "believe",
             "could",
-            "words",
+            "filterWords",
             "speak",
             "until",
             "frames",
@@ -661,7 +661,7 @@ public class BomWordsFilter extends VocabListFilter {
             "israel",
             "search",
             "beginning",
-            "contain",
+            "doesContain",
             "five",
             "books",
             "creation",
@@ -2421,7 +2421,7 @@ public class BomWordsFilter extends VocabListFilter {
             "breach",
             "tabeal",
             "damascus",
-            "score",
+            "dbl",
             "samaria",
             "heights",
             "tempt",
@@ -3073,7 +3073,7 @@ public class BomWordsFilter extends VocabListFilter {
             "dung",
             "grafts",
             "size",
-            "equal",
+            "doesEqual",
             "mights",
             "thrive",
             "dug",
@@ -5569,11 +5569,11 @@ public class BomWordsFilter extends VocabListFilter {
     private static Set set = new HashSet(Arrays.asList(list));
 
     public BomWordsFilter() {
-        super(new VocabList(set, "book of mormon words"));
+        super(new VocabList(set, "book of mormon filterWords"));
     }
 
     public BomWordsFilter(ReturnType returnType) {
-        super(returnType, new VocabList(set, "book of mormon words"));
+        super(returnType, new VocabList(set, "book of mormon filterWords"));
     }
 
     @Override

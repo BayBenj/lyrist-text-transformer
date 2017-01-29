@@ -82,20 +82,20 @@ public abstract class Rhymer {
 
     /**
      * In the returned structure the ith element, j, is an array where
-     * of the LOOKAHEAD lines following line i, j[0] was the highest matching rhyme
+     * of the LOOKAHEAD lines following line i, j[0] was the filterToHighest matching rhyme
      * above THRESHOLD and j[1] syllables matched
      *
      * return scheme in which a number n at line i means that line i rhymes with line i-n
      */
-//    public static int[] extractRhymeScheme(List<String> words) {
+//    public static int[] extractRhymeScheme(List<String> filterWords) {
 //        // For each line we want to return the number of syllables in the line
 //        // and any rhyming information
-//        int lineCount = words.size();
+//        int lineCount = filterWords.size();
 //        List<List<VowelPhoneme[]>> wordsPhones = new ArrayList<List<VowelPhoneme[]>>();
 //
-//        // for each line, store the syllables for the last few words
+//        // for each line, store the syllables for the last few filterWords
 //        for (int i = 0; i < lineCount; i++) {
-////            wordsPhones.add(Phoneticizer.getPhonesForXLastSyllables(words.get(i), 1));
+////            wordsPhones.add(Phoneticizer.getPhonesForXLastSyllables(filterWords.get(i), 1));
 //        }
 //
 //        int[] scheme = new int[lineCount];
@@ -112,7 +112,7 @@ public abstract class Rhymer {
 //            if (DEBUG) {
 //                System.out.print(i + "\t");
 //                System.out.print(scheme[i] + "\t");
-//                System.out.print(words.get(i) + "\t");
+//                System.out.print(filterWords.get(i) + "\t");
 //            }
 //            maxRhymeScoreForLines = -1.0;
 //            for (int j = i+1; j < Math.min(i+LOOKAHEAD+1, lineCount); j++) {
@@ -129,7 +129,7 @@ public abstract class Rhymer {
 //                        }
 //                    }
 //                }
-////				System.out.println("\n\t"+ maxRhymeScoreForLine + "\t" + words.get(j));
+////				System.out.println("\n\t"+ maxRhymeScoreForLine + "\t" + filterWords.get(j));
 //                if ( maxRhymeScoreForLine > maxRhymeScoreForLines){
 //                    maxRhymeScoreForLines = maxRhymeScoreForLine;
 //                    maxJ = j;
@@ -173,7 +173,7 @@ public abstract class Rhymer {
 //    }
 
     /**
-     * Are the final consonants the same (and is the vowel somewhat similar?)
+     * Are the final consonants the instanceSpecific (and is the vowel somewhat similar?)
      * @param line1Phones
      * @param line2Phones
      * @return
@@ -192,7 +192,7 @@ public abstract class Rhymer {
 //
 ////        int phone1 = line1Phones[phone1VowelIdx].phonemeEnum;
 ////        int phone2 = line2Phones[phone2VowelIdx].phonemeEnum;
-////        if (HirjeeMatrix.score(phone1, phone2) < 0.){
+////        if (HirjeeMatrix.dbl(phone1, phone2) < 0.){
 ////            return false;
 ////        }
 //
@@ -265,9 +265,9 @@ public abstract class Rhymer {
 //        int line2Len = line2Phones.length;
 //
 //        int phone1, phone2;
-//        for (int pos = 1; pos <= Math.min(line1Len, line2Len); pos++) {
-//            phone1 = line1Phones[line1Len-pos].phonemeEnum;
-//            phone2 = line2Phones[line2Len-pos].phonemeEnum;
+//        for (int wordsToPos = 1; wordsToPos <= Math.min(line1Len, line2Len); wordsToPos++) {
+//            phone1 = line1Phones[line1Len-wordsToPos].phonemeEnum;
+//            phone2 = line2Phones[line2Len-wordsToPos].phonemeEnum;
 //
 //            //vowels (by sound) are identical
 //            if (Phoneticizer.isVowel(phone1)){
@@ -284,7 +284,7 @@ public abstract class Rhymer {
 //    }
 
 //    private static boolean arePhoneticallyRelated(int phone1, int phone2) {
-////		return (HirjeeMatrix.score(phone1, phone2) > 0.0);
+////		return (HirjeeMatrix.dbl(phone1, phone2) > 0.0);
 ////		return Phoneticizer.getCategory(phone1) == Phoneticizer.getCategory(phone2);
 //        return Phoneticizer.getGeneralCategory(phone1) == Phoneticizer.getGeneralCategory(phone2); // Pat's definition
 //    }
@@ -294,9 +294,9 @@ public abstract class Rhymer {
 //        int line2Len = line2Phones.length;
 //
 //        int phone1, phone2;
-//        for (int pos = 1; pos <= Math.min(line1Len, line2Len); pos++) {
-//            phone1 = line1Phones[line1Len-pos].phonemeEnum;
-//            phone2 = line2Phones[line2Len-pos].phonemeEnum;
+//        for (int wordsToPos = 1; wordsToPos <= Math.min(line1Len, line2Len); wordsToPos++) {
+//            phone1 = line1Phones[line1Len-wordsToPos].phonemeEnum;
+//            phone2 = line2Phones[line2Len-wordsToPos].phonemeEnum;
 //
 //            //vowels (by sound) are identical
 //            if (Phoneticizer.isVowel(phone1)){
@@ -331,7 +331,7 @@ public abstract class Rhymer {
 ////		double penultimateVLastScore = 0.0;//alignedRhymeScore(line1Penultimate, line2Last);
 ////		double penultimateVPenultimateScore = 0.0;//alignedRhymeScore(line1Penultimate, line2Penultimate);
 //
-//        // 2. find the one with the highest score
+//        // 2. find the one with the filterToHighest dbl
 //
 //        // TODO: 3. penalize for greater distance and for not aligning last syllable
 ////		return Math.max(lastVLastScore, Math.max(lastVPenultimateScore, Math.max(penultimateVLastScore, penultimateVPenultimateScore)));// * (1.05 - (.05 * distanceAhead));
@@ -340,15 +340,15 @@ public abstract class Rhymer {
 
 //    public static void main(String[] args) throws IOException {
 //
-//        String[] words = new String[]{"Megaphone","Xylophone","Acetone","place called home", "bland", "hoax","jokes","folks"};
+//        String[] filterWords = new String[]{"Megaphone","Xylophone","Acetone","place called home", "bland", "hoax","jokes","folks"};
 //        List<List<VowelPhoneme[]>> stressedPhones = new ArrayList<List<VowelPhoneme[]>>();
-//        for (int i = 0; i < words.length; i++) {
+//        for (int i = 0; i < filterWords.length; i++) {
 //            //TODO: get last 3-4 syllables (i.e., not phones) for each word, not whole thing
-////			stressedPhones[i] = CMULoader.getPhones(words[i]);
-////            stressedPhones.add(Phoneticizer.getPhonesForXLastSyllables(words[i],1));
+////			stressedPhones[i] = CMULoader.getPhones(filterWords[i]);
+////            stressedPhones.add(Phoneticizer.getPhonesForXLastSyllables(filterWords[i],1));
 //        }
 //
-////		double[][] scores = new double[words.length][words.length];
+////		double[][] scores = new double[filterWords.length][filterWords.length];
 //
 //        //TODO: set Aligner costs
 ////        Aligner.setMinPercOverlap(.7);
@@ -356,15 +356,15 @@ public abstract class Rhymer {
 //
 //        VowelPhoneme[] word1SPs, word2SPs;
 //        if (DEBUG) System.out.println("Simple\tAlign\tWord1\tWord2\tWord1Syls\tWord2Syls");
-//        double score;
-//        for (int i = 0; i < words.length; i++) {
+//        double dbl;
+//        for (int i = 0; i < filterWords.length; i++) {
 //            word1SPs = stressedPhones.get(i).get(0);
-//            for (int j = i+1; j < words.length; j++) {
+//            for (int j = i+1; j < filterWords.length; j++) {
 //                word2SPs = stressedPhones.get(j).get(0);
-//                score = simpleRhymeScore(word1SPs, word2SPs);
-//                if (DEBUG) System.out.print(""+score);
-//                score = alignedRhymeScore(word1SPs, word2SPs);
-//                if (DEBUG) System.out.println("\t" + words[i] + "\t" + words[j] + "\t" + Arrays.toString(Phoneticizer.readable(word1SPs)) + "\t" + Arrays.toString(Phoneticizer.readable(word2SPs)));
+//                dbl = simpleRhymeScore(word1SPs, word2SPs);
+//                if (DEBUG) System.out.print(""+dbl);
+//                dbl = alignedRhymeScore(word1SPs, word2SPs);
+//                if (DEBUG) System.out.println("\t" + filterWords[i] + "\t" + filterWords[j] + "\t" + Arrays.toString(Phoneticizer.readable(word1SPs)) + "\t" + Arrays.toString(Phoneticizer.readable(word2SPs)));
 ////                Utils.promptEnterKey("");
 //            }
 //        }
@@ -389,7 +389,7 @@ public abstract class Rhymer {
     /**
      * @param phoneDict
      * @param hMatrix
-     * @param words
+     * @param filterWords
      * @param scores
      * @param word1SPs
      * @param word2SPs
@@ -401,17 +401,17 @@ public abstract class Rhymer {
 //    private static double simpleRhymeScore(VowelPhoneme[] word1SPs, VowelPhoneme[] word2SPs) {
 //        VowelPhoneme word1SP;
 //        VowelPhoneme word2SP;
-//        double score, totScore = 0.;
+//        double dbl, totScore = 0.;
 //        int wrd1SPsLen = word1SPs.length;
 //        int wrd2SPsLen = word2SPs.length;
 //        int k;
 //        for (k = 0; k < Math.min(wrd1SPsLen, wrd2SPsLen); k++) {
 //            word1SP = word1SPs[wrd1SPsLen-k-1];
 //            word2SP = word2SPs[wrd2SPsLen-k-1];
-//            score = hMatrix[word1SP.phonemeEnum][word2SP.phonemeEnum];
-////			System.out.println("\tScore for " + phoneDict.get(word1SP.phonemeEnum).getFirst() + " & " + phoneDict.get(word2SP.phonemeEnum).getFirst() + " = " + score);
-//            if (k<1 || score >= 0) {
-//                totScore += score;
+//            dbl = hMatrix[word1SP.phonemeEnum][word2SP.phonemeEnum];
+////			System.out.println("\tScore for " + phoneDict.get(word1SP.phonemeEnum).getFirst() + " & " + phoneDict.get(word2SP.phonemeEnum).getFirst() + " = " + dbl);
+//            if (k<1 || dbl >= 0) {
+//                totScore += dbl;
 //            }
 //            else {
 //                break;

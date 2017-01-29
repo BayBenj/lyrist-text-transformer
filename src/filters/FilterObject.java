@@ -1,7 +1,7 @@
-package filters;
-
-public abstract class FilterObject {
-
-
-
-}
+//package filters;
+//
+//public abstract class FilterObject {
+//
+//
+//
+//}
