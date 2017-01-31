@@ -71,8 +71,8 @@ public abstract class SongMutator {
                     if (wordReplacements.containsKey(currentWord))
                         newLine.add(wordReplacements.get(currentWord));
                     else {
-                        //TODO: do a more complete copy here. Is that possible?
                         Word temp = new Word(currentWord.getLowerSpelling());
+                        temp.setBase(currentWord.getBase());
                         temp.setSyllables(currentWord.getSyllables());
                         temp.setPos(currentWord.getPos());
                         temp.setNe(currentWord.getNe());
@@ -213,6 +213,8 @@ public abstract class SongMutator {
         return rawString;
     }
 }
+
+
 
 
 

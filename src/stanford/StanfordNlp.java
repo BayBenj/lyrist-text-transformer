@@ -28,7 +28,7 @@ public class StanfordNlp {
     private static StanfordCoreNLP pipeline;
     private static final String INPUT_TYPE = "annotators";
     private static final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner";
-//    private final String ANNOTATORS = "tokenize, ssplit, wordsToPos, lemma, ner, parse, dcoref";
+//    private final String ANNOTATORS = "tokenize, ssplit, pos, lemma, ner, parse, dcoref";
     //private static final MaxentTagger tagger = new MaxentTagger(U.rootPath + "lib/stanford-parser/3.6.0/libexec/models/wsj-0-18-bidirectional-nodistsim.tagger");
     //private final MaxentTagger tagger = new MaxentTagger(U.rootPath + "local-data/models/wordsToPos-tagger/english-left3words/english-bidirectional-distsim.tagger");
     private static DocumentPreprocessor documentPreprocessor;
@@ -40,107 +40,69 @@ public class StanfordNlp {
         this.setupPipeline();
     }
 
-    public static List<List<CoreLabel>> parseTextCompletelyByPath(String filePath) {
-        setDocumentPreprocessor(filePath);
-        List<List<TaggedWord>> taggedSentences = tokenizeTextFromDocumentPreprocessor();
-        List<List<CoreLabel>> classifiedSentences = new ArrayList<List<CoreLabel>>();
-        for (List<TaggedWord> taggedSentence : taggedSentences)
-            classifiedSentences.add(classifyNamedEntities(taggedSentence));
-        return classifiedSentences;
-    }
+//    public static List<List<CoreLabel>> parseTextCompletelyByPath(String filePath) {
+//        setDocumentPreprocessor(filePath);
+//        List<List<TaggedWord>> taggedSentences = tokenizeTextFromDocumentPreprocessor();
+//        List<List<CoreLabel>> classifiedSentences = new ArrayList<List<CoreLabel>>();
+//        for (List<TaggedWord> taggedSentence : taggedSentences)
+//            classifiedSentences.add(classifyNamedEntities(taggedSentence));
+//        return classifiedSentences;
+//    }
 
-    public static List<List<CoreLabel>> parseTextCompletelyByString(String fullText) {
-        //this.setDocumentPreprocessor(filePath);
-        List<List<HasWord>> taggedSentences = tokenizeTextFromString(fullText);
-        List<List<CoreLabel>> classifiedSentences = new ArrayList<List<CoreLabel>>();
-        for (List<HasWord> taggedSentence : taggedSentences)
-            classifiedSentences.add(classifyNamedEntities(taggedSentence));
-        return classifiedSentences;
-    }
+//    public static List<List<CoreLabel>> parseTextCompletelyByString(String fullText) {
+//        //this.setDocumentPreprocessor(filePath);
+//        List<List<HasWord>> taggedSentences = tokenizeTextFromString(fullText);
+//        List<List<CoreLabel>> classifiedSentences = new ArrayList<List<CoreLabel>>();
+//        for (List<HasWord> taggedSentence : taggedSentences)
+//            classifiedSentences.add(classifyNamedEntities(taggedSentence));
+//        return classifiedSentences;
+//    }
 
-    public static void setDocumentPreprocessor(String filePath) {
-        documentPreprocessor = new DocumentPreprocessor(filePath);
-        //this.ptbTokenizerFactory.setOptions();
-        documentPreprocessor.setTokenizerFactory(ptbTokenizerFactory);
-    }
+//    public static void setDocumentPreprocessor(String filePath) {
+//        documentPreprocessor = new DocumentPreprocessor(filePath);
+//        //this.ptbTokenizerFactory.setOptions();
+//        documentPreprocessor.setTokenizerFactory(ptbTokenizerFactory);
+//    }
 
-    public static List<List<TaggedWord>> tokenizeTextFromDocumentPreprocessor() {
-        List<List<TaggedWord>> taggedSentences = new ArrayList<List<TaggedWord>>();
-        for (List<HasWord> sentence : documentPreprocessor) {
-            //List<TaggedWord> taggedSentence = tagger.tagSentence(sentence);
-            //taggedSentences.add(taggedSentence);
-        }
-        return taggedSentences;
-    }
-
-    public static List<List<HasWord>> tokenizeTextFromString(String untokenizedText) {
-        List<List<HasWord>> sentences;
-        StringReader sr = new StringReader(untokenizedText);
-        sentences = MaxentTagger.tokenizeText(new BufferedReader(sr));
-        return sentences;
-    }
-
-    public static List<CoreLabel> classifyNamedEntities(List<? extends HasWord> untaggedSentence) {
-        //classify named entities
-        String serializedClassifier = U.rootPath + "lib/english.all.3class.distsim.crf.ser.gz";
-        AbstractSequenceClassifier<CoreLabel> classifier = null;
-        try {
-            classifier = CRFClassifier.getClassifier(serializedClassifier);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        List<CoreLabel> classifiedSentence = classifier.classifySentence(untaggedSentence);
-        return classifiedSentence;
-    }
-
-    public void setupPipeline() {
-//        File f = new File(PATH);
-//        if(f.exists() && !f.isDirectory())
-//            this.deserializePipeline();
-//        else
-//            this.buildPipeline();
-        this.buildPipeline();
-    }
-
-//    private void deserializePipeline() {
-//        System.out.println("Deserializing StanfordCoreNLP object");
-//        try {
-//            FileInputStream fileIn = new FileInputStream(PATH);
-//            ObjectInputStream in = new ObjectInputStream(fileIn);
-//            this.pipeline = (StanfordCoreNLP) in.readObject();
-//            in.close();
-//            fileIn.close();
+//    public static List<List<TaggedWord>> tokenizeTextFromDocumentPreprocessor() {
+//        List<List<TaggedWord>> taggedSentences = new ArrayList<List<TaggedWord>>();
+//        for (List<HasWord> sentence : documentPreprocessor) {
+////            List<TaggedWord> taggedSentence = tagger.tagSentence(sentence);
+////            taggedSentences.add(taggedSentence);
 //        }
-//        catch(IOException i) {
-//            i.printStackTrace();
-//        }
-//        catch(ClassNotFoundException c) {
-//            System.out.println("StanfordCoreNLP class not found");
-//            c.printStackTrace();
-//        }
+//        return taggedSentences;
+//    }
+
+//    public static List<List<HasWord>> tokenizeTextFromString(String untokenizedText) {
+//        List<List<HasWord>> sentences;
+//        StringReader sr = new StringReader(untokenizedText);
+//        sentences = MaxentTagger.tokenizeText(new BufferedReader(sr));
+//        return sentences;
 //    }
 //
-//    private void serializePipeline() {
+//    public static List<CoreLabel> classifyNamedEntities(List<? extends HasWord> untaggedSentence) {
+//        //classify named entities
+//        String serializedClassifier = U.rootPath + "lib/english.all.3class.distsim.crf.ser.gz";
+//        AbstractSequenceClassifier<CoreLabel> classifier = null;
 //        try {
-//            FileOutputStream fileOut = new FileOutputStream(PATH);
-//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-//            out.writeObject(this.pipeline);
-//            out.close();
-//            fileOut.close();
-//            System.out.println("Serialized StanfordCoreNLP object is saved in " + PATH);
+//            classifier = CRFClassifier.getClassifier(serializedClassifier);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
 //        }
-//        catch(IOException i) {
-//            i.printStackTrace();
-//        }
+//        List<CoreLabel> classifiedSentence = classifier.classifySentence(untaggedSentence);
+//        return classifiedSentence;
 //    }
+
+    public void setupPipeline() {
+        this.buildPipeline();
+    }
 
     private void buildPipeline() {
         Properties props = new Properties();
         props.put(INPUT_TYPE, ANNOTATORS);
         this.pipeline = new StanfordCoreNLP(props);
-        //this.serializePipeline();
     }
 
     public static ArrayList<Sentence> parseTextToSentences(String rawText) {
@@ -210,6 +172,7 @@ public class StanfordNlp {
                     else {
                         //Make a new word object
                         Word tempWord = new Word(spelling);
+                        tempWord.setBase(token.get(CoreAnnotations.LemmaAnnotation.class));
                         tempWord.setPos(Pos.valueOf(pos));
                         tempWord.setNe(Ne.valueOf(ne));
 
@@ -239,60 +202,6 @@ public class StanfordNlp {
 //        Map<Integer, CoreNLPProtos.CorefChain> graph =
 //                document.get(CorefChainAnnotation.class);
         return mySentences;
-    }
-
-    public static Set<Word> tagWordsWithSentenceContext(Collection<String> suggestions,
-                                                        Sentence contextSentence,
-                                                        Word oldWord,
-                                                        int oldWordIndex,
-                                                        boolean oldWordIsCapital) {
-        Set<Word> result = new HashSet<>();
-//        int corelabelIndex = contextSentence.getWordIndexIncludingPunctuation(oldWordIndex);
-        int corelabelIndex = oldWordIndex;
-
-        //Contextually tag every input string
-        for (String suggestion : suggestions) {
-            Word word = sentenceContext(contextSentence, oldWord, suggestion, corelabelIndex);
-//            Word contextualSuggestedWord = new Word(suggestion);
-//            String contextSentenceString = contextSentence.toString();
-//            contextSentenceString = contextSentenceString.replace(oldString, suggestion);
-//
-//            Annotation annotation = new Annotation(contextSentenceString);
-//            pipeline.annotate(annotation);
-//            List<CoreMap> stanfordSentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-////            List<List<CoreLabel>> stanfordSentences = parseTextCompletelyByString(contextSentenceString);
-//
-//            //TODO does this get the correct CoreLabel?
-////            for (List<CoreLabel> stanfordSentence : stanfordSentences) {
-//            for (CoreMap stanfordSentence : stanfordSentences) {
-////                CoreLabel parsedToken = stanfordSentence.get(corelabelIndex);
-//                List<CoreLabel> listOfCoreLabels = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class);
-//                CoreLabel parsedToken = null;
-//                try {
-//                    parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(corelabelIndex);
-//                } catch (IndexOutOfBoundsException e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    contextualSuggestedWord.setParts(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
-//                } catch (IllegalArgumentException e) {
-//                    e.printStackTrace();
-//                    System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
-//                    System.out.println(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class));
-//                    contextualSuggestedWord.setParts(Pos.UNKNOWN);
-//                }
-//                try {
-//                    contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
-//                } catch (IllegalArgumentException e) {
-//                    e.printStackTrace();
-//                    System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
-//                    System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
-//                    contextualSuggestedWord.setNe(Ne.UNKNOWN);
-//                }
-//            }
-            result.add(word);
-        }
-        return result;
     }
 
     public static Map<Double, Word> tagWordsWithSentenceContextWithDoubles(TreeMap<Double, String> suggestions,
@@ -325,6 +234,7 @@ public class StanfordNlp {
         for (CoreMap stanfordSentence : stanfordSentences) {
             CoreLabel parsedToken = null;
             Word contextualSuggestedWord = null;
+
             //Get parsed token, set text
             try {
                 if (stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).size() == contextSentence.size())
@@ -351,6 +261,7 @@ public class StanfordNlp {
             catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
+
             //Set Part of Speech
             try {
                 contextualSuggestedWord.setPos(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
@@ -363,6 +274,7 @@ public class StanfordNlp {
                 }
                 contextualSuggestedWord.setPos(Pos.UNKNOWN);
             }
+
             //Set Named Entity
             try {
                 contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
@@ -372,6 +284,19 @@ public class StanfordNlp {
                     e.printStackTrace();
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
+                }
+                contextualSuggestedWord.setNe(Ne.UNKNOWN);
+            }
+
+            //Set Lemma Base
+            try {
+                contextualSuggestedWord.setBase(parsedToken.get(CoreAnnotations.LemmaAnnotation.class));
+            }
+            catch (IllegalArgumentException e) {
+                if (ProgramArgs.isTesting()) {
+                    e.printStackTrace();
+                    System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
+                    System.out.println(parsedToken.get(CoreAnnotations.LemmaAnnotation.class));
                 }
                 contextualSuggestedWord.setNe(Ne.UNKNOWN);
             }
@@ -387,55 +312,6 @@ public class StanfordNlp {
         return result;
     }
 
-    private static Word sentenceContext(Sentence contextSentence,
-                                       Word oldWord,
-                                       String suggestion,
-                                       int corelabelIndex
-    ) {
-        String oldString = oldWord.toString();
-        if (oldWord.getCapitalized())
-            suggestion = suggestion.substring(0, 1).toUpperCase() + suggestion.substring(1);
-        Word contextualSuggestedWord = new Word(suggestion);
-        String contextSentenceString = contextSentence.toString();
-        contextSentenceString = contextSentenceString.replace(oldString, suggestion);
-
-        Annotation annotation = new Annotation(contextSentenceString);
-        pipeline.annotate(annotation);
-        List<CoreMap> stanfordSentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//            List<List<CoreLabel>> stanfordSentences = parseTextCompletelyByString(contextSentenceString);
-
-        //TODO does this get the correct CoreLabel?
-//            for (List<CoreLabel> stanfordSentence : stanfordSentences) {
-        for (CoreMap stanfordSentence : stanfordSentences) {
-//                CoreLabel parsedToken = stanfordSentence.get(corelabelIndex);
-            //List<CoreLabel> listOfCoreLabels = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class);
-            CoreLabel parsedToken = null;
-            try {
-                parsedToken = stanfordSentence.get(CoreAnnotations.TokensAnnotation.class).get(corelabelIndex);
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-            try {
-                contextualSuggestedWord.setPos(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
-                System.out.println(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class));
-                contextualSuggestedWord.setPos(Pos.UNKNOWN);
-            }
-            try {
-                contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
-                System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
-                contextualSuggestedWord.setNe(Ne.UNKNOWN);
-            }
-        }
-        if (Character.isUpperCase(oldString.charAt(0)))
-        contextualSuggestedWord.setCapitalized(oldWord.getCapitalized());
-        return contextualSuggestedWord;
-    }
 }
 
 /*
@@ -443,12 +319,6 @@ Decide how to hold data on filterWords and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */
-
-
-
-
-
-
 
 
 

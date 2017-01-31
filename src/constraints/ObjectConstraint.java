@@ -26,9 +26,15 @@ public abstract class ObjectConstraint extends WordConstraint {
 
     @Override
     public Set<Word> useWithPresetFields(Collection<Word> wordsToFilter) {
-        if (objects != null && !objects.isEmpty())
-            return this.filterByMultiple(wordsToFilter, objects, returnType);
-        return null;
+
+        if (objects == null)
+            return null;
+        if (objects.isEmpty())
+            if (returnType == ReturnType.MATCHES)
+                return new HashSet<>();
+            else
+                return new HashSet<>(wordsToFilter);
+        return this.filterByMultiple(wordsToFilter, objects, returnType);
     }
 
     @Override
@@ -59,12 +65,11 @@ public abstract class ObjectConstraint extends WordConstraint {
         return objects;
     }
 
-    public void setObjects(Set<Object> objects) {
-        this.objects = objects;
+    public void setObjects(Collection<Object> objects) {
+        this.objects = new HashSet<>(objects);
     }
 
 }
-
 
 
 

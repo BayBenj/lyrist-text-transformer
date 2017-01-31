@@ -4,10 +4,7 @@ import elements.Pos;
 import filters.ReturnType;
 import main.VocabManager;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public abstract class WordConstraintManager {
 
@@ -16,9 +13,11 @@ public abstract class WordConstraintManager {
     private static Set<String> commonWords = VocabManager.readIn("common-words.txt");
     private static Set<String> dirtyWords = VocabManager.readIn("dirty-words.txt");
     private static Set<String> unsafeWordsForMarking = VocabManager.readIn("unsafe-marking-words.txt");
+    private static Set<String> alreadyUsedWords = new HashSet<>();
+    private static Set<String> alreadyUsedBases = new HashSet<>();
     private static Set<Pos> goodPosForMarking = null;
 
-    public static Map<Integer,WordConstraint> getNormal() {
+    public static List<WordConstraint> getNormal() {
         /*
         1. not the original word
         2. not one of these restricted words
@@ -27,19 +26,23 @@ public abstract class WordConstraintManager {
         5. ne == instanceSpecific
         6. Highest cosine distance
         */
-        Map<Integer,WordConstraint> result = new TreeMap<>();
-        result.put(0, new StringConstraint(ReturnType.NON_MATCHES));//instance-specific, enforced
+        List<WordConstraint> result = new ArrayList<>();
+        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) instance-specific, enforced
         result.get(0).enforce();
-        result.put(1, new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
         result.get(1).enforce();
-        result.put(2, new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.put(3, new PosConstraint(ReturnType.MATCHES));//instance-specific
-        result.put(4, new NeConstraint(ReturnType.MATCHES));//instance-specific
-        result.put(5, new CosineDistanceConstraint(ModelNum.HIGHEST));
+        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+        result.get(2).enforce();
+        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+        result.get(3).enforce();
+        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+        result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
+        result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
+        result.add(new CosineDistanceConstraint(ModelNum.HIGHEST));
         return result;
     }
 
-    public static Map<Integer,WordConstraint> getMarking() {
+    public static List<WordConstraint> getMarking() {
 
         goodPosForMarking = new HashSet<>();
         goodPosForMarking.add(Pos.NN);
@@ -67,15 +70,15 @@ public abstract class WordConstraintManager {
         5. ne == instanceSpecific
         6. Highest cosine distance
         */
-        Map<Integer,WordConstraint> result = new TreeMap<>();
-        result.put(0, new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES));// enforced
+        List<WordConstraint> result = new ArrayList<>();
+        result.add(new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES));// enforced
         result.get(0).enforce();
-        result.put(1, new PosConstraint(goodPosForMarking, ReturnType.MATCHES));// enforced
+        result.add(new PosConstraint(goodPosForMarking, ReturnType.MATCHES));// enforced
         result.get(1).enforce();
         return result;
     }
 
-    public static Map<Integer,WordConstraint> getNormalSameSyllables() {
+    public static List<WordConstraint> getNormalSameSyllables() {
         /*
         1. not one of these restricted words
         2. must be one of these common words
@@ -86,7 +89,7 @@ public abstract class WordConstraintManager {
         return null;
     }
 
-    public static Map<Integer,WordConstraint> getRhyme() {
+    public static List<WordConstraint> getRhyme() {
         /*
         1. not one of these restricted words (should this be here or should rhyme-specific stuff only be here?)
         2. must be one of these common words
@@ -97,22 +100,22 @@ public abstract class WordConstraintManager {
         7. Highest cosine distance
         */
 
-        Map<Integer,WordConstraint> result = new TreeMap<>();
-        result.put(0, new StringConstraint(ReturnType.NON_MATCHES));//instance-specific, enforced
+        List<WordConstraint> result = new ArrayList<>();
+        result.add(new StringConstraint(ReturnType.NON_MATCHES));//instance-specific, enforced
         result.get(0).enforce();
-        result.put(1, new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
         result.get(1).enforce();
-        result.put(2, new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.put(3, new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, .75, ReturnType.MATCHES));// enforced
+        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, .75, ReturnType.MATCHES));// enforced
         result.get(3).enforce();
-        result.put(4, new PosConstraint(ReturnType.MATCHES));//instance-specific
-        result.put(5, new NeConstraint(ReturnType.MATCHES));//instance-specific
-        result.put(6, new RhymeScoreConstraint(NonModelNum.HIGHEST));
-        result.put(7, new CosineDistanceConstraint(NonModelNum.HIGHEST));
+        result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
+        result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
+        result.add(new RhymeScoreConstraint(NonModelNum.HIGHEST));
+        result.add(new CosineDistanceConstraint(NonModelNum.HIGHEST));
         return result;
     }
 
-    public static Map<Integer,WordConstraint> getRhymeSameSyllables() {
+    public static List<WordConstraint> getRhymeSameSyllables() {
         /*
         1. not one of these restricted words
         2. must be one of these common words
@@ -150,7 +153,6 @@ public abstract class WordConstraintManager {
         WordConstraintManager.goodPosForMarking = goodPosForMarking;
     }
 }
-
 
 
 

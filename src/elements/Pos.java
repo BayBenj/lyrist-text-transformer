@@ -1,5 +1,7 @@
 package elements;
 
+import english.Number;
+
 public enum Pos {
 
     CC,
@@ -41,13 +43,38 @@ public enum Pos {
 
     PUNCTUATION,
     UNKNOWN,
-    CONTRACTION_WORD
+    CONTRACTION_WORD;
 
+    public PosFam getFam() {
+        if (this == NN || this == NNS) 
+            return PosFam.NOUN;
+        
+        else if (this == JJ || this == JJR || this == JJS)
+            return PosFam.ADJ;
+
+        else if (this == NNP || this == NNPS)
+            return PosFam.P_NOUN;
+
+        else if (this == RB || this == RBR || this == RBS)
+            return PosFam.ADV;
+
+        else if (this == VB || this == VBD || this == VBG || this == VBN || this == VBP || this == VBZ)
+            return PosFam.VERB;
+        
+        return null;
+    }
+
+    public Number getNumber() {
+        if (this == NNS || this == NNPS)
+            return Number.PLURAL;
+
+        else if (this == NN || this == NNP)
+            return Number.SINGULAR;
+
+        return null;
+    }
+    
 }
-
-
-
-
 
 
 

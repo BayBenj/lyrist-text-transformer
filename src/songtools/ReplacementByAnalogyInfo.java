@@ -4,6 +4,8 @@ import constraints.WordConstraint;
 import constraints.WordConstraintManager;
 import utils.U;
 import word2vec.W2vCommander;
+
+import java.util.List;
 import java.util.Map;
 
 
@@ -12,8 +14,8 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
     private String oldTheme;
     private String newTheme;
 
-    public ReplacementByAnalogyInfo(Map<Integer, WordConstraint> markingConstraints,
-                                    Map<Integer, WordConstraint> wordConstraints,
+    public ReplacementByAnalogyInfo(List<WordConstraint> markingConstraints,
+                                    List<WordConstraint> wordConstraints,
                                     W2vCommander w2v,
                                     double replacementFrequency,
                                     String oldTheme,
@@ -63,8 +65,6 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
                        double replacementFrequency
 
  */
-
-
 
 
 

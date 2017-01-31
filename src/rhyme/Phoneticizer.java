@@ -93,7 +93,7 @@ public class Phoneticizer {
         Map<String, WordSyllables> result = new HashMap<>();
         for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
             if (entry.getKey().equals("SWIMSUIT")) {
-                U.print("stop for test");
+//                U.print("stop for test");
             }
             WordSyllables syllables = SyllableParser.algorithmicallyParse(entry.getValue().get(0));
             result.put(entry.getKey(), syllables);  //TODO it gets the top pronunciation, make sure that's right

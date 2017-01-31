@@ -5,6 +5,7 @@ import rhyme.*;
 public class Word extends SongElement implements Comparable<Word> {
 
     private String spelling = null;
+    private String base = null;
     private WordSyllables syllables = null;
     private Pos pos = null;
     private Ne ne = null;
@@ -15,6 +16,14 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public Word(String s) {
         this.setSpelling(s);
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
     }
 
     public SyllableGroup getFullRhyme() {
@@ -170,7 +179,6 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
-
 
 
 

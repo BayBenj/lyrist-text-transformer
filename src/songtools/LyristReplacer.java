@@ -1,7 +1,8 @@
 package songtools;
 
+import constraints.BaseConstraint;
+import constraints.StringConstraint;
 import constraints.WordConstraint;
-import constraints.WordConstraintManager;
 import constraints.WordConstraintPrioritizer;
 import elements.*;
 import rhyme.*;
@@ -15,19 +16,40 @@ public abstract class LyristReplacer {
         Song original = songWrapper.getSong();
         Set<Word> marked = WordConstraintPrioritizer.useConstraintsByWeakening(info.getMarkingConstraints(), original.getAllWords());
         WordReplacements wordReplacements = new WordReplacements();
+        StringReplacements baseReplacements = new StringReplacements();
         for (Sentence s : songWrapper.getSentences()) {
             for (int w = 0; w < s.size(); w++) {
                 Word oldWord = s.get(w);
                 if (oldWord instanceof Punctuation || !marked.contains(oldWord) || wordReplacements.containsKey(oldWord))
                     continue;
+                
                 Map<Double, String> cosineStrings = WordSource.w2vAnalogy(info.getW2v(), info.getOldTheme(), info.getNewTheme(), oldWord.getLowerSpelling(), 100);
                 Set<Word> cosineWords = cosineStringsToWords(cosineStrings, s, oldWord, w);
-                Word chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(WordConstraintManager.getNormal(), oldWord, cosineWords);
+
+                Word chosen;
+                WordConstraintPrioritizer.enableAllConstraints(info.getWordConstraints());
+                if (baseReplacements.keySet().contains(oldWord.getBase()))
+                    chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(info.getBaseConstraints(baseReplacements.get(oldWord.getBase())), oldWord, cosineWords);
+                
+                else 
+                    chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(info.getWordConstraints(), oldWord, cosineWords);
+
+                //if no suggestion was successful, don't do a replacement
+                if (chosen == null) continue;
+
                 wordReplacements.put(oldWord, chosen);
+                baseReplacements.put(oldWord.getBase(), chosen.getBase());
+                ((StringConstraint)info.getWordConstraints().get(1)).getObjects().add(chosen.getLowerSpelling());
+                ((BaseConstraint)info.getWordConstraints().get(2)).getObjects().add(chosen.getBase());
             }
         }
         return SongMutator.replaceWords(original, wordReplacements);
     }
+    
+    /*
+    Lemma solution: for now, filter out suggestions that are of the wrong lemma.
+        Later, build a tool that changes the base lemma into whatever the needed form is (just in case the correct form is not suggested).
+     */
 
     public static Song rhymeReplace(SongWrapper songWrapper, RhymeReplacementInfo info) {
         Song original = songWrapper.getSong();
@@ -49,6 +71,14 @@ public abstract class LyristReplacer {
         return SongMutator.replaceWords(original, replacements);
     }
 
+    public static Set<String> wordsToBases(Collection<Word> words) {
+        Set<String> result = new HashSet<>();
+        for (Word word : words)
+            if (word.getBase() != null)
+                result.add(word.getBase());
+        return result;
+    }
+    
     public static Set<Word> cosineStringsToWords(Map<Double, String> stringMapSuggestions,
                                                  Sentence sentence,
                                                  Word oldWord,
@@ -94,7 +124,7 @@ public abstract class LyristReplacer {
         return result;
     }
 
-    private static List<Word> getRhymeModelWords(WordSuggestionsByRhyme wordsToRhyme, Map<Integer, WordConstraint> nonRhymeFilters, double rhymeThreshold) {
+    private static List<Word> getRhymeModelWords(WordSuggestionsByRhyme wordsToRhyme, List<WordConstraint> nonRhymeFilters, double rhymeThreshold) {
         //get rhyme models for each rhyme class
         List<Word> result = new ArrayList<>();
         for (Map.Entry<Rhyme, List<Set<Word>>> rhymeClass : wordsToRhyme.entrySet()) {
@@ -106,7 +136,7 @@ public abstract class LyristReplacer {
         return result;
     }
 
-    private static Word chooseBestWordForRhyming(List<Set<Word>> suggestionSets, Map<Integer, WordConstraint> nonRhymeFilters, double rhymeThreshold) {
+    private static Word chooseBestWordForRhyming(List<Set<Word>> suggestionSets, List<WordConstraint> nonRhymeFilters, double rhymeThreshold) {
         //Chooses the best word in its rhyme scheme (best = most rhymeable)
         //Attempts to optimize all constraints in choice of rhyming word
 
@@ -147,11 +177,6 @@ public abstract class LyristReplacer {
     }
 
 }
-
-
-
-
-
 
 
 

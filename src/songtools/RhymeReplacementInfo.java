@@ -6,15 +6,15 @@ import rhyme.LineRhymeScheme;
 import utils.U;
 import word2vec.W2vCommander;
 
+import java.util.List;
 import java.util.Map;
 
 public class RhymeReplacementInfo extends ReplacementByAnalogyInfo {
 
     private LineRhymeScheme rhymeScheme;
 
-    public RhymeReplacementInfo(Map<Integer,
-                                WordConstraint> markingConstraints,
-                                Map<Integer, WordConstraint> wordConstraints,
+    public RhymeReplacementInfo(List<WordConstraint> markingConstraints,
+                                List<WordConstraint> wordConstraints,
                                 W2vCommander w2v, double replacementFrequency,
                                 String oldTheme,
                                 String newTheme,

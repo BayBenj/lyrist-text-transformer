@@ -41,7 +41,7 @@ public class LyristDriver {
             U.phoneticizer = new Phoneticizer();
 
             //Get template elements
-            SongWrapper templateSong = SongScanner.getTemplateSong("sorrow.txt");
+            SongWrapper templateSong = SongScanner.getTemplateSong("all-waters-fixed.txt");
 
             //Get elements intentions from programmer input
             SongIntentions songIntentions = IntentionManager.getSongIntentions(

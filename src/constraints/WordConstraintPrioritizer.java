@@ -7,19 +7,19 @@ import java.util.*;
 
 public abstract class WordConstraintPrioritizer {
 
-    public static WordReplacements useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, WordsToSuggestions candidates) {
+    public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) {
         WordReplacements result = new WordReplacements();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet())
             result.put(entry.getKey(), useConstraintsTo1ByWeakening(constraints, entry.getKey(), entry.getValue()));
         return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, Collection<Word> candidates) {
+    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Collection<Word> candidates) {
         Word result = useConstraintsTo1ByWeakening(constraints, null, candidates);
         return result;
     }
 
-    public static WordsToSuggestions useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, WordsToSuggestions candidates) {
+    public static WordsToSuggestions useConstraintsByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) {
         WordsToSuggestions result = new WordsToSuggestions();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet()) {
             Set<Word> temp = useConstraintsByWeakening(constraints, entry.getKey(), entry.getValue());
@@ -28,7 +28,7 @@ public abstract class WordConstraintPrioritizer {
         return result;
     }
 
-    public static Set<Word> useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, Collection<Word> originals) {
+    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Collection<Word> originals) {
         Set<Word> result = new HashSet<>(originals);
         for (int c = 0; c < constraints.size(); c++) {
             WordConstraint wordConstraint = constraints.get(c);
@@ -52,14 +52,14 @@ public abstract class WordConstraintPrioritizer {
         return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(Map<Integer, WordConstraint> constraints, Word original, Collection<Word> candidates) {
+    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word original, Collection<Word> candidates) {
         TreeSet<Word> results = new TreeSet<>(useConstraintsByWeakening(constraints, original, candidates));
         if (results != null && !results.isEmpty())
             return results.first();
         return null;
     }
 
-    public static Set<Word> useConstraintsByWeakening(Map<Integer, WordConstraint> constraints, Word original, Collection<Word> candidates) {
+    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Word original, Collection<Word> candidates) {
         if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
         Set<Word> remaining = new HashSet(candidates);
         for (int c = 0; c < constraints.size(); c++) {
@@ -84,7 +84,12 @@ public abstract class WordConstraintPrioritizer {
         return null;
     }
 
-//    public static Set<Word> useConstraints(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
+    public static void enableAllConstraints(List<WordConstraint> constraints) {
+        for (WordConstraint c : constraints)
+            c.enable();
+    }
+
+//    public static Set<Word> useConstraints(List<WordConstraint> constraints, Set<Word> candidates, Word original) {
 //        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
 //        Set<Word> remaining = new HashSet<>();
 //        for (int c = 0; c < constraints.size(); c++) {
@@ -100,7 +105,7 @@ public abstract class WordConstraintPrioritizer {
 //        return remaining;
 //    }
 
-//    private static TreeMap<Integer, WordConstraint> weakenOrRemoveLastConstraint(TreeMap<Integer, WordConstraint> constraints) {
+//    private static TreeList<WordConstraint> weakenOrRemoveLastConstraint(TreeList<WordConstraint> constraints) {
 //        //constraints should be coming in with lowest priority first
 //        if (constraints.firstEntry().getValue() instanceof DoubleConstraint)
 //            constraints.lastEntry().getValue().weaken();
@@ -109,7 +114,7 @@ public abstract class WordConstraintPrioritizer {
 //        return constraints;
 //    }
 
-//    public static Word useConstraintsTo1(Map<Integer, WordConstraint> constraints, Set<Word> candidates, Word original) {
+//    public static Word useConstraintsTo1(List<WordConstraint> constraints, Set<Word> candidates, Word original) {
 //        TreeSet<Word> results = (TreeSet<Word>)useConstraints(constraints, candidates, original);
 //        if (U.notNullnotEmpty(results))
 //            return results.first();
@@ -139,10 +144,6 @@ Continuous constraints may be weakened or strengthened.
 4. Highest rhyme dbl
 5. Highest cosine distance
  */
-
-
-
-
 
 
 

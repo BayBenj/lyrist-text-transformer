@@ -114,7 +114,7 @@ public abstract class SyllableParser {
         int nSyllables = 0;
         for (Phoneme phoneme : phonemes) {
             if (phoneme.phonemeEnum == null) {
-                System.out.println("stop for test");
+//                System.out.println("stop for test");
             }
             if (phoneme.phonemeEnum.isVowel())
                 nSyllables++;
@@ -575,6 +575,7 @@ public abstract class SyllableParser {
 
 
 //sonnarent = non vowel that you can hold out: nasals, liquids
+
 
 
 
