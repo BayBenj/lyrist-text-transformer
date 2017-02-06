@@ -32,13 +32,13 @@ public class RhymeReplacementInfo extends ReplacementByAnalogyInfo {
     }
 
     public static RhymeReplacementInfo getExample() {
-        return new RhymeReplacementInfo(null,
+        return new RhymeReplacementInfo(WordConstraintManager.getMarking(),
                 WordConstraintManager.getRhyme(),
                 U.getW2vCommander(),
                 1,
                 "depression",
                 "happiness",
-                new LineRhymeScheme("A","B","A","B"));
+                new LineRhymeScheme("A","B","A","B","A","B","A","B"));
     }
 
 }

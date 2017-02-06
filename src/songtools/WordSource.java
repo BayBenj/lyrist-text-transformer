@@ -28,14 +28,28 @@ public class WordSource {
         return stringSuggestionMap;
     }
 
-    public static Map<Double, String> cmuRhymes(String oldWord) {
+//    public static Map<Double, String> perfectCmuRhymes(String oldWord) {
+//        //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
+//        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.toUpperCase(), 1);
+//        Map<Double, String> cmuRhymes = new HashMap<>();
+//        double extra = 0.0001;
+//        for (String rhyme : allRhymes) {
+//            cmuRhymes.put(1.0 + extra, rhyme.toLowerCase());
+//            extra += 0.0001;
+//        }
+//        return cmuRhymes;
+//    }
+
+    public static Map<Double, String> imperfectCmuRhymes(Word rhymeModel, int limit) {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
-        Set<String> allRhymes = Rhymer.getPerfectRhymes(oldWord.toUpperCase(), 1);
+        Set<String> allRhymes = Rhymer.getAllRhymesByThreshhold(rhymeModel, .7);
         Map<Double, String> cmuRhymes = new HashMap<>();
         double extra = 0.0001;
         for (String rhyme : allRhymes) {
             cmuRhymes.put(1.0 + extra, rhyme.toLowerCase());
             extra += 0.0001;
+            if (cmuRhymes.size() > limit)
+                return cmuRhymes;
         }
         return cmuRhymes;
     }
@@ -49,10 +63,6 @@ public class WordSource {
 //    }
 
 }
-
-
-
-
 
 
 

@@ -101,13 +101,17 @@ public abstract class WordConstraintManager {
         */
 
         List<WordConstraint> result = new ArrayList<>();
-        result.add(new StringConstraint(ReturnType.NON_MATCHES));//instance-specific, enforced
+        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) instance-specific, enforced, instance-specific
         result.get(0).enforce();
-        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
         result.get(1).enforce();
-        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, .75, ReturnType.MATCHES));// enforced
+        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+        result.get(2).enforce();
+        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
         result.get(3).enforce();
+        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, .7, ReturnType.MATCHES));// enforced
+        result.get(5).enforce();
         result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
         result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
         result.add(new RhymeScoreConstraint(NonModelNum.HIGHEST));
@@ -153,10 +157,6 @@ public abstract class WordConstraintManager {
         WordConstraintManager.goodPosForMarking = goodPosForMarking;
     }
 }
-
-
-
-
 
 
 

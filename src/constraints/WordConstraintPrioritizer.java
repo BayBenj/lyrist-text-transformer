@@ -14,11 +14,6 @@ public abstract class WordConstraintPrioritizer {
         return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Collection<Word> candidates) {
-        Word result = useConstraintsTo1ByWeakening(constraints, null, candidates);
-        return result;
-    }
-
     public static WordsToSuggestions useConstraintsByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) {
         WordsToSuggestions result = new WordsToSuggestions();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet()) {
@@ -89,6 +84,24 @@ public abstract class WordConstraintPrioritizer {
             c.enable();
     }
 
+    public static void disableRhymeConstraints(List<WordConstraint> constraints) {
+        for (WordConstraint c : constraints)
+            if (c instanceof RhymeScoreConstraint)
+                c.disable();
+    }
+
+    public static void disableIntanceSpecificConstraints(List<WordConstraint> constraints) {
+        for (WordConstraint c : constraints)
+            if (c.isInstanceSpecific())
+                c.disable();
+    }
+
+    public static void disableNonRhymeConstraints(List<WordConstraint> constraints) {
+        for (WordConstraint c : constraints)
+            if (!(c instanceof RhymeScoreConstraint))
+                c.disable();
+    }
+
 //    public static Set<Word> useConstraints(List<WordConstraint> constraints, Set<Word> candidates, Word original) {
 //        if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
 //        Set<Word> remaining = new HashSet<>();
@@ -144,6 +157,8 @@ Continuous constraints may be weakened or strengthened.
 4. Highest rhyme dbl
 5. Highest cosine distance
  */
+
+
 
 
 

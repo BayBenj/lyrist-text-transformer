@@ -4,7 +4,6 @@ import constraints.WordConstraint;
 import constraints.WordConstraintManager;
 import utils.U;
 import word2vec.W2vCommander;
-
 import java.util.List;
 
 public class NormalReplacementInfo extends ReplacementByAnalogyInfo {
@@ -18,7 +17,8 @@ public class NormalReplacementInfo extends ReplacementByAnalogyInfo {
                                              WordConstraintManager.getNormal(),
                                              U.getW2vCommander(),
                                             1,
-                                            "sorrow",
-                                            "terrorism");
+                                            "delicious",
+                                            "disgusting");
     }
+
 }

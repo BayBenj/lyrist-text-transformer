@@ -27,7 +27,7 @@ public class WordSyllables extends SyllableGroup {
 
             if (i == mostStressedSyllableIndex) {
                 reachedHighestStress = true;
-                wordRhyme.add(new Syllable(null, syllable.getNucleus(), (ConsonantPronunciation) syllable.getCoda()));
+                wordRhyme.add(new Syllable(new ConsonantPronunciation(), syllable.getNucleus(), syllable.getCoda()));
             }
             i++;
         }

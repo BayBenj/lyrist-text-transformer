@@ -33,6 +33,12 @@ public class U {//Utils
         return true;
     }
 
+    public static boolean isNullOrEmpty(Collection c) {
+        if (c == null || c.isEmpty())
+            return true;
+        return false;
+    }
+
     public static void startTimer() {
         startTime = System.nanoTime();
     }

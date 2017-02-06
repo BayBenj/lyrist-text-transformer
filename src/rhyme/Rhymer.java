@@ -1,25 +1,48 @@
 package rhyme;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
+
+import elements.Pos;
 import elements.Word;
+import utils.U;
 
 public abstract class Rhymer {
 
-    private static final int LOOKAHEAD = 4;
-    public static final double MATCHING_LINE_THRESHOLD = .2;
-
-    private static final double PERFECT_RHYME_SCORE = 1.0;
-    private static final double FAMILY_RHYME_SCORE = .75;
-    private static final double ADDITIVE_RHYME_SCORE = .6;
-    private static final double SUBTRACTIVE_RHYME_SCORE = .4;
-    private static final double ASSONANCE_RHYME_SCORE = .4;
-    private static final double CONSONANCE_RHYME_SCORE = .2;
-    private static final boolean DEBUG = false;
+//    private static final int LOOKAHEAD = 4;
+//    public static final double MATCHING_LINE_THRESHOLD = .2;
+//
+//    private static final double PERFECT_RHYME_SCORE = 1.0;
+//    private static final double FAMILY_RHYME_SCORE = .75;
+//    private static final double ADDITIVE_RHYME_SCORE = .6;
+//    private static final double SUBTRACTIVE_RHYME_SCORE = .4;
+//    private static final double ASSONANCE_RHYME_SCORE = .4;
+//    private static final double CONSONANCE_RHYME_SCORE = .2;
+//    private static final boolean DEBUG = false;
 
 //    private static double[][] hMatrix = HirjeeMatrix.load();
 //    private static List<Pair<String, MannerOfArticulation>> phoneDict = Phoneticizer.loadReversePhonesDict();
 
+    public static void main(String[] args) throws IOException {
+        File currentDirFile = new File("");
+        U.rootPath = currentDirFile.getAbsolutePath() + "/";
+        Phoneticizer.loadCMUDict();
+
+        Word w = new Word("creation");
+        w.setPos(Pos.NN);
+        w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
+
+        Set<String> rhymes = getAllRhymesByThreshhold(w, .95);
+        for (String s : rhymes)
+            System.out.println(s);
+    }
+
+    public static Set<String> getAllRhymesByThreshhold(Word w, double threshold) {
+        return Phoneticizer.getRhymesByThreshold(w, threshold);
+    }
+
+    /*
     public static boolean isPerfectRhyme(String s1, String s2, int nSyl) {
         List<PhonemeEnum> rhyme1 = Phoneticizer.getRhymeOfLastXSyllables(s1, nSyl);
         List<PhonemeEnum> rhyme2 = Phoneticizer.getRhymeOfLastXSyllables(s2, nSyl);
@@ -40,15 +63,15 @@ public abstract class Rhymer {
     }
 
     public static double scoreRhyme(Word w1, Word w2) {
-        if (areIdentical(w1,w2))
-            return 2;
-        if (areRhymeIdentical(w1,w2))
-            return 1;
-        if (areVowelAligned(w1,w2)) {
-            double cost = getTweakCost(w1,w2);
-            return 1 - cost;
-        }
-        return 0;
+//        if (areIdentical(w1,w2))
+//            return 2;
+//        else if (areRhymeIdentical(w1,w2))
+//            return 1;
+//        else if (areVowelAligned(w1,w2)) {
+//            double cost = score2Rhymes(w1.getFullRhyme(),w2.getFullRhyme());
+//            return 1 - cost;
+//        }
+        return score2Rhymes(w1.getFullRhyme(),w2.getFullRhyme());
     }
 
     public static boolean areIdentical(Word w1, Word w2) {
@@ -75,18 +98,174 @@ public abstract class Rhymer {
                 return false;
         return true;
     }
+*/
+    public static double score2Rhymes(SyllableGroup s1, SyllableGroup s2) {
+        SyllableGroup shorter = s1;
+        SyllableGroup longer = s2;
+        if (s1.size() > s2.size()) {
+            shorter = s2;
+            longer = s1;
+        }
 
-    public static double getTweakCost(Word w1, Word w2) {
-        return .1;
+        double d = 0.0;
+        double n = shorter.size();
+        for (int s = shorter.size() - 1; s >= 0; s--)
+            d += score2Syllables(s1.get(s), s2.get(s));
+
+        double average = d / n;
+
+        //penalize words with rhymes of differing syllables
+        double difference = Math.abs((double)shorter.size() - (double)longer.size());
+
+        if (difference == 0)
+            return average;
+
+        double ratio = (((difference / 2.0) + ((double)shorter.size())) / ((double)longer.size()));
+        average *= ratio;
+
+        return average;
     }
 
-    /**
-     * In the returned structure the ith element, j, is an array where
-     * of the LOOKAHEAD lines following line i, j[0] was the filterToHighest matching rhyme
-     * above THRESHOLD and j[1] syllables matched
-     *
-     * return scheme in which a number n at line i means that line i rhymes with line i-n
-     */
+    public static double score2Syllables(Syllable s1, Syllable s2) {
+        int n = 3;
+
+        double onsetWeight = 1;
+        double nucleusWeight = 6;
+        double codaWeight = 1;
+
+        ConsonantPronunciation o1 = s1.getOnset();
+        ConsonantPronunciation o2 = s2.getOnset();
+        double onsetScore;
+        if (U.isNullOrEmpty(o1) && U.isNullOrEmpty(o2)) {
+            n--;
+            onsetScore = 0;
+            onsetWeight = 0;
+        }
+        else
+            onsetScore = scoreConsonantPronunciations(o1,o2);
+
+        VowelPhoneme n1 = s1.getNucleus();
+        VowelPhoneme n2 = s2.getNucleus();
+        double nucleusScore;
+        if (n1 == null && n2 == null) {
+            n--;
+            nucleusScore = 0;
+            nucleusWeight = 0;
+        }
+        else
+             nucleusScore = score2Vowels(n1,n2);
+
+        ConsonantPronunciation c1 = s1.getCoda();
+        ConsonantPronunciation c2 = s2.getCoda();
+        double codaScore;
+        if (U.isNullOrEmpty(c1) && U.isNullOrEmpty(c2)) {
+            n--;
+            codaScore = 0;
+            codaWeight = 0;
+        }
+        else
+            codaScore = scoreConsonantPronunciations(c1,c2);
+
+
+        double total = (onsetWeight + nucleusWeight + codaWeight) / n;
+
+        double onsetMult = onsetWeight / total;
+        double nucleusMult = nucleusWeight / total;
+        double codaMult = codaWeight / total;
+
+        double syllableAlignmentScore = ((onsetMult * onsetScore) + (nucleusMult * nucleusScore) + (codaMult * codaScore)) / n;
+        return syllableAlignmentScore;
+    }
+
+    public static double scoreConsonantPronunciations(ConsonantPronunciation o1, ConsonantPronunciation o2) {
+        if (!U.notNullnotEmpty(o1) && !U.notNullnotEmpty(o2))
+            return 1;
+        if (!U.notNullnotEmpty(o1) || !U.notNullnotEmpty(o2))
+            return 0;
+        //TODO ACTUALLY ALIGN consonants here
+        double alignmentScore = 0;
+        ConsonantPronunciation shortest = o1;
+        ConsonantPronunciation longest = o2;
+        if (o1.size() > o2.size()) {
+            shortest = o2;
+            longest = o1;
+        }
+        for (int cp = shortest.size() - 1; cp >= 0; cp--) {
+            ConsonantPhoneme cp1 = o1.get(cp);
+            ConsonantPhoneme cp2 = o2.get(cp);
+            alignmentScore += score2Consonants(cp1, cp2);
+        }
+        int n = longest.size();
+        double average = alignmentScore / n;
+        return average;
+    }
+
+    public static double score2Vowels(VowelPhoneme n1, VowelPhoneme n2) {
+        if (n1 == null || n2 == null)
+            return 0;
+        double[] coord1 = PhonemeEnum.getCoord(n1.phonemeEnum);
+        double[] coord2 = PhonemeEnum.getCoord(n2.phonemeEnum);
+        if (coord1 == null || coord2 == null)
+            return 0;
+        double frontnessDiff = Math.abs(coord1[0] - coord2[0]);
+        double hightDiff = Math.abs(coord1[1] - coord2[1]);
+        double frontScore = Math.abs((frontnessDiff / 12.72792) - 1) * 1;
+        double heightScore = Math.abs((hightDiff / 12.72792) - 1) * 1;
+        return (frontScore + heightScore) / 2;//TODO weight frontness and height
+        //        Frontness f1 = ph1.getFrontness();
+//        Frontness f2 = ph2.getFrontness();
+//        Height h1 = ph1.getHeight();
+//        Height h2 = ph2.getHeight();
+//        boolean r1 = PhonemeEnum.isRounded(ph1);
+//        boolean r2 = PhonemeEnum.isRounded(ph2);
+//        double score = 0;
+//        if (f1 == f2)
+//            score += .3; //TODO: score individual types of frontness, etc.
+//
+//        if (h1 == h2)
+//            if (h1 == Height.LOW)
+//                score += .4;
+//            else
+//                score += .35;
+//
+//        if (r1 == r2)
+//            score += .2;
+//
+//        return score;
+
+    }
+
+    private static double getDistance(double[] p1, double[] p2) {
+        double d = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
+        return d;
+    }
+
+    private static double score2Consonants(ConsonantPhoneme ph1, ConsonantPhoneme ph2) {
+        if (ph1 == null || ph2 == null)
+            return 0;
+        MannerOfArticulation m1 = PhonemeEnum.getManner(ph1.phonemeEnum);
+        MannerOfArticulation m2 = PhonemeEnum.getManner(ph2.phonemeEnum);
+        PlaceOfArticulation p1 = PhonemeEnum.getPlace(ph1.phonemeEnum);
+        PlaceOfArticulation p2 = PhonemeEnum.getPlace(ph2.phonemeEnum);
+        boolean v1 = ph1.isVoiced();
+        boolean v2 = ph2.isVoiced();
+        double score = 0;
+        if (v1 == v2)
+            score += .1;
+        if (m1 == m2)
+            score += .45;
+        if (p1 == p2)
+            score += .45;
+        return score;
+    }
+
+        /**
+         * In the returned structure the ith element, j, is an array where
+         * of the LOOKAHEAD lines following line i, j[0] was the filterToHighest matching rhyme
+         * above THRESHOLD and j[1] syllables matched
+         *
+         * return scheme in which a number n at line i means that line i rhymes with line i-n
+         */
 //    public static int[] extractRhymeScheme(List<String> filterWords) {
 //        // For each line we want to return the number of syllables in the line
 //        // and any rhyming information
@@ -424,6 +603,3 @@ public abstract class Rhymer {
 //    }
 
 }
-
-
-

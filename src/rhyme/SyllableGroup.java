@@ -34,8 +34,18 @@ public class SyllableGroup extends ArrayList<Syllable> {
         return sb;
     }
 
+    public boolean equalsSansStress(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        SyllableGroup that = (SyllableGroup) o;
+        for (int s = 0; s < this.size(); s++)
+            if (!this.get(s).equalsSansStress(that.get(s)))
+                return false;
+        return true;
+    }
 
 }
+
 
 
 

@@ -59,7 +59,7 @@ public final class Syllable {
         return all;
     }
 
-    public List<ConsonantPhoneme> getOnset() {
+    public ConsonantPronunciation getOnset() {
         return onset;
     }
 
@@ -67,7 +67,7 @@ public final class Syllable {
         this.onset = (ConsonantPronunciation) onset;
     }
 
-    public List<ConsonantPhoneme> getCoda() {
+    public ConsonantPronunciation getCoda() {
         return coda;
     }
 
@@ -124,12 +124,20 @@ public final class Syllable {
         return "" + onset.toString() + nucleus.toString() + coda.toString();
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Syllable syllable = (Syllable) o;
+
+        if (getOnset() == null && syllable.getOnset() != null) return false;
+        if (getOnset() != null && syllable.getOnset() == null) return false;
+        if (getNucleus() == null && syllable.getNucleus() != null) return false;
+        if (getNucleus() != null && syllable.getNucleus() == null) return false;
+        if (getCoda() == null && syllable.getCoda() != null) return false;
+        if (getCoda() != null && syllable.getCoda() == null) return false;
 
         if (getOnset() != null ? !getOnset().equals(syllable.getOnset()) : syllable.getOnset() != null) return false;
         if (getNucleus() != null ? !getNucleus().equals(syllable.getNucleus()) : syllable.getNucleus() != null)

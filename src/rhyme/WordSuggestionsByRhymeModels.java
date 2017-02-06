@@ -1,14 +1,13 @@
 package rhyme;
 
 import elements.Word;
-import utils.Pair;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Word>>>> {
-    //HashMap<rhyme class, Map<instance n of this rhyme class,Set<word suggestion for this instance>>>
+public class WordSuggestionsByRhymeModels extends HashMap<Word, List<Set<Word>>> {
+    //HashMap<rhyme class's model word, Map<instance n of this rhyme class,Set<word suggestion for this instance>>>
 
 //    public boolean contains(Word word) {
 //        for (Set<Word> set : this.values())
@@ -34,6 +33,7 @@ public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Wo
 //    }
 
 }
+
 
 
 

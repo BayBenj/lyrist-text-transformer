@@ -547,18 +547,25 @@ public class Phoneticizer {
         return null;
     }
 
+    public static Set<String> getRhymesByThreshold(Word w, double threshold) {
+        Set<String> result = new HashSet<>();
+        for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
+            if (!syllableDict.keySet().contains(entry.getKey().toUpperCase()) || !entry.getKey().matches("\\w+")) continue;
+            if (entry.getKey().equalsIgnoreCase("dog")) {
+                System.out.println("stop for testing");
+            }
+            Word temp = new Word(entry.getKey());
+            temp.setSyllables(getSyllablesForWord(entry.getKey()));
+            double score = Rhymer.score2Rhymes(w.getFullRhyme(), temp.getFullRhyme());
+            if (score >= threshold) {
+                result.add(entry.getKey().toLowerCase());
+                System.out.println(entry.getKey().toLowerCase() + ": " + score);
+            }
+        }
+        return result;
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

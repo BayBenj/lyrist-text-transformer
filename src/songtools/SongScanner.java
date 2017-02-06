@@ -248,12 +248,13 @@ public abstract class SongScanner {
 
     public static WordsByRhyme getRhymeSchemeWords(Song songToMark, LineRhymeScheme rhymeScheme) {
         if (songToMark != null && !songToMark.getAllWords().isEmpty()) {
-            List<Word> words = songToMark.getAllWords();
+            List<SongElement> lines = songToMark.getAllSubElementsOfType(new Line());
             WordsByRhyme wordsByRhyme = new WordsByRhyme();
-            for (int w = 0; w < words.size(); w++) {
-                if (rhymeScheme.contains(w)) {
-                    Word word = words.get(w);
-                    Rhyme rhyme = rhymeScheme.getRhymeByIndex(w);
+            for (int l = 0; l < lines.size(); l++) {
+                Line line = (Line)lines.get(l);
+                if (rhymeScheme.contains(l)) {
+                    Word word = line.getAllWords().get(line.getSize() - 1);
+                    Rhyme rhyme = rhymeScheme.getRhymeByIndex(l);
                     wordsByRhyme.putWord(rhyme, word);
                 }
             }
@@ -263,8 +264,6 @@ public abstract class SongScanner {
     }
 
 }
-
-
 
 
 
