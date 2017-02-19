@@ -27,8 +27,8 @@
 //    //ArrayList<GrammaticalStructure> gs = new ArrayList<GrammaticalStructure>();
 //
 //    public void tagPoSForSongSegment(SongElement segment) {
-//        if (segment instanceof Song)
-//            this.tagPoSForSong((Song)segment);
+//        if (segment instanceof InfoSong)
+//            this.tagPoSForSong((InfoSong)segment);
 //
 //        else if (segment instanceof Stanza)
 //            this.tagPoSForStanza((Stanza)segment);
@@ -48,7 +48,7 @@
 //        return tagger.tagSentence(sentence);
 //    }
 //
-//    public void tagPoSForSong(Song elements) {
+//    public void tagPoSForSong(InfoSong elements) {
 //        for (int i = 0; i < elements.getSize(); i ++) {
 //            Stanza tempStanza = elements.getStanzas().get(i);
 ////            posSong.add(tagPoSForStanza(tempStanza));

@@ -9,6 +9,7 @@ public class RhymeScoreConstraint extends DoubleConstraint {
 
     public RhymeScoreConstraint(NonModelNum comparison) {
         super(comparison);
+        this.instanceSpecific = false;
     }
 
     public RhymeScoreConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
@@ -36,8 +37,7 @@ public class RhymeScoreConstraint extends DoubleConstraint {
 
     @Override
     public boolean weaken() {
-        this.weaken(.25);
-        return true;
+        return this.weaken(.25);
     }
 
 }

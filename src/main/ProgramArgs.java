@@ -18,7 +18,7 @@ public class ProgramArgs {
     public static UISetting userInterfaceSetting = UISetting.UNSET;
 
     public static void loadProgramArgs(String[] args) {
-        if (args.length == 0)
+        if (args.length == 6)
             loadDefaultProgramArgs();
         else
             throw new UnsupportedOperationException("Illegal arguments passed to program: " + Arrays.toString(args));
@@ -62,10 +62,6 @@ public class ProgramArgs {
 
 
 //TODO: oooh, enums within a class?
-
-
-
-
 
 
 

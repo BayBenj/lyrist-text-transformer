@@ -1,9 +1,10 @@
 package rhyme;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Syllable {
+public final class Syllable implements Serializable {
 
     private ConsonantPronunciation onset = new ConsonantPronunciation();
     private VowelPhoneme nucleus;//part of rhyme
@@ -168,6 +169,8 @@ public final class Syllable {
 }
 // extends ArrayList<PhonemeEnum>?
 // holds ArrayList<PhonemeEnum>?
+
+
 
 
 

@@ -1,6 +1,8 @@
 package rhyme;
 
-public abstract class Phoneme {
+import java.io.Serializable;
+
+public abstract class Phoneme implements Serializable {
 
     public PhonemeEnum phonemeEnum;
 

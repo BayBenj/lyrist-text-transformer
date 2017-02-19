@@ -1,9 +1,10 @@
 package elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stanza extends SongElement {
+public class Stanza extends SongElement implements Serializable {
 
     public void add(boolean b, ArrayList<String> strings) {
         //called by the initial readTemplate()  method in TemplateSongEngineer
@@ -54,8 +55,8 @@ public class Stanza extends SongElement {
         return this.getSuperElement();
     }
 
-    public void setSong(Song song) {
-        this.setSuperElement(song);
+    public void setSong(Song infoSong) {
+        this.setSuperElement(infoSong);
         // TODO: Catch ClassCastException
     }
 

@@ -1,8 +1,8 @@
 package intentions;
 
+import main.ThemeManager;
 import rhyme.Meter;
 import rhyme.LineRhymeScheme;
-import rhyme.RhymeScheme;
 import rhyme.RhymeSchemeManager;
 import utils.U;
 import java.util.ArrayList;
@@ -10,18 +10,18 @@ import java.util.List;
 
 public abstract class IntentionManager {
 
-    public static SongIntentions getSongIntentions(LineRhymeScheme rhymeScheme, String emotion, String culture) {
+    public static CompleteIntentions getSongIntentions(LineRhymeScheme rhymeScheme, String oldTheme, String newTheme, String culture) {
         StructuralIntentions structuralIntentions = new StructuralIntentions();
         structuralIntentions.setRhymeScheme(rhymeScheme);
         List<EmotionalIntention> emotionalIntentions = new ArrayList<>();
-        emotionalIntentions.add(new EmotionalIntention(emotion));
+        emotionalIntentions.add(new EmotionalIntention(newTheme));
         List<CulturalIntention> culturalIntentions = new ArrayList<>();
         culturalIntentions.add(new CulturalIntention(culture));
-        return new SongIntentions(structuralIntentions, emotionalIntentions, culturalIntentions);
+        return new CompleteIntentions(structuralIntentions, oldTheme, emotionalIntentions, culturalIntentions);
     }
 
-    public static SongIntentions getRandomSongIntentions(int lines) {
-        return new SongIntentions(getRandomStructuralIntentions(lines), getRandomEmotionalIntention(), getRandomCulturalIntention());
+    public static CompleteIntentions getRandomSongIntentions(int lines) {
+        return new CompleteIntentions(getRandomStructuralIntentions(lines), ThemeManager.getThemePair().getFirst(), getRandomEmotionalIntention(), getRandomCulturalIntention());
     }
 
     public static StructuralIntentions getRandomStructuralIntentions(int lines) {
@@ -30,10 +30,10 @@ public abstract class IntentionManager {
         return structuralIntentions;
     }
 
-    public static RhymeScheme getRandomRhymeScheme(int lines) {
+    public static LineRhymeScheme getRandomRhymeScheme(int lines) {
 //        int rnd = U.rand.nextInt(4);
         int rnd = 0;
-        RhymeScheme rhymeScheme = null;
+        LineRhymeScheme rhymeScheme = null;
         switch (rnd) {
             case 0:
                 RhymeSchemeManager.getAlternatingScheme(lines, U.rand.nextInt(lines - 1) + 2, 1);
@@ -63,7 +63,6 @@ public abstract class IntentionManager {
     }
 
 }
-
 
 
 

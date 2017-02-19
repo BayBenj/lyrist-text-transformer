@@ -1,16 +1,17 @@
 package elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SongElement {
+public abstract class SongElement implements Serializable {
 
     private SongElement superElement = null;
     private List<SongElement> subElements = null;
 
     public final void add(SongElement se) {
         if (this.getSubElements() == null)
-            this.setSubElements(new ArrayList<SongElement>());
+            this.setSubElements(new ArrayList<>());
         this.getSubElements().add(se);
     }
 
@@ -28,15 +29,39 @@ public abstract class SongElement {
     }
 
     public List<Word> getAllWords() {
-        List<SongElement> allWordsAsElements = this.getSubElementsRecursively(new Word(""), new ArrayList<SongElement>());
-        List<Word> allWords = new ArrayList<Word>();
-        for (SongElement se : allWordsAsElements)
-            allWords.add((Word)se);
-        return allWords;
+        List<Word> allWords = new ArrayList<>();
+        if (this instanceof Word) {
+            allWords.add((Word)this);
+            return allWords;
+        }
+        else if (this instanceof Line) {
+            Line l = (Line)this;
+            allWords.addAll(l.getAllWords());
+            return allWords;
+        }
+        else if (this instanceof Stanza) {
+            Stanza s = (Stanza)this;
+            for (Line l : s.getLines())
+                allWords.addAll(l.getWords());
+            return allWords;
+        }
+        else if (this instanceof Song) {
+            Song song = (Song)this;
+            for (Stanza s : song.getStanzas())
+                for (Line l : s.getLines())
+                    allWords.addAll(l.getWords());
+            return allWords;
+        }
+        else {
+            List<SongElement> allWordsAsElements = this.getSubElementsRecursively(new Word(""), new ArrayList<>());
+            for (SongElement se : allWordsAsElements)
+                allWords.add((Word) se);
+            return allWords;
+        }
     }
 
     public List<SongElement> getAllSubElementsOfType(SongElement baseCase) {
-        return this.getSubElementsRecursively(baseCase, new ArrayList<SongElement>());
+        return this.getSubElementsRecursively(baseCase, new ArrayList<>());
     }
 
     private List<SongElement> getSubElementsRecursively(SongElement baseCase, ArrayList<SongElement> result) {
@@ -242,13 +267,6 @@ public means other classes can use it
 protected means Stanzas, Lines, and Words can use it
 private means only stuff in this class can use it
  */
-
-
-
-
-
-
-
 
 
 

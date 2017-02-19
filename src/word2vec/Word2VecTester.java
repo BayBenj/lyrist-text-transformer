@@ -1,8 +1,6 @@
 package word2vec;
 
-import main.ProgramArgs;
 import utils.U;
-import word2vec.W2vCommander;
 
 import java.io.File;
 import java.util.*;
@@ -14,18 +12,12 @@ public class Word2VecTester {
     private static int results;
     private static String operation;
     private static Scanner input = new Scanner(System.in);
-    private static W2vCommander w2v;
+    private static W2vInterface w2v;
 
     public static void main(String[] args) {
         //Set the root path of Lyrist in U
         File currentDirFile = new File("");
         U.rootPath = currentDirFile.getAbsolutePath() + "/";
-
-        //Load arguments
-        ProgramArgs.loadProgramArgs(args);
-
-        //Set testing variable
-        ProgramArgs.setTesting(false);
 
         loop:
         while (true) {
@@ -35,8 +27,8 @@ public class Word2VecTester {
 //            if (model.equals("") || model.matches("\\s+")) {
 //                model = "news-lyrics-bom";
 //            }
-//            w2v = new W2vCommander(model);
-            w2v = new W2vCommander("news-lyrics-bom");
+//            w2v = new W2vInterface(model);
+            w2v = new W2vInterface("n1615-c4-l1");
 
 
 //            //Choose number of results to return
@@ -52,30 +44,36 @@ public class Word2VecTester {
             System.out.print("Operation: ");
             operation = input.next();
             Map<Double, String> w2vResults = null;
-            switch (operation) {
-                case "DONE":
-                    break loop;
-                case "analogy":
-                    w2vResults = analogy();
-                    break;
-                case "sum":
-                    w2vResults = sum();
-                    break;
-                case "similar":
-                    w2vResults = similar();
-                    break;
-                case "average":
-                    w2vResults = average();
-                    break;
-                default:
-                    w2vResults = analogy();
-                    break;
+            try {
+                switch (operation) {
+                    case "DONE":
+                        break loop;
+                    case "analogy":
+                        w2vResults = analogy();
+                        break;
+                    case "sum":
+                        w2vResults = sum();
+                        break;
+                    case "similar":
+                        w2vResults = similar();
+                        break;
+                    case "average":
+                        w2vResults = average();
+                        break;
+                    default:
+                        w2vResults = analogy();
+                        break;
+                }
+            }
+            catch (BadW2vInputException e) {
+                System.out.println("\t***Bad W2v Input!");
+                e.printStackTrace();
             }
             printResults(w2vResults);
         }
     }
 
-    private static Map<Double, String> sum() {
+    private static Map<Double, String> sum() throws BadW2vInputException {
         String originalWords = "";
         String word = "";
         System.out.print("Original filterWords, type DONE when done: ");
@@ -92,14 +90,14 @@ public class Word2VecTester {
         return w2v.findSum(actualWords, results, true);
     }
 
-    private static Map<Double, String> similar() {
+    private static Map<Double, String> similar() throws BadW2vInputException {
         String originalWord;
         System.out.print("Original word: ");
         originalWord = input.next();
         return w2v.findSimilars(originalWord, results);
     }
 
-    private static Map<Double, String> average() {
+    private static Map<Double, String> average() throws BadW2vInputException {
         String originalWords = "";
         String word = "";
         System.out.print("Original filterWords, type DONE when done: ");
@@ -116,7 +114,7 @@ public class Word2VecTester {
         return w2v.findSentiment(actualWords, results);
     }
 
-    private static Map<Double, String> analogy() {
+    private static Map<Double, String> analogy() throws BadW2vInputException {
         System.out.print("___ is to ___ as ___ is to: ");
         String word1 = input.next();
         String word2 = input.next();
@@ -141,13 +139,6 @@ Should be able to
 3) choose the word2vec model
 all with console input variables.
  */
-
-
-
-
-
-
-
 
 
 

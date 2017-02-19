@@ -3,19 +3,25 @@ package rhyme;
 import elements.Word;
 import utils.Pair;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Word>>>> {
-    //HashMap<rhyme class, Map<instance n of this rhyme class,Set<word suggestion for this instance>>>
+    //HashMap<rhyme class, List<Pair<oldWord instance,Set<word suggestion for this instance>>>>
 
-//    public boolean contains(Word word) {
-//        for (Set<Word> set : this.values())
-//            if (set.contains(word))
-//                return true;
-//        return false;
-//    }
+    public void putWord(Word oldWord, Collection<Word> newWords) {
+        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
+            for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
+                if (oldWord.equals(rhymeInstance.getFirst()))
+                    rhymeInstance.getSecond().addAll(newWords);
+    }
+
+    public boolean containsOld(Word oldWord) {
+        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
+            for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
+                if (rhymeInstance.getFirst().equals(oldWord))
+                    return true;
+        return false;
+    }
 //
 //    public void putWord(Rhyme rhyme, Word word) {
 //        if (this.containsKey(rhyme) && this.get(rhyme) != null && !this.get(rhyme).isEmpty()) {
@@ -26,14 +32,18 @@ public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Wo
 //            this.put(rhyme, new HashSet<>());
 //    }
 //
-//    public Rhyme getRhymeByWord(Word w) {
-//        for (Map.Entry<Rhyme,Set<Word>> entry : this.entrySet())
-//            if (entry.getValue().contains(w))
-//                return entry.getKey();
-//        return null;
-//    }
+    public Rhyme getRhymeByOldWord(Word oldWord) {
+        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
+            for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
+                if (oldWord.equals(rhymeInstance.getFirst()))
+                return rhymeClass.getKey();
+        return null;
+    }
 
 }
+
+
+
 
 
 

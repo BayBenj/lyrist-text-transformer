@@ -2,7 +2,9 @@ package elements;
 
 import english.Number;
 
-public enum Pos {
+import java.io.Serializable;
+
+public enum Pos implements Serializable {
 
     CC,
     CD,

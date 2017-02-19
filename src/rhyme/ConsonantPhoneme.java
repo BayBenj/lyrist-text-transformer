@@ -1,6 +1,8 @@
 package rhyme;
 
-public class ConsonantPhoneme extends Phoneme {
+import java.io.Serializable;
+
+public class ConsonantPhoneme extends Phoneme implements Serializable {
 
     public ConsonantPhoneme(PhonemeEnum phonemeEnum) {
         super(phonemeEnum);

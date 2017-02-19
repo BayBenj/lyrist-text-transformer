@@ -4,12 +4,13 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.CoreMap;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Sentence extends ArrayList<Word> {
+public class Sentence extends ArrayList<Word> implements Serializable {
 
     private CoreMap coreMap;
-    private Map<Integer,Character> punctuationPositions = new TreeMap<Integer, Character>();//gives punctuation positions for the CoreMap
+    private Map<Integer,Character> punctuationPositions = new TreeMap<>();//gives punctuation positions for the CoreMap
 
     public CoreMap getCoreMap() {
         return coreMap;
@@ -85,7 +86,6 @@ public class Sentence extends ArrayList<Word> {
         return sb.toString();
     }
 }
-
 
 
 

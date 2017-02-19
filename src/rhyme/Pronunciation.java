@@ -1,9 +1,10 @@
 package rhyme;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pronunciation extends ArrayList<Phoneme> {
+public class Pronunciation extends ArrayList<Phoneme> implements Serializable {
 
     public List<PhonemeEnum> getPhonemeEnums() {
         List<PhonemeEnum> result = new ArrayList<>();

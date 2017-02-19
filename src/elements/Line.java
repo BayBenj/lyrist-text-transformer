@@ -1,9 +1,10 @@
 package elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Line extends SongElement {
+public class Line extends SongElement implements Serializable {
 
     @Override
     public Stanza getSuperElement() {

@@ -2,18 +2,29 @@ package intentions;
 
 import java.util.List;
 
-public class SongIntentions {
+public class CompleteIntentions {
 
+    private String oldTheme;
     private StructuralIntentions structuralIntentions;
     private List<EmotionalIntention> emotionalIntentions;
     private List<CulturalIntention> culturalIntentions;
 
-    public SongIntentions(StructuralIntentions structuralIntentions,
-                          List<EmotionalIntention> emotionalIntentions,
-                          List<CulturalIntention> culturalIntentions) {
+    public CompleteIntentions(StructuralIntentions structuralIntentions,
+                              String oldTheme,
+                              List<EmotionalIntention> emotionalIntentions,
+                              List<CulturalIntention> culturalIntentions) {
         this.structuralIntentions = structuralIntentions;
+        this.oldTheme = oldTheme;
         this.emotionalIntentions = emotionalIntentions;
         this.culturalIntentions = culturalIntentions;
+    }
+
+    public String getOldTheme() {
+        return oldTheme;
+    }
+
+    public void setOldTheme(String oldTheme) {
+        this.oldTheme = oldTheme;
     }
 
     public StructuralIntentions getStructuralIntentions() {
@@ -40,8 +51,6 @@ public class SongIntentions {
         this.culturalIntentions = culturalIntentions;
     }
 }
-
-
 
 
 

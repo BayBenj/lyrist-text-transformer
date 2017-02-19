@@ -1,6 +1,8 @@
 package rhyme;
 
-public class VowelPhoneme extends Phoneme {
+import java.io.Serializable;
+
+public class VowelPhoneme extends Phoneme implements Serializable {
 
     public int stress;
 
@@ -43,8 +45,6 @@ public class VowelPhoneme extends Phoneme {
         return result;
     }
 }
-
-
 
 
 

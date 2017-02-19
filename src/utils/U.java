@@ -1,13 +1,13 @@
 package utils;
 
+import elements.Song;
 import main.ProgramArgs;
 import rhyme.Phoneticizer;
 import elements.Line;
-import elements.Song;
 import elements.SongElement;
 import elements.Stanza;
 import stanford.StanfordNlp;
-import word2vec.W2vCommander;
+import word2vec.W2vInterface;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class U {//Utils
     public static String rootPath;
 
     private static StanfordNlp stanfordNlp;
-    private static W2vCommander w2vCommander;
+    private static W2vInterface w2VInterface;
     public static Phoneticizer phoneticizer;
 
     private static long startTime;
@@ -61,12 +61,12 @@ public class U {//Utils
         stanfordNlp = posTagger_in;
     }
 
-    public static W2vCommander getW2vCommander() {
-        return w2vCommander;
+    public static W2vInterface getW2VInterface() {
+        return w2VInterface;
     }
 
-    public static void setW2vCommander(W2vCommander w2vCommander_in) {
-        w2vCommander = w2vCommander_in;
+    public static void setW2VInterface(W2vInterface w2VInterface_in) {
+        w2VInterface = w2VInterface_in;
     }
 
     public static void print(String s) {
@@ -106,7 +106,6 @@ public class U {//Utils
             print("");
         }
     }
-
 
     public static void testPrintln(Object o1) {
         if (ProgramArgs.isTesting())
@@ -216,7 +215,6 @@ public class U {//Utils
         return sortedMap;
     }
 }
-
 
 
 

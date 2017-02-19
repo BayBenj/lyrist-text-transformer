@@ -1,6 +1,8 @@
 package rhyme;
 
-public enum PhonemeEnum {
+import java.io.Serializable;
+
+public enum PhonemeEnum implements Serializable {
 
     //Arpabet phonemes
 

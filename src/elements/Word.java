@@ -2,7 +2,9 @@ package elements;
 
 import rhyme.*;
 
-public class Word extends SongElement implements Comparable<Word> {
+import java.io.Serializable;
+
+public class Word extends SongElement implements Comparable<Word>, Serializable {
 
     private String spelling = null;
     private String base = null;
@@ -13,6 +15,11 @@ public class Word extends SongElement implements Comparable<Word> {
 
     private double cosineDistance = Double.MIN_VALUE;
     private double rhymeScore = Double.MIN_VALUE;
+
+    private Sentence sentence;
+    private int sentenceIndex;
+
+    private Rhyme assignedRhyme;
 
     public Word(String s) {
         this.setSpelling(s);
@@ -27,6 +34,8 @@ public class Word extends SongElement implements Comparable<Word> {
     }
 
     public SyllableGroup getFullRhyme() {
+        if (this.syllables == null)
+            return null;
         return this.syllables.getWordRhymeFromStress();
     }
 
@@ -94,6 +103,30 @@ public class Word extends SongElement implements Comparable<Word> {
 
     public void setRhymeScore(double rhymeScore) {
         this.rhymeScore = rhymeScore;
+    }
+
+    public Sentence getSentence() {
+        return sentence;
+    }
+
+    public void setSentence(Sentence sentence) {
+        this.sentence = sentence;
+    }
+
+    public int getSentenceIndex() {
+        return sentenceIndex;
+    }
+
+    public void setSentenceIndex(int sentenceIndex) {
+        this.sentenceIndex = sentenceIndex;
+    }
+
+    public Rhyme getAssignedRhyme() {
+        return assignedRhyme;
+    }
+
+    public void setAssignedRhyme(Rhyme assignedRhyme) {
+        this.assignedRhyme = assignedRhyme;
     }
 
     @Override
@@ -179,9 +212,6 @@ public class Word extends SongElement implements Comparable<Word> {
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
-
-
-
 
 
 

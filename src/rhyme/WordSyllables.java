@@ -1,6 +1,8 @@
 package rhyme;
 
-public class WordSyllables extends SyllableGroup {
+import java.io.Serializable;
+
+public class WordSyllables extends SyllableGroup implements Serializable {
 
     //Pertains specifically to syllables in 1 word
 

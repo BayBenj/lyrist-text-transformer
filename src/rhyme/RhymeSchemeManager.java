@@ -1,5 +1,7 @@
 package rhyme;
 
+import utils.U;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,21 +36,27 @@ public abstract class RhymeSchemeManager {
             "Z"
     };
 
-    public static LineRhymeScheme getAlternatingScheme(int nLines, int nDiffRhymes, int nLinesPerRhyme) {
-        if (nDiffRhymes < 1)
+    public static LineRhymeScheme getRndAlternatingScheme(int nLines) {
+        int nRhymeClasses = (int)(Math.pow(U.rand.nextDouble(), 2) * nLines);
+        int nLinesPerRhyme = (int)(Math.pow(U.rand.nextDouble(), 2) * 3) + 1;
+        return getAlternatingScheme(nLines, nRhymeClasses, nLinesPerRhyme);
+    }
+
+    public static LineRhymeScheme getAlternatingScheme(int nLines, int nRhymeClasses, int nLinesPerRhyme) {
+        if (nRhymeClasses < 1)
             return getRhymelessScheme(nLines);
 
-        else if (nDiffRhymes == 1)
+        else if (nRhymeClasses == 1)
             return getMonorhyme(nLines);
 
-        else if (nDiffRhymes > nLines)
-            nDiffRhymes = nLines;
+        else if (nRhymeClasses > nLines)
+            nRhymeClasses = nLines;
 
-        while (nLinesPerRhyme * (nDiffRhymes - 1) + 1 > nLines)
+        while (nLinesPerRhyme * (nRhymeClasses - 1) + 1 > nLines)
             nLinesPerRhyme--;
 
-        String[] uniqueRhymes = new String[nDiffRhymes];
-        for (int rhyme = 0; rhyme < nDiffRhymes; rhyme++) {
+        String[] uniqueRhymes = new String[nRhymeClasses];
+        for (int rhyme = 0; rhyme < nRhymeClasses; rhyme++) {
             uniqueRhymes[rhyme] = alphabet[rhyme];
         }
 
@@ -58,7 +66,7 @@ public abstract class RhymeSchemeManager {
         for (int line = 0; line < nLines; line++) {
             if (nSameRhymesInARow > nLinesPerRhyme) {
                 currentRhyme++;
-                if (currentRhyme >= nDiffRhymes)
+                if (currentRhyme >= nRhymeClasses)
                     currentRhyme = 0;
             }
             lineRhymes[line] = uniqueRhymes[currentRhyme];
@@ -152,6 +160,8 @@ if 2 * 2 + 1 > 5
 if 5 > 5 PASS
 
  */
+
+
 
 
 

@@ -4,23 +4,25 @@ import constraints.WordConstraint;
 import constraints.WordConstraintManager;
 import rhyme.LineRhymeScheme;
 import utils.U;
-import word2vec.W2vCommander;
+import word2vec.W2vInterface;
 
 import java.util.List;
-import java.util.Map;
 
 public class RhymeReplacementInfo extends ReplacementByAnalogyInfo {
 
     private LineRhymeScheme rhymeScheme;
+    private List<WordConstraint> rhymeConstraints;
 
     public RhymeReplacementInfo(List<WordConstraint> markingConstraints,
-                                List<WordConstraint> wordConstraints,
-                                W2vCommander w2v, double replacementFrequency,
+                                List<WordConstraint> normalConstraints,
+                                List<WordConstraint> rhymeConstraints,
+                                W2vInterface w2v, double replacementFrequency,
                                 String oldTheme,
                                 String newTheme,
                                 LineRhymeScheme rhymeScheme) {
-        super(markingConstraints, wordConstraints, w2v, replacementFrequency, oldTheme, newTheme);
+        super(markingConstraints, normalConstraints, w2v, replacementFrequency, oldTheme, newTheme);
         this.rhymeScheme = rhymeScheme;
+        this.rhymeConstraints = rhymeConstraints;
     }
 
     public LineRhymeScheme getRhymeScheme() {
@@ -31,14 +33,24 @@ public class RhymeReplacementInfo extends ReplacementByAnalogyInfo {
         this.rhymeScheme = rhymeScheme;
     }
 
-    public static RhymeReplacementInfo getExample() {
-        return new RhymeReplacementInfo(WordConstraintManager.getMarking(),
+    public List<WordConstraint> getRhymeConstraints() {
+        return rhymeConstraints;
+    }
+
+    public void setRhymeConstraints(List<WordConstraint> rhymeConstraints) {
+        this.rhymeConstraints = rhymeConstraints;
+    }
+
+    public static RhymeReplacementInfo getExample(String oldTheme, String newTheme, LineRhymeScheme rhymeScheme) {
+        return new RhymeReplacementInfo(
+                WordConstraintManager.getMarking(),
+                WordConstraintManager.getNormal(),
                 WordConstraintManager.getRhyme(),
-                U.getW2vCommander(),
+                U.getW2VInterface(),
                 1,
-                "depression",
-                "happiness",
-                new LineRhymeScheme("A","B","A","B","A","B","A","B"));
+                oldTheme,
+                newTheme,
+                rhymeScheme);
     }
 
 }

@@ -7,7 +7,7 @@
 //import intentions.ReplacementIntention;
 //import utils.Pair;
 //import utils.U;
-//import word2vec.W2vCommander;
+//import word2vec.W2vInterface;
 //
 //import java.util.ArrayList;
 //import java.util.List;
@@ -32,7 +32,7 @@
 //        ReplacementIntention replacementIntention = ReplacementIntention.REPLACE_MARKED_WITH_NEW;//need old marked filterWords, new filterWords
 //
 //        FilterEquation suggestionFilters = FilterManager.wEq(FilterManager.getMirrorPosNeFilters());
-//        W2vCommander w2v = U.getW2vCommander();
+//        W2vInterface w2v = U.getW2VInterface();
 //        return new ReplacementByAnalogyInfo(whatToReplace, replacementFrequency, operationalIntentions, suggestionFilters, w2v, new Pair<String,String>(oldTheme, newTheme));
 //    /*
 //    Mark                FilterOperation
@@ -68,7 +68,7 @@
 //        ReplacementIntention replacementIntention = ReplacementIntention.REPLACE_MARKED_WITH_NEW;//need old marked filterWords, new filterWords
 //
 //        FilterEquation suggestionFilters = FilterManager.wEq(FilterManager.getMirrorPosNeFilters());
-//        W2vCommander w2v = U.getW2vCommander();
+//        W2vInterface w2v = U.getW2VInterface();
 //        return new ReplacementByAnalogyInfo(whatToReplace, replacementFrequency, replacementSources, suggestionFilters, w2v, new Pair<String,String>(oldTheme, newTheme));
 //    }
 //

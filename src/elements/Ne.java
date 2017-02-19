@@ -1,12 +1,12 @@
 package elements;
 
-public enum Ne {
+import java.io.Serializable;
+
+public enum Ne implements Serializable {
 
     PERSON, ORGANIZATION, LOCATION, O, ORDINAL, DATE, TIME, DURATION, MISC, SET, UNKNOWN, NUMBER, WEEKDAY
 
 }
-
-
 
 
 

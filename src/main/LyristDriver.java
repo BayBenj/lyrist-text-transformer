@@ -3,15 +3,14 @@ package main;
 import intentions.*;
 import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
-import songtools.SongScanner;
-import songtools.SongWrapper;
-import songtools.TemplateSongEngineer;
+import rhyme.RhymeSchemeManager;
+import songtools.*;
 import stanford.StanfordNlp;
+import utils.Pair;
 import utils.U;
-import word2vec.W2vCommander;
+import word2vec.W2vInterface;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LyristDriver {
 
@@ -20,101 +19,82 @@ public class LyristDriver {
         public static void main(String[] args) throws IOException {
 
             //Set the root path of Lyrist in U
-            File currentDirFile = new File("");
+            final File currentDirFile = new File("");
             U.rootPath = currentDirFile.getAbsolutePath() + "/";
 
             //Load arguments
+            final String templateFileName = args[0];
+            final String debug = args[1];
+            String oldTheme = args[2];
+            String newTheme = args[3];
+            final String rhymeSchemeInput = args[4];
+            final String culture = args[5];
+            final String paulFormat = args[6];
+
             ProgramArgs.loadProgramArgs(args); //TODO: right now it doesn't want any args
 
             //Set testing variable
-            ProgramArgs.setTesting(false);
+            if (!debug.equals("debug"))
+                ProgramArgs.setTesting(false);
+            else
+                ProgramArgs.setTesting(true);
 
             //Setup StanfordNlp
-            StanfordNlp stanfordNlp = new StanfordNlp();
+            final StanfordNlp stanfordNlp = new StanfordNlp();
             U.setStanfordNlp(stanfordNlp);
 
-            //Setup W2vCommander
-            W2vCommander w2v  = new W2vCommander("news-lyrics-bom2");
-            U.setW2vCommander(w2v);
+            //Setup W2vInterface
+            final W2vInterface w2v  = new W2vInterface("vectors-phrase-681320-200");
+//            W2vInterface w2v  = new W2vInterface("c");
+            U.setW2VInterface(w2v);
 
             //Setup Phoneticizer
             U.phoneticizer = new Phoneticizer();
 
-            //Get template elements
-            SongWrapper templateSong = SongScanner.getTemplateSong("all-waters-fixed.txt");
+            //Get template elements, normal read format
+            final InfoSong templateSong;
+            if (!paulFormat.equals("true")) {
+                templateSong = SongScanner.getInfoSong(templateFileName);
+            }
+            //Get template elements, Paul read format
+            else {
+                templateSong = SongScanner.getInfoSongPaulFormat(templateFileName);
+
+            }
+
+            //Get rnd themes
+            if (oldTheme.equals("rnd") || newTheme.equals("rnd")) {
+                Pair<String,String> themes = ThemeManager.getThemePair();
+                oldTheme = themes.getFirst();
+                newTheme = themes.getSecond();
+            }
+
+            //Get rnd rhyme scheme
+            final LineRhymeScheme rhymeScheme;
+            if (rhymeSchemeInput.equals("rnd")) {
+                int nLines = SongScanner.getNLines(templateSong);
+                rhymeScheme = RhymeSchemeManager.getRndAlternatingScheme(nLines);
+                //TODO fix random rhyme schemes
+            }
+            else {
+                //input would be like this: "a-b-a-b-c"
+                rhymeScheme = new LineRhymeScheme(rhymeSchemeInput.split("-"));
+            }
 
             //Get elements intentions from programmer input
-            SongIntentions songIntentions = IntentionManager.getSongIntentions(
-                    new LineRhymeScheme("A","B","A","B"), "happiness", "English");
+            final CompleteIntentions completeIntentions = IntentionManager.getSongIntentions(
+                    rhymeScheme, oldTheme, newTheme, culture);
 
             //Generate a new song
-            TemplateSongEngineer templateSongEngineer = new TemplateSongEngineer();
-            templateSongEngineer.generateSong(songIntentions, templateSong);
+            final TemplateSongEngineer templateSongEngineer = new TemplateSongEngineer();
+            final InfoSong newSong = templateSongEngineer.generateSong(completeIntentions, templateSong);
+
+            //Make and print out composition
+            final TextComposition composition = new TextComposition(templateSong, newSong, completeIntentions);
+            U.print(composition.toString());
         }
 
-//    public static void main(String[] args) {
-//		TreeMap<Integer, String> map = new TreeMap<Integer, String>();
-//		try {
-//			BufferedReader br;
-//			br = new BufferedReader(new FileReader("/Users/Benjamin/Documents/workspace/BibleWordThing/src/biblewords.txt"));
-//
-//		    String line = br.readLine();
-//
-//		    while (line != null) {
-//		    	StringBuilder originalLine = new StringBuilder(line);
-//		    	int i = Integer.parseInt(line.replaceAll("[^0-9]", ""));
-//		    	map.put(i, originalLine.toString());
-//
-//		        line = br.readLine();
-//		    }
-//		    br.close();
-//		}
-//		catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//		for (Map.Entry<Integer, String> entry : map.entrySet()) {
-//			System.out.print(entry.getKey() + ": ");
-//			System.out.println(entry.getValue());
-//
-//		}
-//
-//	}
-
 }
-
-/*
-
-//Generates a new elements inspired from a system-selected inspiring idea
-
-public class PopDriver {
-	public static void main(String[] args)
-	{
-		ProgramArgs.loadProgramArgs(args);
-
-		Studio studio = new Studio();
-
-		Composition newSong = studio.generate();
-
-		System.out.println(newSong);
-	}
-}
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

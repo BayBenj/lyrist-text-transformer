@@ -1,6 +1,6 @@
 package main;
 
-import edu.stanford.nlp.process.DocumentPreprocessor;
+import english.ContractionManager;
 
 import java.io.*;
 import java.util.Scanner;
@@ -8,7 +8,8 @@ import java.util.Scanner;
 public class CorpusProcessor {
 
     public static void main(String[] args) {
-        File inFile = new File("/Users/Benjamin/Desktop/code/lyrist/local-data/w2v/corpora/news-lyrics-bom.txt");
+        File inFile = new File(args[0]);
+        File outFile = new File(args[1]);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(inFile);
@@ -19,11 +20,40 @@ public class CorpusProcessor {
         FileWriter fw = null;
         try {
             sc = new Scanner(fis, "UTF-8");
-            File outFile = new File("/Users/Benjamin/Desktop/code/lyrist/local-data/w2v/corpora/news-lyrics-bom-cleaned.txt");
             fw = new FileWriter(outFile);
 
             while (sc.hasNextLine()) {
-                String string = sc.nextLine();
+                String s = sc.nextLine();
+                s = s.toLowerCase();
+                s = s.replaceAll("-"," ");
+                s = s.replaceAll("(@ )+","\\. ");
+                s = s.replaceAll("[^\\w\\s'.?;:!]","");
+//                s = s.replaceAll("\\d","");
+                String[] words = s.split("\\s");
+                for (String word : words) {
+                    if (ContractionManager.isContraction(word)) {
+                        String[] e = ContractionManager.getExpansion(word);
+                        int l = e.length;
+                        StringBuilder ex = new StringBuilder();
+                        for (int i = 0; i < l; i++) {
+                            ex.append(e[i]);
+                            if (i != l - 1)
+                                ex.append(" ");
+                        }
+                        s = s.replaceAll(word,ex.toString());
+                    }
+                }
+                s = s.replaceAll("\'"," '");
+                s = s.replaceAll("\\."," .");
+                s = s.replaceAll("\\?"," ?");
+                s = s.replaceAll(";"," ;");
+                s = s.replaceAll(":"," :");
+                s = s.replaceAll("!"," !");
+                s = s.replaceAll("\\s\\s"," ");
+                fw.write(s);
+                fw.write("\n");
+
+                /*
                 if (!string.matches("(\\d|\\W|\\s|[\\d\\s]|[\\W\\s])+")) {
                     string = string.toLowerCase();
                     string = " " + string + " ";
@@ -49,6 +79,7 @@ public class CorpusProcessor {
                     }
                     fw.write(string + "\n");
                 }
+                */
             }
             if (sc.ioException() != null) {
                 throw sc.ioException();
@@ -75,23 +106,7 @@ public class CorpusProcessor {
         }
     }
 
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

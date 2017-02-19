@@ -105,7 +105,19 @@ public class StanfordNlp {
         this.pipeline = new StanfordCoreNLP(props);
     }
 
-    public static ArrayList<Sentence> parseTextToSentences(String rawText) {
+    public static List<Sentence> parseWordsToSentences(List<Word> wordInput) {
+        //words to raw text
+        StringBuilder text = new StringBuilder();
+        for (Word word : wordInput) {
+            text.append(word.toString());
+            text.append(" ");
+        }
+        String rawText = text.toString();
+
+        return parseTextToSentences(rawText);
+    }
+
+    public static List<Sentence> parseTextToSentences(String rawText) {
         //TODO: eventually preserve punctuation in Sentence object
 
         //make the result object
@@ -124,6 +136,7 @@ public class StanfordNlp {
         for (CoreMap tempCoreMap : sentences) {
             Sentence tempSentence = new Sentence();
             tempSentence.setCoreMap(tempCoreMap);
+            int sentenceIndex = 0;
             // traversing the filterWords in the current sentence
             // a CoreLabel is a CoreMap with additional token-specific methods
             for (CoreLabel token : tempCoreMap.get(CoreAnnotations.TokensAnnotation.class)) {
@@ -133,6 +146,8 @@ public class StanfordNlp {
                 if (spelling.length() == 1 && !Character.isLetterOrDigit(spelling.charAt(0))) {
                     //it's punctuation
                     Punctuation punct = new Punctuation(spelling);
+                    punct.setSentence(tempSentence);
+                    punct.setSentenceIndex(sentenceIndex);
                     tempSentence.add(punct);
                 }
                 else {
@@ -177,10 +192,12 @@ public class StanfordNlp {
                         tempWord.setNe(Ne.valueOf(ne));
 
                         //Add it to the sentence object
+                        tempWord.setSentence(tempSentence);
+                        tempWord.setSentenceIndex(sentenceIndex);
                         tempSentence.add(tempWord);
                     }
                 }
-
+                sentenceIndex++;
                 //System.out.println("token: " + spelling + " wordsToPos: " + wordsToPos + " filterNe:" + filterNe);
             }
 
@@ -205,9 +222,11 @@ public class StanfordNlp {
     }
 
     public static Map<Double, Word> tagWordsWithSentenceContextWithDoubles(TreeMap<Double, String> suggestions,
-                                                                           Sentence contextSentence,
-                                                                           Word oldWord,
-                                                                           int originalOldWordIndex) {
+                                                                           Word oldWord) {
+        Sentence contextSentence = oldWord.getSentence();
+        int originalOldWordIndex = oldWord.getSentenceIndex();
+
+
         Map<Double, Word> result = new HashMap<>();
         int oldWordIndex = originalOldWordIndex;
 
@@ -268,7 +287,7 @@ public class StanfordNlp {
             }
             catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
-                    e.printStackTrace();
+                    System.out.println("Bad Pos " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class));
                 }
@@ -281,7 +300,7 @@ public class StanfordNlp {
             }
             catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
-                    e.printStackTrace();
+                    System.out.println("Bad Ne " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
                 }
@@ -294,7 +313,7 @@ public class StanfordNlp {
             }
             catch (IllegalArgumentException e) {
                 if (ProgramArgs.isTesting()) {
-                    e.printStackTrace();
+                    System.out.println("Bad lemma " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.LemmaAnnotation.class));
                 }
@@ -319,15 +338,6 @@ Decide how to hold data on filterWords and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */
-
-
-
-
-
-
-
-
-
 
 
 

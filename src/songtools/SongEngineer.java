@@ -1,14 +1,13 @@
 package songtools;
 
-import intentions.SongIntentions;
+import intentions.CompleteIntentions;
 import elements.Song;
 
 public abstract class SongEngineer {
 
-    public abstract Song generateSong(SongIntentions intentions, SongWrapper templateSong);
+    public abstract Song generateSong(CompleteIntentions intentions, InfoSong templateSong);
 
 }
-
 
 
 

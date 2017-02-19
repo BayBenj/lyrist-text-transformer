@@ -1,9 +1,10 @@
 package rhyme;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SyllableGroup extends ArrayList<Syllable> {
+public class SyllableGroup extends ArrayList<Syllable> implements Serializable {
 
     //Can represent the syllables of 1 or more filterWords
 
@@ -45,7 +46,6 @@ public class SyllableGroup extends ArrayList<Syllable> {
     }
 
 }
-
 
 
 

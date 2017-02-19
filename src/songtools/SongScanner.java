@@ -1,16 +1,12 @@
 package songtools;
 
-import constraints.WordConstraint;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import english.Person;
-import filters.ReturnType;
 import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
 import elements.*;
 import rhyme.Rhyme;
 import rhyme.WordsByRhyme;
-import stanford.StanfordNlp;
 import utils.U;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,23 +15,117 @@ import java.util.*;
 
 public abstract class SongScanner {
 
-    public static SongWrapper getTemplateSong(String fileString) {
+    public static InfoSong getTemplateSong(TextInFormat format, String fileString) {
+        switch (format) {
+            case NORMAL:
+                return getTemplateSong(fileString);
+            case PAUL:
+                return getTemplateSongPaulFormat(fileString);
+            default:
+                return getTemplateSong(fileString);
+        }
+    }
+
+    public static InfoSong getInfoSong(TextInFormat format, String fileString) {
+        switch (format) {
+            case NORMAL:
+                return getInfoSong(fileString);
+            case PAUL:
+                return getInfoSongPaulFormat(fileString);
+            default:
+                return getInfoSong(fileString);
+        }
+    }
+
+
+
+    public static InfoSong getTemplateSong(String fileString) {
         String rawTemplateText = readFileToText(fileString);
-        rawTemplateText = SongMutator.expandAllContractions(rawTemplateText);
+        rawTemplateText = SongMutator.cleanText(rawTemplateText);
 //        rawTemplateText = SongMutator.personToPerson(rawTemplateText, Person.FIRST, Person.SECOND);
 //        rawTemplateText = SongMutator.stringToString(rawTemplateText, "my", "your");
-        StanfordNlp stanford = U.getStanfordNlp();
-        List<Sentence> parsedSentences = stanford.parseTextToSentences(rawTemplateText);
+        List<Sentence> parsedSentences = U.getStanfordNlp().parseTextToSentences(rawTemplateText);
         setSyllablesForSentences(parsedSentences);
-        SongWrapper templateSongWrapper = sentencesToSongWrapper(rawTemplateText, parsedSentences);
-        return templateSongWrapper;
+        InfoSong templateInfoSong = sentencesToInfoSong(rawTemplateText, parsedSentences);
+        return templateInfoSong;
+    }
+
+    public static InfoSong getTemplateSongPaulFormat(String fileString) {
+        String rawTemplateText = readFileToText(fileString);
+        InfoSong song = readPaulFormat(rawTemplateText);
+        List<Sentence> parsedSentences = U.getStanfordNlp().parseWordsToSentences(song.getAllWords());
+        setSyllablesForSentences(parsedSentences);
+        return song;
+    }
+
+    public static InfoSong readPaulFormat(String text) {
+        String[] lines = text.split("\\n");
+        InfoSong song = new InfoSong("title", "writer", "genre");
+        Stanza currentStanza = null;
+        for (String lineStr : lines) {
+            if (lineStr.matches("TITLE: \\w+")) {
+                song.setTitle(lineStr.replace("TITLE: ", ""));
+            }
+            else if (lineStr.matches("INTRO") ||
+                    lineStr.matches("VERSE") ||
+                    lineStr.matches("CHORUS") ||
+                    lineStr.matches("BRIDGE")) {
+                if (currentStanza != null)
+                    song.add(currentStanza);
+                currentStanza = new Stanza();
+            }
+            else if (lineStr.matches("[A-Z]\\t.+")) {
+                String rhyme = Character.toString(lineStr.charAt(0));
+                Line currentLine = new Line();
+                String[] words = lineStr.split(" ");
+                for (String word : words) {
+                    Word tempWord = new Word(word);
+                    currentLine.add(tempWord);
+                }
+                currentStanza.add(currentLine);
+            }
+        }
+        return song;
+    }
+
+
+    public static InfoSong getInfoSong(String fileString) {
+        InfoSong templateInfoSong = getTemplateSong(fileString);
+
+        String[] fileNameStrs = fileString.split("(@)|(.lyrics.txt)|( - )");
+        if (fileNameStrs.length == 2) {
+            String writer = fileNameStrs[0];
+            String title = fileNameStrs[1];
+            templateInfoSong.setTitle(title);
+            templateInfoSong.setWriter(writer);
+            templateInfoSong.setGenre("pop");
+            templateInfoSong.setProgrammer("Ben Bay");
+        }
+
+        return templateInfoSong;
+    }
+
+    public static InfoSong getInfoSongPaulFormat(String fileString) {
+        InfoSong templateInfoSong = getTemplateSongPaulFormat(fileString);
+
+        String[] fileNameStrs = fileString.split("(@)|(.lyrics.txt)|( - )");
+        if (fileNameStrs.length == 2) {
+            String writer = fileNameStrs[0];
+            String title = fileNameStrs[1];
+            templateInfoSong.setTitle(title);
+            templateInfoSong.setWriter(writer);
+            templateInfoSong.setGenre("pop");
+            templateInfoSong.setProgrammer("Ben Bay");
+        }
+
+        return templateInfoSong;
     }
 
     public static String readFileToText(String fileString) {
         U.testPrintln("Entering readSong");
-        Song song = new Song();
+        Song infoSong = new Song();
         try {
-            File file = new File(U.rootPath + "local-data/dev-template-songs/" + fileString);
+            File file = new File(U.rootPath + "data/songs/dev-template-songs/" + fileString);
             FileInputStream fis = new FileInputStream(file);
             byte[] data = new byte[(int) file.length()];
             fis.read(data);
@@ -57,14 +147,13 @@ public abstract class SongScanner {
         }
     }
 
-    public static SongWrapper sentencesToSongWrapper(String rawSong, List<Sentence> parsedSentences) {
-        //TODO > Include in SongWrapper a CoreMap for each sentence.
+    public static InfoSong sentencesToInfoSong(String rawSong, List<Sentence> parsedSentences) {
+        //TODO > Include in InfoSong a CoreMap for each sentence.
 
-        Song tempSong = new Song();
+        InfoSong tempInfoSong = new InfoSong("", "", "");
 
         ArrayList<String> rawStanzas = new ArrayList<String>(Arrays.asList(rawSong.split("\\n\\n")));
 
-        SongWrapper wrapper = new SongWrapper();
         ArrayList<ArrayList<char[]>> punctuation = new ArrayList<ArrayList<char[]>>();
         Sentence currentStringSentence = new Sentence();
 
@@ -101,18 +190,11 @@ public abstract class SongScanner {
                 }
                 tempStanza.add(tempLine);
             }
-            tempSong.add(tempStanza);
+            tempInfoSong.add(tempStanza);
         }
 
         //TODO: eventually make this internal
-        wrapper.setRawSong(rawSong);
-        wrapper.setSentences(parsedSentences);
-        wrapper.setPunctuation(punctuation);
-        wrapper.setSong(tempSong);
-        wrapper.setWordSet(new HashSet<>());
-        wrapper.setBasic_lines(new ArrayList<>());
-        wrapper.setSongStats(tempSong);
-        return wrapper;
+        return tempInfoSong;
     }
 
     public static ArrayList<Sentence> stanfordSentencesToSentences(List<List<CoreLabel>> stanfordSentences) {
@@ -229,10 +311,10 @@ public abstract class SongScanner {
         return randomIndexes;
     }
 
-    public static Set<PositionedWord> getPositionedWords(Song song) {
+    public static Set<PositionedWord> getPositionedWords(Song infoSong) {
         Set<PositionedWord> positionedWords = new HashSet<>();
-        for (int s = 0; s < song.getStanzas().size(); s++) {
-            Stanza stanza = song.getStanzas().get(s);
+        for (int s = 0; s < infoSong.getStanzas().size(); s++) {
+            Stanza stanza = infoSong.getStanzas().get(s);
             for (int l = 0; l < stanza.getLines().size(); l++) {
                 Line line = stanza.getLines().get(l);
                 for (int w = 0; w < line.getWords().size(); w++) {
@@ -246,9 +328,9 @@ public abstract class SongScanner {
         return positionedWords;
     }
 
-    public static WordsByRhyme getRhymeSchemeWords(Song songToMark, LineRhymeScheme rhymeScheme) {
-        if (songToMark != null && !songToMark.getAllWords().isEmpty()) {
-            List<SongElement> lines = songToMark.getAllSubElementsOfType(new Line());
+    public static WordsByRhyme getRhymeSchemeWords(Song infoSongToMark, LineRhymeScheme rhymeScheme) {
+        if (infoSongToMark != null && !infoSongToMark.getAllWords().isEmpty()) {
+            List<SongElement> lines = infoSongToMark.getAllSubElementsOfType(new Line());
             WordsByRhyme wordsByRhyme = new WordsByRhyme();
             for (int l = 0; l < lines.size(); l++) {
                 Line line = (Line)lines.get(l);
@@ -263,13 +345,12 @@ public abstract class SongScanner {
         return null;
     }
 
+    public static int getNLines(Song infoSong) {
+        List<SongElement> lines = infoSong.getAllSubElementsOfType(new Line());
+        return lines.size();
+    }
+
 }
-
-
-
-
-
-
 
 
 

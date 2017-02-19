@@ -1,9 +1,10 @@
 package elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Song extends SongElement {
+public class Song extends SongElement implements Serializable {
 
     @Override
     public List<SongElement> getSubElements() {

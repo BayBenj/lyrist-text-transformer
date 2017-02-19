@@ -1,5 +1,6 @@
 package songtools;
 
+import elements.Song;
 import english.*;
 import rhyme.Phoneticizer;
 import elements.*;
@@ -47,8 +48,8 @@ public abstract class SongMutator {
         word.setSpelling(sb.toString());
     }
 
-    public static void lowercaseAllWords(Song generatedSong) {
-        List<Word> words = generatedSong.getAllWords();
+    public static void lowercaseAllWords(Song generatedInfoSong) {
+        List<Word> words = generatedInfoSong.getAllWords();
         for (Word word : words) {
             String spelling = word.getLowerSpelling();
             word.setSpelling(spelling.toLowerCase());
@@ -56,12 +57,12 @@ public abstract class SongMutator {
         }
     }
 
-    public static Song replaceWords(Song templateSong, WordReplacements wordReplacements) {
+    public static InfoSong replaceWords(Song templateInfoSong, WordReplacements wordReplacements) {
         //TODO: eventually change this to work with any SongSement, not just entire Songs
         //TODO: if Clonable becomes viable, skinny out this method and use Cloneable instead
-        Song generatedSong = new Song();
-        for (int i = 0; i < templateSong.getSize(); i++) {
-            Stanza currentStanza = templateSong.getStanzas().get(i);
+        InfoSong generatedInfoSong = new InfoSong("NEW SONG");
+        for (int i = 0; i < templateInfoSong.getSize(); i++) {
+            Stanza currentStanza = templateInfoSong.getStanzas().get(i);
             Stanza newStanza = new Stanza();
             for (int j = 0; j < currentStanza.getSize(); j++) {
                 Line currentLine = currentStanza.getLines().get(j);
@@ -82,9 +83,38 @@ public abstract class SongMutator {
                 }
                 newStanza.add(newLine);
             }
-            generatedSong.add(newStanza);
+            generatedInfoSong.add(newStanza);
         }
-        return generatedSong;
+        return generatedInfoSong;
+    }
+
+    public static Stanza replaceWords(Stanza templateStanza, WordReplacements wordReplacements) {
+        //TODO: eventually change this to work with any SongSement, not just entire Songs
+        //TODO: if Clonable becomes viable, skinny out this method and use Cloneable instead
+        Stanza result = new Stanza();
+        for (int l = 0; l < templateStanza.getSize(); l++) {
+            Line currentLine = templateStanza.getLines().get(l);
+            Line newLine = new Line();
+            for (int w = 0; w < currentLine.getSize(); w++) {
+                Word currentWord = currentLine.getWords().get(w);
+                if (wordReplacements.containsKey(currentWord))
+                    newLine.add(wordReplacements.get(currentWord));
+                else {
+                    Word temp = new Word(currentWord.getLowerSpelling());
+                    temp.setBase(currentWord.getBase());
+                    temp.setSyllables(currentWord.getSyllables());
+                    temp.setPos(currentWord.getPos());
+                    temp.setNe(currentWord.getNe());
+                    temp.setCapitalized(currentWord.getCapitalized());
+                    temp.setRhymeScore(currentWord.getRhymeScore());
+                    temp.setCosineDistance(currentWord.getCosineDistance());
+                    newLine.add(temp);
+                }
+            }
+            result.add(newLine);
+        }
+
+        return result;
     }
 
     public static void hideAllPunctuation(SongElement se) {
@@ -212,20 +242,50 @@ public abstract class SongMutator {
         }
         return rawString;
     }
+
+    public static String splitAppostropheWords(String rawTemplateText) {
+        String result = new String(rawTemplateText.replaceAll("'", " '"));
+        return result;
+    }
+
+//    public static InfoSong combineAppostropheWords(InfoSong song) {
+//        for (Stanza stanza : song.getStanzas()) {
+//            for (Line line : stanza.getLines()) {
+//                Word lastWord;
+//                for (Word word : line.getWords()) {
+//                    if ()
+//                    lastWord = word;
+//                }
+//
+//            }
+//
+//        }
+//    }
+
+    public static String fixAppostrophes(String rawTemplateText) {
+        String result = new String(rawTemplateText.replaceAll("’", "'"));
+        result = result.replaceAll("`", "'");
+        return result;
+    }
+
+    public static String deleteGarbage(String rawTemplateText) {
+        String result = new String(rawTemplateText.replaceAll("'", " '"));
+        result = result.replaceAll("\\d", "");
+        result = result.replaceAll("-", " ");
+        result = result.replaceAll("[^\\w\\s\\d'.!?;:]", "");
+        return result;
+    }
+
+    public static String cleanText(String text) {
+        text = SongMutator.expandAllContractions(text);
+        text = SongMutator.fixAppostrophes(text);
+        text = SongMutator.splitAppostropheWords(text);
+        text = SongMutator.deleteGarbage(text);
+        return text;
+    }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

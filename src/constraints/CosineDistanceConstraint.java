@@ -12,11 +12,12 @@ public class CosineDistanceConstraint extends DoubleConstraint {
 
     public CosineDistanceConstraint(NonModelNum comparison) {
         super(comparison);
-        this.instanceSpecific = true;
+        this.instanceSpecific = false;
     }
 
     public CosineDistanceConstraint(ModelNum comparison) {
         super(comparison);
+        this.instanceSpecific = false;
     }
 
     public CosineDistanceConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
@@ -44,8 +45,7 @@ public class CosineDistanceConstraint extends DoubleConstraint {
 
     @Override
     public boolean weaken() {
-        this.weaken(.1);
-        return true;
+        return this.weaken(.1);
     }
 
 }

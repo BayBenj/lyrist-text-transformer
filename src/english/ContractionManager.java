@@ -232,7 +232,9 @@ public abstract class ContractionManager {
     }
 
     public static boolean isContraction(String word) {
-        return expandMap.keySet().contains(word.toLowerCase());
+        if (expandMap == null || contractMap == null)
+            initializeMaps();
+        return expandMap.keySet().contains(word);
         //TODO if false, guess between possessive (the llama's laugh) and contraction (the llama's laughing)
     }
 
@@ -413,8 +415,6 @@ you’d	you had / you would
 @you’re	you are
 @you’ve	you have
  */
-
-
 
 
 

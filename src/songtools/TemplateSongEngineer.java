@@ -1,7 +1,9 @@
 package songtools;
 
-import intentions.SongIntentions;
-import elements.*;
+import elements.Song;
+import elements.Stanza;
+import intentions.CompleteIntentions;
+import rhyme.LineRhymeScheme;
 import utils.U;
 
 public final class TemplateSongEngineer extends SongEngineer {
@@ -12,26 +14,48 @@ public final class TemplateSongEngineer extends SongEngineer {
     private boolean providedRhymeScheme = false;
     private boolean providedMeter = false;
 
+//    public Stanza generateStanza(CompleteIntentions intentions, InfoSong templateInfoSong) {
+//
+//    }
+
+//    public InfoSong generateSongByStanza(CompleteIntentions intentions, InfoSong templateInfoSong) {
+//        this.setIntentionBools(intentions);
+//        InfoSong templateInfoSong = templateInfoSong.getInfoSong();
+//
+//        String oldTheme = intentions.getOldTheme();
+//        String newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
+//        LineRhymeScheme rhymeScheme = intentions.getStructuralIntentions().getRhymeScheme();
+//
+//        for (Stanza stanza : templateInfoSong.getStanzas()) {
+//
+//            InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
+//
+////            InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateInfoSong, RhymeReplacementInfo.getExample(oldTheme, newTheme, rhymeScheme));
+//        }
+//    }
+
     @Override
-    public Song generateSong(SongIntentions intentions, SongWrapper templateSongWrapper) {
+    public InfoSong generateSong(CompleteIntentions intentions, InfoSong templateInfoSong) {
         U.startTimer();
 
         this.setIntentionBools(intentions);
-        Song templateSong = templateSongWrapper.getSong();
 
+        String oldTheme = intentions.getOldTheme();
+        String newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
+        LineRhymeScheme rhymeScheme = intentions.getStructuralIntentions().getRhymeScheme();
 
-        Song generatedSong = LyristReplacer.normalReplace(templateSongWrapper, NormalReplacementInfo.getExample());
+//        InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
 
-//        Song generatedSong = LyristReplacer.rhymeReplace(templateSongWrapper, RhymeReplacementInfo.getExample());
+        InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateInfoSong, RhymeReplacementInfo.getExample(oldTheme, newTheme, rhymeScheme));
 //
 //        //Filter out filterWords w/ unsafe wordsToPos so they can't be marked
-//        List<Word> allMarkableWordsList = this.getMarkableWords(templateSong);
+//        List<Word> allMarkableWordsList = this.getMarkableWords(templateInfoSong);
 //
 //        //Get word indexes
 //        Set<Integer> allWordIndexes = this.getWordIndexes(allMarkableWordsList);
 //
 //        //Mark all rhyme scheme filterWords for rhyme replacement
-//        Map<Rhyme,Set<Word>> rhymeWordsToReplace = this.markRhymeWordsToReplace(templateSong, (LineRhymeScheme)intentions.getStructuralIntentions().getRhymeScheme());
+//        Map<Rhyme,Set<Word>> rhymeWordsToReplace = this.markRhymeWordsToReplace(templateInfoSong, (LineRhymeScheme)intentions.getStructuralIntentions().getRhymeScheme());
 //
 //        //Mark all normal filterWords for normal replacement
 //        Set<Word> normalWordsToReplace = this.markNormalWordsToReplace(allWordIndexes, allMarkableWordsList);
@@ -43,20 +67,20 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        String newTheme = this.decideNewTheme(intentions);
 //
 //        //Replace marked filterWords in template w/ word2vec
-//        Song generatedSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateSongWrapper, oldTheme, newTheme, templateSong);
+//        Song generatedInfoSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateInfoSong, oldTheme, newTheme, templateInfoSong);
 
         //Manage generated text
-        this.manageSongText(generatedSong);
+        this.manageSongText(generatedInfoSong);
 
         //Print both songtools out
-        U.printSideBySide(templateSong, generatedSong);
+//        U.printSideBySide(templateInfoSong, generatedInfoSong);
 
         U.stopTimer();
         U.print("TOTAL RUNNING TIME: " + U.getTotalTime() + "\n");
-        return generatedSong;
+        return generatedInfoSong;
     }
 
-    private void setIntentionBools(SongIntentions intentions) {
+    private void setIntentionBools(CompleteIntentions intentions) {
         if (intentions.getStructuralIntentions() != null && !intentions.getStructuralIntentions().hasNothing()) {
             providedStructuralIntentions = true;
             if (intentions.getStructuralIntentions().getRhymeScheme() != null)
@@ -126,51 +150,51 @@ public final class TemplateSongEngineer extends SongEngineer {
 //
 //    private String decideOldTheme() {
 //        String oldTheme = "sorrow";//default
-//        //oldTheme = ((TreeMap<Double,String>)U.getW2vCommander().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the instanceSpecific as the old theme?)
+//        //oldTheme = ((TreeMap<Double,String>)U.getW2VInterface().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the instanceSpecific as the old theme?)
 //        return oldTheme;
 //    }
 //
-//    private String decideNewTheme(SongIntentions intentions) {
+//    private String decideNewTheme(CompleteIntentions intentions) {
 //        String newTheme = "happiness";//default
 //        if (providedEmotionalIntentions)
 //            newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
 //        return newTheme;
 //    }
 
-//    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, SongWrapper templateSongWrapper, String oldTheme, String newTheme, Song templateSong) {
+//    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, InfoSong templateInfoSong, String oldTheme, String newTheme, Song templateSong) {
 //        LyristReplacer replacementManager = new LyristReplacer();
 //        replacementManager.setnSuggestionsToPrint(100);
 //        WordReplacements wordReplacements = replacementManager.getWordSuggestions(
 //                normalWordsToReplace,
 //                rhymeWordsToReplace,
-//                templateSongWrapper.getSentences(),
+//                templateInfoSong.getSentences(),
 //                FilterManager.sEq(FilterManager.getSafetyStringFilters()),
 //                100,
-//                U.getW2vCommander(),
+//                U.getW2VInterface(),
 //                oldTheme,
 //                newTheme,
 //                null);
 //        return SongMutator.replaceWords(templateSong, wordReplacements);
 //    }
 
-    private void manageSongText(Song generatedSong) {
+    private void manageSongText(Song generatedInfoSong) {
         // Fix indefinite articles
-        SongMutator.fixAllIndefiniteArticles(generatedSong);
+        SongMutator.fixAllIndefiniteArticles(generatedInfoSong);
 
         // Capitalize first word of every line
-        SongMutator.capitalizeFirstWordsInLines(generatedSong);
+        SongMutator.capitalizeFirstWordsInLines(generatedInfoSong);
 
         //Lowercase every word
-//        SongMutator.lowercaseAllWords(generatedSong);
+//        SongMutator.lowercaseAllWords(generatedInfoSong);
 
         //Hide all punctuation
-//        SongMutator.hideAllPunctuation(generatedSong);
+//        SongMutator.hideAllPunctuation(generatedInfoSong);
 
         //Reveal all punctuation
-//        SongMutator.revealAllPunctuation(generatedSong);
+//        SongMutator.revealAllPunctuation(generatedInfoSong);
 
         //Soften all punctuation
-//        SongMutator.softenAllPunctuation(generatedSong);
+//        SongMutator.softenAllPunctuation(generatedInfoSong);
     }
 
 }
@@ -398,7 +422,7 @@ TODO > Inspect doc2vec
 Word2vec
 TODO: make a naming code for w2v models, like l for lower, u for upper, lu for both, p for punctuation, etc.
 TODO > Use some sort of DocumentPreprocessor on my spelling corpora.
-TODO > Standardize all w2v data (lowercase, only certain punctuation types). Also ensure at W2vCommander that no such 'bad strings' are queried.
+TODO > Standardize all w2v data (lowercase, only certain punctuation types). Also ensure at W2vInterface that no such 'bad strings' are queried.
 TODO > Consider weakening theme, multiply it by a theme-weakening factor.
 TODO > Ensure that my vector bins have every word that the pop-star database has with vocab lists
 TODO > Write distance() script for word2vec models
@@ -434,10 +458,6 @@ VBN
 VBP
 VBZ
  */
-
-
-
-
 
 
 

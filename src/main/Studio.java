@@ -9,7 +9,7 @@ package main;
 ////import lyrics.LyricalEngineer;
 ////import lyrics.Lyrics;
 //import managerCHECK.Manager;
-//import elements.Song;
+//import elements.InfoSong;
 //import songtools.SongEngineer;
 ////import structure.Structure;
 ////import structure.StructureEngineer;
@@ -18,7 +18,7 @@ package main;
 //
 //    public Composition generate() {
 //
-//        Composition newComposition = new Composition();
+//        TextComposition newComposition = new TextComposition();
 //
 //        Manager manager = new Manager();
 //
@@ -27,8 +27,8 @@ package main;
 //        newComposition.setInspiration(inspiration);
 //
 //        SongEngineer songEngineer = manager.getSongEngineer();
-//        Song elements = songEngineer.generateSong(inspiration);
-//        newComposition.setSong(elements);
+//        InfoSong elements = songEngineer.generateSong(inspiration);
+//        newComposition.setInfoSong(elements);
 //
 ////        StructureEngineer structureEngineer = manager.getStructureEngineer();
 ////        Structure structure = structureEngineer.generateStructure();

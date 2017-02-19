@@ -3,10 +3,9 @@ package songtools;
 import constraints.WordConstraint;
 import constraints.WordConstraintManager;
 import utils.U;
-import word2vec.W2vCommander;
+import word2vec.W2vInterface;
 
 import java.util.List;
-import java.util.Map;
 
 
 public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
@@ -16,7 +15,7 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
 
     public ReplacementByAnalogyInfo(List<WordConstraint> markingConstraints,
                                     List<WordConstraint> wordConstraints,
-                                    W2vCommander w2v,
+                                    W2vInterface w2v,
                                     double replacementFrequency,
                                     String oldTheme,
                                     String newTheme) {
@@ -25,13 +24,13 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
         this.setNewTheme(newTheme);
     }
 
-    public static ReplacementByAnalogyInfo getNormal() {
+    public static ReplacementByAnalogyInfo getNormal(String oldTheme, String newTheme) {
         return new ReplacementByAnalogyInfo(null,
                                             WordConstraintManager.getNormal(),
-                                            U.getW2vCommander(),
+                                            U.getW2VInterface(),
                                             1,
-                                            "depression",
-                                            "happiness");
+                                            oldTheme,
+                                            newTheme);
     }
 
     public String getOldTheme() {
@@ -60,7 +59,7 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
                        List<IndividualAction> individualActions,
                        StringFilterEquation stringFilters,
                        WordFilterEquation wordFilters,
-                       W2vCommander w2v,
+                       W2vInterface w2v,
                        ReplacementIntention replacementIntention,
                        double replacementFrequency
 

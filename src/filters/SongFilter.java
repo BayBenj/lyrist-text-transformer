@@ -1,6 +1,6 @@
 //package filters;
 //
-//import elements.Song;
+//import elements.InfoSong;
 //import main.ProgramArgs;
 //import elements.Word;
 //import utils.U;
@@ -18,7 +18,7 @@
 //        super(returnType);
 //    }
 //
-//    public Set<Word> filterWords(Song song) {
+//    public Set<Word> filterWords(InfoSong song) {
 //        if (ProgramArgs.isTesting()) {
 //            FilterUtils.startTimer();
 //            Set<Word> result = this.doFilter(song);
@@ -30,7 +30,7 @@
 //            return this.doFilter(song);
 //    }
 //
-//    public abstract Set<Word> doFilter(Song song);
+//    public abstract Set<Word> doFilter(InfoSong song);
 //
 //}
 //

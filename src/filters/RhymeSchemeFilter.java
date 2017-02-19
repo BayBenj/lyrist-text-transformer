@@ -1,6 +1,6 @@
 //package filters;
 //
-//import elements.Song;
+//import elements.InfoSong;
 //import elements.Word;
 //import rhyme.LineRhymeScheme;
 //import rhyme.Rhyme;
@@ -22,7 +22,7 @@
 //        this.setLineRhymeScheme(rhymeScheme);
 //    }
 //
-//    public WordsByRhyme doFilter(Song song) {
+//    public WordsByRhyme doFilter(InfoSong song) {
 //        if (song != null && !song.getAllWords().isEmpty()) {
 //            List<Word> words = song.getAllWords();
 //            WordsByRhyme wordsByRhyme = new WordsByRhyme();

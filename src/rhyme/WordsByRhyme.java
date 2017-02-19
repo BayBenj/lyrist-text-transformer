@@ -34,15 +34,15 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
         return null;
     }
 
+    public Set<Word> getAll() {
+        Set<Word> words = new HashSet<>();
+        for (Map.Entry<Rhyme, Set<Word>> entry : this.entrySet())
+            words.addAll(entry.getValue());
+        return words;
+    }
+
+
 }
-
-
-
-
-
-
-
-
 
 
 

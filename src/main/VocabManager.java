@@ -8,7 +8,7 @@ import java.util.Set;
 public abstract class VocabManager {
 
     public static VocabList readIn(String fileName) {
-        String filePath = U.rootPath + "local-data/vocab-lists/" + fileName;
+        String filePath = U.rootPath + "data/word-lists/filters/" + fileName;
         File file = new File(filePath);
         Set<String> set = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {

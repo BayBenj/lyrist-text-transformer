@@ -5,24 +5,24 @@ import filters.ReturnType;
 
 import java.util.*;
 
-public abstract class DoubleConstraint extends WordConstraint {
+public abstract class IntConstraint extends WordConstraint {
 
     protected ModelNum modelComparison;
     protected NonModelNum nonModelComparison;
-    protected double dbl = -1;
+    protected int i = -1;
 
-    public DoubleConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
+    public IntConstraint(ModelNum comparison, int i, ReturnType returnType) {
         super(returnType);
         this.modelComparison = comparison;
-        this.dbl = dbl;
+        this.i = i;
     }
 
-    public DoubleConstraint(ModelNum comparison) {
-        super(null);
+    public IntConstraint(ModelNum comparison) {
+        super(ReturnType.MATCHES);
         this.modelComparison = comparison;
     }
 
-    public DoubleConstraint(NonModelNum comparison) {
+    public IntConstraint(NonModelNum comparison) {
         super(null);
         this.nonModelComparison = comparison;
     }
@@ -42,7 +42,7 @@ public abstract class DoubleConstraint extends WordConstraint {
 
     @Override
     public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
-        this.dbl = (this.wordToSpecficDoubleType(specificWord));
+        this.i = (this.wordToSpecficIntType(specificWord));
         return this.useWithPresetFields(wordsToFilter);
     }
 
@@ -52,6 +52,9 @@ public abstract class DoubleConstraint extends WordConstraint {
                 return filterByGreaterOrEqual(wordsToFilter);
             case HIGHEST:
                 Set<Word> set = filterByHighest(wordsToFilter);
+                return set;
+            case EQUAL:
+                set = filterByEqual(wordsToFilter, i, returnType);
                 return set;
             default:
                 return null;
@@ -68,68 +71,83 @@ public abstract class DoubleConstraint extends WordConstraint {
     }
 
     public Set<Word> filterByGreaterOrEqual(Collection<Word> words) {
-        return this.filterByGreaterOrEqual(words, dbl, returnType);
+        return this.filterByGreaterOrEqual(words, i, returnType);
     }
 
-    public Set<Word> filterByGreaterOrEqual(Collection<Word> words, Double score, ReturnType returnType) {
-        Map<Word,Double> map = wordsToSpecficDoubleType(words);
+    public Set<Word> filterByGreaterOrEqual(Collection<Word> words, Integer score, ReturnType returnType) {
+        Map<Word,Integer> map = wordsToSpecficIntType(words);
         map.values().retainAll(filter_goe(map.values(), score, returnType));
         return map.keySet();
     }
 
     public Set<Word> filterByHighest(Collection<Word> words) {
-        TreeMap<Word,Double> map = new TreeMap<>(wordsToSpecficDoubleType(words));
+        TreeMap<Word,Integer> map = new TreeMap<>(wordsToSpecficIntType(words));
         map.values().retainAll(filter_highest(map.values()));
         return map.keySet();
     }
 
+    public Set<Word> filterByEqual(Collection<Word> words, Integer score, ReturnType returnType) {
+        TreeMap<Word,Integer> map = new TreeMap<>(wordsToSpecficIntType(words));
+        map.values().retainAll(filter_equal(map.values(), score, returnType));
+        return map.keySet();
+    }
+
 //    public Set<Word> filterByEqual(Collection<Word> words) {
-//        TreeMap<Word,Double> map = new TreeMap<>(wordsToSpecficIntType(words));
+//        TreeMap<Word,Integer> map = new TreeMap<>(wordsToSpecficIntType(words));
 //        map.values().retainAll(filter_equal(map.values()));
 //        return map.keySet();
 //    }
 //
 //    public Set<Word> filterByLessThan(Collection<Word> words) {
-//        TreeMap<Word,Double> map = new TreeMap<>(wordsToSpecficIntType(words));
+//        TreeMap<Word,Integer> map = new TreeMap<>(wordsToSpecficIntType(words));
 //        map.values().retainAll(filter_less(map.values()));
 //        return map.keySet();
 //    }
 
-    public abstract Map<Word,Double> wordsToSpecficDoubleType(Collection<Word> words);
+    public abstract Map<Word,Integer> wordsToSpecficIntType(Collection<Word> words);
 
-    public abstract Double wordToSpecficDoubleType(Word word);
+    public abstract Integer wordToSpecficIntType(Word word);
 
     @Override
     public abstract boolean weaken();
 
-    public boolean weaken(double d) {
-        if (dbl <= 0)
+    public boolean weaken(int i) {
+        if (this.i <= 0)
             return false;
-        dbl -= d;
+        this.i -= i;
         return true;
     }
 
-    public static List<Double> filter_goe(Collection<Double> doubles, double dbl, ReturnType returnType) {
-        List<Double> filteredIn = new ArrayList<>();
-        for (double d : doubles)
-            if (returnType == ReturnType.MATCHES && d >= dbl ||
-                    returnType == ReturnType.NON_MATCHES && d < dbl)
+    public static List<Integer> filter_goe(Collection<Integer> ints, int i, ReturnType returnType) {
+        List<Integer> filteredIn = new ArrayList<>();
+        for (int d : ints)
+            if (returnType == ReturnType.MATCHES && d >= i ||
+                    returnType == ReturnType.NON_MATCHES && d < i)
                 filteredIn.add(d);
         return filteredIn;
     }
 
-    public static List<Double> filter_highest(Collection<Double> doubles) {
-        List<Double> maxDbls = new ArrayList<>();
-        double maxVal = Double.MIN_VALUE;
-        for (double d : doubles)
+    public static List<Integer> filter_highest(Collection<Integer> ints) {
+        List<Integer> maxis = new ArrayList<>();
+        int maxVal = Integer.MIN_VALUE;
+        for (int d : ints)
             if (d > maxVal) {
                 maxVal = d;
-                maxDbls.clear();
-                maxDbls.add(d);
+                maxis.clear();
+                maxis.add(d);
             }
             else if (d == maxVal)
-                maxDbls.add(d);
-        return maxDbls;
+                maxis.add(d);
+        return maxis;
+    }
+
+    public static List<Integer> filter_equal(Collection<Integer> ints, Integer score, ReturnType returnType) {
+        List<Integer> result = new ArrayList<>();
+        for (Integer i : ints)
+            if (returnType == ReturnType.MATCHES && score == i ||
+                    returnType == ReturnType.NON_MATCHES && score != i)
+                result.add(i);
+        return result;
     }
 
     public ModelNum getModelComparison() {
@@ -148,14 +166,16 @@ public abstract class DoubleConstraint extends WordConstraint {
         this.nonModelComparison = nonModelComparison;
     }
 
-    public double getDbl() {
-        return dbl;
+    public int geti() {
+        return i;
     }
 
-    public void setDbl(double dbl) {
-        this.dbl = dbl;
+    public void seti(int i) {
+        this.i = i;
     }
 }
+
+
 
 
 

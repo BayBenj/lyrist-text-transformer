@@ -48,9 +48,12 @@ public abstract class WordConstraintPrioritizer {
     }
 
     public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word original, Collection<Word> candidates) {
-        TreeSet<Word> results = new TreeSet<>(useConstraintsByWeakening(constraints, original, candidates));
-        if (results != null && !results.isEmpty())
-            return results.first();
+        Set<Word> results = useConstraintsByWeakening(constraints, original, candidates);
+        if (results == null)
+            return null;
+        TreeSet<Word> result = new TreeSet<>(results);
+        if (result != null && !result.isEmpty())
+            return result.first();
         return null;
     }
 
@@ -157,6 +160,8 @@ Continuous constraints may be weakened or strengthened.
 4. Highest rhyme dbl
 5. Highest cosine distance
  */
+
+
 
 
 
