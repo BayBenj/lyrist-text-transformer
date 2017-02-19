@@ -1,18 +1,20 @@
 package songtools;
 
+import elements.Line;
 import elements.Song;
-import elements.Stanza;
 import intentions.CompleteIntentions;
-import rhyme.LineRhymeScheme;
+import intentions.IntentionManager;
+import main.IntentionSelectionMode;
+import main.LyristDriver;
+import main.SingleProgramArgs;
+import main.ThemeManager;
+import rhyme.*;
+import utils.Pair;
 import utils.U;
+import java.io.File;
+import java.io.IOException;
 
-public final class TemplateSongEngineer extends SongEngineer {
-
-    private boolean providedStructuralIntentions = false;
-    private boolean providedEmotionalIntentions = false;
-    private boolean providedCulturalIntentions = false;
-    private boolean providedRhymeScheme = false;
-    private boolean providedMeter = false;
+public abstract class TemplateSongEngineer extends SongEngineer {
 
 //    public Stanza generateStanza(CompleteIntentions intentions, InfoSong templateInfoSong) {
 //
@@ -34,19 +36,34 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        }
 //    }
 
-    @Override
-    public InfoSong generateSong(CompleteIntentions intentions, InfoSong templateInfoSong) {
-        U.startTimer();
+    public static void main(String[] args) throws IOException {
+        //Setup
+        LyristDriver.standardSetup();
 
-        this.setIntentionBools(intentions);
+        //Load arguments
+        SingleProgramArgs.loadSingleProgramArgs(args);
+        InfoSong templateSong = SongScanner.getInfoSong(SingleProgramArgs.textInFormat, SingleProgramArgs.templateName);
+        TextComposition composition = generateSongWithArgs(templateSong);
+        U.print(composition.toString());
+    }
 
-        String oldTheme = intentions.getOldTheme();
-        String newTheme = intentions.getEmotionalIntentions().get(0).getEmotionKeyword();
-        LineRhymeScheme rhymeScheme = intentions.getStructuralIntentions().getRhymeScheme();
+    public static TextComposition generateSongWithArgs(InfoSong templateSong) {
+        U.startSingleTimer();
 
-//        InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
+        //Get rhyme scheme
+        LineRhymeScheme rhymeScheme = new LineRhymeScheme(SingleProgramArgs.rhymeScheme);
 
-        InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateInfoSong, RhymeReplacementInfo.getExample(oldTheme, newTheme, rhymeScheme));
+        //Get elements intentions from programmer input
+        final CompleteIntentions completeIntentions = IntentionManager.getSongIntentions(
+                rhymeScheme, SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme, SingleProgramArgs.culture);
+
+        //Generate a new song
+        final InfoSong newSong = TemplateSongEngineer.generateSong(completeIntentions, templateSong);
+        manageSongText(newSong);
+
+        //Make and print out composition
+        final TextComposition composition = new TextComposition(templateSong, newSong, completeIntentions);
+
 //
 //        //Filter out filterWords w/ unsafe wordsToPos so they can't be marked
 //        List<Word> allMarkableWordsList = this.getMarkableWords(templateInfoSong);
@@ -70,32 +87,16 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        Song generatedInfoSong = this.w2vReplace(normalWordsToReplace, rhymeWordsToReplace, templateInfoSong, oldTheme, newTheme, templateInfoSong);
 
         //Manage generated text
-        this.manageSongText(generatedInfoSong);
 
         //Print both songtools out
 //        U.printSideBySide(templateInfoSong, generatedInfoSong);
 
-        U.stopTimer();
-        U.print("TOTAL RUNNING TIME: " + U.getTotalTime() + "\n");
-        return generatedInfoSong;
+        SingleProgramArgs.clearSingleProgramArgs();
+        U.stopSingleTimer();
+        U.print("TOTAL RUNNING TIME FOR THIS SONG: " + U.getTotalSingleTime() + "\n");
+        return composition;
     }
 
-    private void setIntentionBools(CompleteIntentions intentions) {
-        if (intentions.getStructuralIntentions() != null && !intentions.getStructuralIntentions().hasNothing()) {
-            providedStructuralIntentions = true;
-            if (intentions.getStructuralIntentions().getRhymeScheme() != null)
-                providedRhymeScheme = true;
-
-            if (intentions.getStructuralIntentions().getMeter() != null)
-                providedMeter = true;
-        }
-
-        if (intentions.getEmotionalIntentions() != null && intentions.getEmotionalIntentions().size() > 0)
-            providedEmotionalIntentions = true;
-
-        if (intentions.getCulturalIntentions() != null && intentions.getCulturalIntentions().size() > 0)
-            providedCulturalIntentions = true;
-    }
 
 //    private Set<Integer> getWordIndexes(List<Word> allMarkableWordsList) {
 //        Set<Integer> allWordIndexes = new HashSet<>();
@@ -177,7 +178,7 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        return SongMutator.replaceWords(templateSong, wordReplacements);
 //    }
 
-    private void manageSongText(Song generatedInfoSong) {
+    private static void manageSongText(Song generatedInfoSong) {
         // Fix indefinite articles
         SongMutator.fixAllIndefiniteArticles(generatedInfoSong);
 
@@ -197,6 +198,51 @@ public final class TemplateSongEngineer extends SongEngineer {
 //        SongMutator.softenAllPunctuation(generatedInfoSong);
     }
 
+    public static String[] generateArgs(InfoSong song, File template) {
+        String oldTheme = null;
+        String newTheme = null;
+        String culture = null;
+        String rhymeScheme = null;
+
+        if (SingleProgramArgs.oldThemeSelectionMode == IntentionSelectionMode.RND &&
+                SingleProgramArgs.newThemeSelectionMode == IntentionSelectionMode.RND) {
+            Pair<String,String> themes = ThemeManager.getRndThemePair();
+            oldTheme = themes.getFirst();
+            newTheme = themes.getSecond();
+        }
+        else if (SingleProgramArgs.oldThemeSelectionMode == IntentionSelectionMode.RND) {
+            Pair<String,String> themes = ThemeManager.getRndThemePair();
+            oldTheme = themes.getFirst();
+        }
+        else if (SingleProgramArgs.newThemeSelectionMode == IntentionSelectionMode.RND) {
+            Pair<String,String> themes = ThemeManager.getRndThemePair();
+            newTheme = themes.getSecond();
+        }
+
+        if (SingleProgramArgs.cultureSelectionMode == IntentionSelectionMode.DEFAULT) {
+            culture = "English";
+        }
+
+        if (SingleProgramArgs.rhymeSchemeSelectionMode == IntentionSelectionMode.RND) {
+            RhymeScheme scheme = RhymeSchemeManager.getRndAlternatingScheme(song.getAllSubElementsOfType(new Line()).size());
+            rhymeScheme = scheme.toString();
+        }
+
+        return new String[]{
+                oldTheme,
+                newTheme,
+                culture,
+                rhymeScheme,
+                template.getName()
+        };
+    }
+
+    public static InfoSong generateSong(CompleteIntentions intentions, InfoSong templateSong) {
+//        InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
+
+        InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateSong, RhymeReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme, intentions.getStructuralIntentions().getRhymeScheme()));
+        return generatedInfoSong;
+    }
 }
 
 
@@ -458,6 +504,10 @@ VBN
 VBP
 VBZ
  */
+
+
+
+
 
 
 

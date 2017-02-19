@@ -1,7 +1,7 @@
 //package filters;
 //
 //import elements.InfoSong;
-//import main.ProgramArgs;
+//import main.MultiProgramArgs;
 //import elements.Word;
 //import utils.U;
 //
@@ -19,7 +19,7 @@
 //    }
 //
 //    public Set<Word> filterWords(InfoSong song) {
-//        if (ProgramArgs.isTesting()) {
+//        if (MultiProgramArgs.isDebugMode()) {
 //            FilterUtils.startTimer();
 //            Set<Word> result = this.doFilter(song);
 //            FilterUtils.stopTimer();

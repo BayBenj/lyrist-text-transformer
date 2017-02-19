@@ -8,6 +8,10 @@ public class LineRhymeScheme extends RhymeScheme {
         super(rhymes);
     }
 
+    public LineRhymeScheme(int... rhymes) {
+        super(rhymes);
+    }
+
     public LineRhymeScheme(Map<Rhyme,Set<Integer>> rhymes) {
         super(rhymes);
     }

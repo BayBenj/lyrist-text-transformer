@@ -2,8 +2,7 @@ package songtools;
 
 import constraints.*;
 import elements.*;
-import elements.Song;
-import main.ProgramArgs;
+import main.MultiProgramArgs;
 import rhyme.*;
 import stanford.StanfordNlp;
 import utils.Pair;
@@ -48,7 +47,7 @@ public abstract class LyristReplacer {
                 } catch (NoWordReplacementException e) {
                     System.out.println("\t***No word replacement for old word " + oldWord.toString());
                     e.printStackTrace();
-                    if (ProgramArgs.isTesting())
+                    if (MultiProgramArgs.isDebugMode())
                         chosen = new Word("[n/a]");
                     else
                         continue;
@@ -85,7 +84,7 @@ public abstract class LyristReplacer {
                 final Pair<Word,Set<Word>> instance = rhymeInstances.get(inst);
                 for (Word rhymeTest : instance.getSecond()) {
                     try {
-                        final Set<String> rhymes = Rhymer.getAllRhymesByThreshhold(rhymeTest, 1.0);
+                        final Set<String> rhymes = Rhymer.getAllRhymesByThreshold(rhymeTest, 1.0);
                         final Map<Double, String> cosineRhymes = new HashMap<>();
                         double i = 0.00000001;
                         for (String rhyme : rhymes) {
@@ -300,7 +299,7 @@ public abstract class LyristReplacer {
                     throw new NoWordReplacementException();
                 } catch (NoWordReplacementException e) {
                     e.printStackTrace();
-                    if (ProgramArgs.isTesting())
+                    if (MultiProgramArgs.isDebugMode())
                         chosen = new Word("[n/a]");
                     else
                         continue;

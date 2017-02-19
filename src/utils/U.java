@@ -1,7 +1,7 @@
 package utils;
 
 import elements.Song;
-import main.ProgramArgs;
+import main.MultiProgramArgs;
 import rhyme.Phoneticizer;
 import elements.Line;
 import elements.SongElement;
@@ -24,8 +24,11 @@ public class U {//Utils
     private static W2vInterface w2VInterface;
     public static Phoneticizer phoneticizer;
 
-    private static long startTime;
-    private static long endTime;
+    private static long multiStartTime;
+    private static long multiEndTime;
+
+    private static long singleStartTime;
+    private static long singleEndTime;
 
     public static boolean notNullnotEmpty(Collection c) {
         if (c == null || c.isEmpty())
@@ -39,16 +42,28 @@ public class U {//Utils
         return false;
     }
 
-    public static void startTimer() {
-        startTime = System.nanoTime();
+    public static void startSingleTimer() {
+        singleStartTime = System.nanoTime();
     }
 
-    public static void stopTimer() {
-        endTime = System.nanoTime();
+    public static void stopSingleTimer() {
+        singleEndTime = System.nanoTime();
     }
 
-    public static String getTotalTime() {
-        return ((endTime - startTime) / 1000000) + " milliseconds (" + ((endTime - startTime) / 1000000000) + " seconds).";
+    public static String getTotalSingleTime() {
+        return ((singleEndTime - singleStartTime) / 1000000) + " milliseconds (" + ((singleEndTime - singleStartTime) / 1000000000) + " seconds).";
+    }
+
+    public static void startMultiTimer() {
+        multiStartTime = System.nanoTime();
+    }
+
+    public static void stopMultiTimer() {
+        multiEndTime = System.nanoTime();
+    }
+
+    public static String getTotalMultiTime() {
+        return ((multiEndTime - multiStartTime) / 1000000) + " milliseconds (" + ((multiEndTime - multiStartTime) / 1000000000) + " seconds).";
     }
 
     public static Random rand = new Random();
@@ -108,12 +123,12 @@ public class U {//Utils
     }
 
     public static void testPrintln(Object o1) {
-        if (ProgramArgs.isTesting())
+        if (MultiProgramArgs.isDebugMode())
             print("\n" + o1);
     }
 
     public static void testPrint(Object o1) {
-        if (ProgramArgs.isTesting())
+        if (MultiProgramArgs.isDebugMode())
             print(o1);
     }
 

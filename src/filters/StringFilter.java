@@ -1,6 +1,6 @@
 //package filters;
 //
-//import main.ProgramArgs;
+//import main.MultiProgramArgs;
 //import utils.U;
 //
 //import java.util.Collection;
@@ -17,7 +17,7 @@
 //    }
 //
 //    public Set<String> filter(Collection<String> originalStrings) {
-//        if (ProgramArgs.isTesting()) {
+//        if (MultiProgramArgs.isDebugMode()) {
 //            FilterUtils.startTimer();
 //            Set<String> result = this.doFilter(originalStrings);
 //            FilterUtils.stopTimer();

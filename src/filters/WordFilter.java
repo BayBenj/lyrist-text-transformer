@@ -1,6 +1,6 @@
 //package filters;
 //
-//import main.ProgramArgs;
+//import main.MultiProgramArgs;
 //import elements.Word;
 //import utils.U;
 //
@@ -18,7 +18,7 @@
 //    }
 //
 //    public Set<Word> filterWords(Collection<Word> originalWords) {
-//        if (ProgramArgs.isTesting()) {
+//        if (MultiProgramArgs.isDebugMode()) {
 //            FilterUtils.startTimer();
 //            Set<Word> result = this.doFilter(originalWords);
 //            FilterUtils.stopTimer();

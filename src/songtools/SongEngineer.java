@@ -5,7 +5,7 @@ import elements.Song;
 
 public abstract class SongEngineer {
 
-    public abstract Song generateSong(CompleteIntentions intentions, InfoSong templateSong);
+//    public abstract Song generateSong(CompleteIntentions intentions, InfoSong templateSong);
 
 }
 

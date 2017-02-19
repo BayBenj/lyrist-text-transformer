@@ -7,19 +7,19 @@
 //import inspirationCHECK.RandomInspirationEngineer;
 //import inspirationCHECK.UserInspirationEngineer;
 //import songtools.TemplateSongEngineer;
-//import mainCHECK.ProgramArgs;
+//import mainCHECK.MultiProgramArgs;
 //import songtools.SongEngineer;
 //
 //import static com.sun.imageio.plugins.jpeg.JPEG.TEM;
-//import static mainCHECK.ProgramArgs.SongConfigSourceSetting.DISTRIBUTIONAL;
-//import static mainCHECK.ProgramArgs.SongConfigSourceSetting.FROM_FILE;
+//import static mainCHECK.MultiProgramArgs.SongConfigSourceSetting.DISTRIBUTIONAL;
+//import static mainCHECK.MultiProgramArgs.SongConfigSourceSetting.FROM_FILE;
 //
 //public class Manager {
 //
 //    private SongConfiguration config = null;
 //
 //    public Manager() {
-//        switch (ProgramArgs.configurationSetting) {
+//        switch (MultiProgramArgs.configurationSetting) {
 //            case FROM_FILE:
 //                config = SongConfigurationLoader.loadConfigurationFromFile();
 //                break;

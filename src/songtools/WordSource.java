@@ -44,7 +44,7 @@ public class WordSource {
 
     public static Map<Double, String> imperfectCmuRhymes(Word rhymeModel, int limit) throws NoRhymeFoundException {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
-        Set<String> allRhymes = Rhymer.getAllRhymesByThreshhold(rhymeModel, 1.0);
+        Set<String> allRhymes = Rhymer.getAllRhymesByThreshold(rhymeModel, 1.0);
         Map<Double, String> cmuRhymes = new HashMap<>();
         double extra = 0.0001;
         for (String rhyme : allRhymes) {

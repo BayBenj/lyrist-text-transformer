@@ -1,26 +1,20 @@
 package stanford;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
-import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.util.CoreMap;
 import english.ContractionManager;
-import main.ProgramArgs;
+import main.MultiProgramArgs;
 import elements.*;
 import elements.Sentence;
-import utils.U;
 
-import java.io.*;
 import java.util.*;
 
 public class StanfordNlp {
@@ -286,7 +280,7 @@ public class StanfordNlp {
                 contextualSuggestedWord.setPos(Pos.valueOf(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class)));
             }
             catch (IllegalArgumentException e) {
-                if (ProgramArgs.isTesting()) {
+                if (MultiProgramArgs.isDebugMode()) {
                     System.out.println("Bad Pos " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.PartOfSpeechAnnotation.class));
@@ -299,7 +293,7 @@ public class StanfordNlp {
                 contextualSuggestedWord.setNe(Ne.valueOf(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class)));
             }
             catch (IllegalArgumentException e) {
-                if (ProgramArgs.isTesting()) {
+                if (MultiProgramArgs.isDebugMode()) {
                     System.out.println("Bad Ne " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.NamedEntityTagAnnotation.class));
@@ -312,7 +306,7 @@ public class StanfordNlp {
                 contextualSuggestedWord.setBase(parsedToken.get(CoreAnnotations.LemmaAnnotation.class));
             }
             catch (IllegalArgumentException e) {
-                if (ProgramArgs.isTesting()) {
+                if (MultiProgramArgs.isDebugMode()) {
                     System.out.println("Bad lemma " + parsedToken.get(CoreAnnotations.TextAnnotation.class) + " in StandfordNlp!");
                     System.out.println(parsedToken.get(CoreAnnotations.TextAnnotation.class));
                     System.out.println(parsedToken.get(CoreAnnotations.LemmaAnnotation.class));

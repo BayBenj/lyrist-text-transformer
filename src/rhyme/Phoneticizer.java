@@ -14,11 +14,11 @@ public class Phoneticizer {
 //    private static final String phonesFilePath = TabDriver.dataDir + "/pron_dict/cmudict-0.7b.phones.reordered.txt";
     private static final String cmuFilePath = U.rootPath + "data/phonemes/pron-dict/cmudict-0.7b.txt";
 
-    private static Map<String, List<Pronunciation>> cmuDict = loadCMUDict();
+    public static Map<String, List<Pronunciation>> cmuDict = loadCMUDict();
     public static Map<List<PhonemeEnum>, Set<String>> lastSylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last2SylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last3SylRhymeDict = new HashMap<>();
-    private static Map<String, WordSyllables> syllableDict = loadSyllableDicts();
+    public static Map<String, WordSyllables> syllableDict = loadSyllableDicts();
 //    private static Map<String, Pair<Integer, MannerOfArticulation>> phonesDict = loadPhonesDict();
 //    private static List<Pair<String, MannerOfArticulation>> reversePhonesDict = loadReversePhonesDict();
     private static G2PConverter converter = new G2PConverter(U.rootPath + "data/phonemes/pron-dict/model.fst.ser");
@@ -545,22 +545,6 @@ public class Phoneticizer {
             return getSyllablesForWord(word.getLowerSpelling());
         }
         return null;
-    }
-
-    public static Set<String> getRhymesByThreshold(Word w, double threshold) {
-        if (w == null) return null;
-        Set<String> result = new HashSet<>();
-        for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
-            if (!syllableDict.keySet().contains(entry.getKey().toUpperCase()) || !entry.getKey().matches("\\w+")) continue;
-            Word temp = new Word(entry.getKey());
-            temp.setSyllables(getSyllablesForWord(entry.getKey()));
-            double score = Rhymer.score2Rhymes(w.getFullRhyme(), temp.getFullRhyme());
-            if (score >= threshold) {
-                result.add(entry.getKey().toLowerCase());
-//                System.out.println(entry.getKey().toLowerCase() + ": " + score);
-            }
-        }
-        return result;
     }
 
     public static Map<String, List<Pronunciation>> getCmuDict() {

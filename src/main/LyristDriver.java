@@ -1,108 +1,78 @@
 package main;
 
-import intentions.*;
-import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
-import rhyme.RhymeSchemeManager;
+import rhyme.Rhymer;
 import songtools.*;
 import stanford.StanfordNlp;
-import utils.Pair;
 import utils.U;
 import word2vec.W2vInterface;
-
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LyristDriver {
 
     //Generates a new elements inspired from a system-selected inspiring idea
 
-        public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
+        //Setup
+        standardSetup();
 
-            //Set the root path of Lyrist in U
-            final File currentDirFile = new File("");
-            U.rootPath = currentDirFile.getAbsolutePath() + "/";
+        U.startMultiTimer();
 
-            //Load arguments
-            final String templateFileName = args[0];
-            final String debug = args[1];
-            String oldTheme = args[2];
-            String newTheme = args[3];
-            final String rhymeSchemeInput = args[4];
-            final String culture = args[5];
-            final String paulFormat = args[6];
+        //Load arguments
+        MultiProgramArgs.loadMultiProgramArgs(args);
 
-            ProgramArgs.loadProgramArgs(args); //TODO: right now it doesn't want any args
+        List<File> templates = new ArrayList<>();
+        List<TextComposition> compositions = new ArrayList<>();
+        for (File template : templates) {
+            SingleProgramArgs.templateName = template.getName();
 
-            //Set testing variable
-            if (!debug.equals("debug"))
-                ProgramArgs.setTesting(false);
-            else
-                ProgramArgs.setTesting(true);
+            //Read in template song
+            final InfoSong templateSong = SongScanner.getInfoSong(MultiProgramArgs.textInFormat, SingleProgramArgs.templateName);
 
-            //Setup StanfordNlp
-            final StanfordNlp stanfordNlp = new StanfordNlp();
-            U.setStanfordNlp(stanfordNlp);
-
-            //Setup W2vInterface
-            final W2vInterface w2v  = new W2vInterface("vectors-phrase-681320-200");
-//            W2vInterface w2v  = new W2vInterface("c");
-            U.setW2VInterface(w2v);
-
-            //Setup Phoneticizer
-            U.phoneticizer = new Phoneticizer();
-
-            //Get template elements, normal read format
-            final InfoSong templateSong;
-            if (!paulFormat.equals("true")) {
-                templateSong = SongScanner.getInfoSong(templateFileName);
-            }
-            //Get template elements, Paul read format
-            else {
-                templateSong = SongScanner.getInfoSongPaulFormat(templateFileName);
-
-            }
-
-            //Get rnd themes
-            if (oldTheme.equals("rnd") || newTheme.equals("rnd")) {
-                Pair<String,String> themes = ThemeManager.getThemePair();
-                oldTheme = themes.getFirst();
-                newTheme = themes.getSecond();
-            }
-
-            //Get rnd rhyme scheme
-            final LineRhymeScheme rhymeScheme;
-            if (rhymeSchemeInput.equals("rnd")) {
-                int nLines = SongScanner.getNLines(templateSong);
-                rhymeScheme = RhymeSchemeManager.getRndAlternatingScheme(nLines);
-                //TODO fix random rhyme schemes
-            }
-            else {
-                //input would be like this: "a-b-a-b-c"
-                rhymeScheme = new LineRhymeScheme(rhymeSchemeInput.split("-"));
-            }
-
-            //Get elements intentions from programmer input
-            final CompleteIntentions completeIntentions = IntentionManager.getSongIntentions(
-                    rhymeScheme, oldTheme, newTheme, culture);
-
-            //Generate a new song
-            final TemplateSongEngineer templateSongEngineer = new TemplateSongEngineer();
-            final InfoSong newSong = templateSongEngineer.generateSong(completeIntentions, templateSong);
-
-            //Make and print out composition
-            final TextComposition composition = new TextComposition(templateSong, newSong, completeIntentions);
-            U.print(composition.toString());
+            //Generate and read in single program args
+            String[] argz = TemplateSongEngineer.generateArgs(templateSong, template);
+            SingleProgramArgs.loadSingleProgramArgs(argz);
+            TextComposition tempComposition = TemplateSongEngineer.generateSongWithArgs(templateSong);
+            U.print(tempComposition.toString());
+            compositions.add(tempComposition);
         }
 
+        U.stopMultiTimer();
+        U.print("TOTAL RUNNING TIME FOR ALL SONGS: " + U.getTotalMultiTime() + "\n");
+    }
+
+    public static void standardSetup() {
+        setupRootPath();
+        setupCmuDict();
+        setupStanfordNlp();
+        setupW2vInterface();
+    }
+
+    public static void setupRootPath() {
+        //Set the root path of Lyrist in U
+        final File currentDirFile = new File("");
+        U.rootPath = currentDirFile.getAbsolutePath() + "/";
+    }
+
+    public static void setupCmuDict() {
+        Phoneticizer.loadCMUDict();
+        U.phoneticizer = new Phoneticizer();
+        Rhymer.deserializePerfRhymes();
+    }
+
+    public static void setupStanfordNlp() {
+        final StanfordNlp stanfordNlp = new StanfordNlp();
+        U.setStanfordNlp(stanfordNlp);
+    }
+
+    public static void setupW2vInterface() {
+        final W2vInterface w2v  = new W2vInterface("vectors-phrase-681320-200");
+        U.setW2VInterface(w2v);
+    }
+
 }
-
-
-
-
-
-
-
-
 
 
 

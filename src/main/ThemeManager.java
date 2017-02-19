@@ -23,7 +23,7 @@ public abstract class ThemeManager {
             "sadness"
     };
 
-    public static Pair<String,String> getThemePair() {
+    public static Pair<String,String> getRndThemePair() {
         String t1;
         String t2;
         int i = U.rand.nextInt(5);

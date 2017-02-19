@@ -27,7 +27,7 @@ package main;
 //        newComposition.setInspiration(inspiration);
 //
 //        SongEngineer songEngineer = manager.getSongEngineer();
-//        InfoSong elements = songEngineer.generateSong(inspiration);
+//        InfoSong elements = songEngineer.generateSongWithArgs(inspiration);
 //        newComposition.setInfoSong(elements);
 //
 ////        StructureEngineer structureEngineer = manager.getStructureEngineer();

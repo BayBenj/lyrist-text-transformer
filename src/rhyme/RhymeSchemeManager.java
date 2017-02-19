@@ -7,35 +7,6 @@ import java.util.List;
 
 public abstract class RhymeSchemeManager {
 
-    private static String[] alphabet = new String[] {
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "Y",
-            //X is excluded because it means a unique rhyme that nothing else can rhyme with
-            "Z"
-    };
-
     public static LineRhymeScheme getRndAlternatingScheme(int nLines) {
         int nRhymeClasses = (int)(Math.pow(U.rand.nextDouble(), 2) * nLines);
         int nLinesPerRhyme = (int)(Math.pow(U.rand.nextDouble(), 2) * 3) + 1;
@@ -55,12 +26,12 @@ public abstract class RhymeSchemeManager {
         while (nLinesPerRhyme * (nRhymeClasses - 1) + 1 > nLines)
             nLinesPerRhyme--;
 
-        String[] uniqueRhymes = new String[nRhymeClasses];
+        int[] uniqueRhymes = new int[nRhymeClasses];
         for (int rhyme = 0; rhyme < nRhymeClasses; rhyme++) {
-            uniqueRhymes[rhyme] = alphabet[rhyme];
+            uniqueRhymes[rhyme] = rhyme;
         }
 
-        String[] lineRhymes = new String[nLines];
+        int[] lineRhymes = new int[nLines];
         int nSameRhymesInARow = 0;
         int currentRhyme = 0;
         for (int line = 0; line < nLines; line++) {
@@ -118,6 +89,8 @@ public abstract class RhymeSchemeManager {
                 "B","C","B","C");
     }
 
+
+
     /*
 Couplet: It contains two line stanzas with “A, A,” rhyme scheme that often appears as “A,A, B,B, C,C and D,D…”
 Triplet: It often repeats like a couplet, uses rhyme scheme of “AAA.”
@@ -160,9 +133,6 @@ if 2 * 2 + 1 > 5
 if 5 > 5 PASS
 
  */
-
-
-
 
 
 

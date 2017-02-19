@@ -3,6 +3,8 @@ package rhyme;
 import java.io.*;
 import java.util.*;
 import elements.Word;
+import main.LyristDriver;
+import main.MultiProgramArgs;
 import utils.U;
 
 public abstract class Rhymer {
@@ -22,58 +24,55 @@ public abstract class Rhymer {
 //    private static List<Pair<String, MannerOfArticulation>> phoneDict = Phoneticizer.loadReversePhonesDict();
 
     public static Map<SyllableGroup, Set<String>> perfectRhymes;
+    public static boolean mainDebug = false;
 
     public static void main(String[] args) throws IOException {
-        File currentDirFile = new File("");
-        U.rootPath = currentDirFile.getAbsolutePath() + "/";
-        Phoneticizer.loadCMUDict();
+        mainDebug = true;
+        MultiProgramArgs.debugMode = true;
 
-        Map<SyllableGroup, Set<String>> perf = new HashMap<>();
-        Set<String> cmudict = Phoneticizer.getCmuDict().keySet();
-        int count = 0;
+        LyristDriver.setupRootPath();
+        LyristDriver.setupCmuDict();
 
-        for (String s : cmudict) {
-            count++;
-            Word word = new Word(s.toLowerCase());
-            word.setSyllables(Phoneticizer.getSyllablesForWord(word.getUpperSpelling()));
-            if (U.isNullOrEmpty(word.getSyllables()) || U.isNullOrEmpty(word.getFullRhyme()))
-                continue;
+        Word w = new Word("fart");
+        w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
 
-            if (!perf.containsKey(word.getFullRhyme())) {
-                Set<String> perfectRhymes;
-                try {
-                    perfectRhymes = getAllRhymesByThreshhold(word, 1.0);
-                    perf.put(word.getFullRhyme(), perfectRhymes);
-                } catch (NoRhymeFoundException e) {
-                    perf.put(word.getFullRhyme(), new HashSet<>());
-                }
-            }
-
-            if (count % 1000 == 0)
-                System.out.println(count + "/130");
+        try {
+            getAllRhymesByThreshold(w, 1.0);
+        } catch (NoRhymeFoundException e) {
+            System.out.println("No rhyme found.");
+            e.printStackTrace();
         }
-
-        serializePerfRhymes(perf);
-        //deserializePerfRhymes();
+//        Map<SyllableGroup, Set<String>> perf = new HashMap<>();
+//        Set<String> cmudict = Phoneticizer.getCmuDict().keySet();
+//        int count = 0;
+//
+//        for (String s : cmudict) {
+//            count++;
+//            Word word = new Word(s.toLowerCase());
+//            word.setSyllables(Phoneticizer.getSyllablesForWord(word.getUpperSpelling()));
+//            if (U.isNullOrEmpty(word.getSyllables()) || U.isNullOrEmpty(word.getFullRhyme()))
+//                continue;
+//
+//            if (!perf.containsKey(word.getFullRhyme())) {
+//                Set<String> perfectRhymes;
+//                try {
+//                    perfectRhymes = getAllRhymesByThreshold(word, 1.0);
+//                    perf.put(word.getFullRhyme(), perfectRhymes);
+//                } catch (NoRhymeFoundException e) {
+//                    perf.put(word.getFullRhyme(), new HashSet<>());
+//                }
+//            }
+//
+//            if (count % 1000 == 0)
+//                System.out.println(count + "/130");
+//        }
+//
+//        serializePerfRhymes(perf);
+//        //deserializePerfRhymes();
     }
 
-
-
-//        Word w = new Word("young");
-//        w.setPos(Pos.NN);
-//        w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
-//
-//        try {
-//            getAllRhymesByThreshhold(w, .95);
-//        } catch (NoRhymeFoundException e) {
-//            System.out.println("No rhyme found.");
-//            e.printStackTrace();
-//        }
-//        for (String s : rhymes)
-//            System.out.println(s);
-
     public static void deserializePerfRhymes() {
-        U.testPrint("Deserializing W2v Model");
+        U.testPrint("Deserializing perfect rhyme Model");
         try {
             FileInputStream fileIn = new FileInputStream(U.rootPath + "data/phonemes/rhyme/sers/perf.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -86,90 +85,56 @@ public abstract class Rhymer {
             i.printStackTrace();
         }
         catch(ClassNotFoundException c) {
-            System.out.println("W2vModel class not found");
+            System.out.println("perfect rhyme class not found");
             c.printStackTrace();
         }
     }
 
-    public static void serializePerfRhymes(Map<SyllableGroup, Set<String>> perfRhymes) {
+    private static void serializePerfRhymes(Map<SyllableGroup, Set<String>> perfRhymes) {
         try {
             FileOutputStream fileOut = new FileOutputStream(U.rootPath + "data/phonemes/rhyme/sers/perf.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(perfRhymes);
             out.close();
             fileOut.close();
-            System.out.println("Serialized W2v Model is saved in lyrist/data/phonemes/rhyme/sers/perf.ser");
+            System.out.println("Serialized perfect rhyme map is saved in lyrist/data/phonemes/rhyme/sers/perf.ser");
         }
         catch(IOException i) {
             i.printStackTrace();
         }
     }
 
+    public static Set<String> getAllRhymesByThreshold(Word w, double threshold) throws NoRhymeFoundException {
+        if (w == null || U.isNullOrEmpty(w.getSyllables()) || U.isNullOrEmpty(w.getFullRhyme())) throw new NoRhymeFoundException();
 
-    public static Set<String> getAllRhymesByThreshhold(Word w, double threshold) throws NoRhymeFoundException {
-        Set<String> rhymes = Phoneticizer.getRhymesByThreshold(w, threshold);
-        if (U.isNullOrEmpty(rhymes))
+        if (threshold > 1.0)
+            threshold = 1.0;
+        else if (threshold < 0.0)
             throw new NoRhymeFoundException();
-        return rhymes;
+
+        if (threshold == 1.0) {
+            Set<String> rhymes = perfectRhymes.get(w.getFullRhyme());
+            if (mainDebug)
+                for (String s : rhymes)
+                    U.testPrint(s.toLowerCase() + ": 1.0");
+            return rhymes;
+        }
+
+        Set<String> result = new HashSet<>();
+        for (Map.Entry<String, List<Pronunciation>> entry : Phoneticizer.cmuDict.entrySet()) {
+            if (!Phoneticizer.syllableDict.keySet().contains(entry.getKey().toUpperCase()) || !entry.getKey().matches("\\w+")) continue;
+            Word temp = new Word(entry.getKey());
+            temp.setSyllables(Phoneticizer.getSyllablesForWord(entry.getKey()));
+            double score = score2Rhymes(w.getFullRhyme(), temp.getFullRhyme());
+            if (score >= threshold) {
+                result.add(entry.getKey().toLowerCase());
+                if (mainDebug)
+                    System.out.println(entry.getKey().toLowerCase() + ": " + score);
+            }
+        }
+        return result;
     }
 
-    /*
-    public static boolean isPerfectRhyme(String s1, String s2, int nSyl) {
-        List<PhonemeEnum> rhyme1 = Phoneticizer.getRhymeOfLastXSyllables(s1, nSyl);
-        List<PhonemeEnum> rhyme2 = Phoneticizer.getRhymeOfLastXSyllables(s2, nSyl);
-        if (rhyme1.equals(rhyme2))
-            return true;
-        return false;
-    }
-
-    public static Set<String> getPerfectRhymes(String s1, int numberOfSyllables) {
-        List<PhonemeEnum> rhyme = Phoneticizer.getRhymeOfLastXSyllables(s1, numberOfSyllables);
-        if (numberOfSyllables == 1)
-            return Phoneticizer.lastSylRhymeDict.get(rhyme);
-        else if (numberOfSyllables == 2)
-            return Phoneticizer.last2SylRhymeDict.get(rhyme);
-        else if (numberOfSyllables == 3)
-            return Phoneticizer.last3SylRhymeDict.get(rhyme);
-        return null;
-    }
-
-    public static double scoreRhyme(Word w1, Word w2) {
-//        if (areIdentical(w1,w2))
-//            return 2;
-//        else if (areRhymeIdentical(w1,w2))
-//            return 1;
-//        else if (areVowelAligned(w1,w2)) {
-//            double cost = score2Rhymes(w1.getFullRhyme(),w2.getFullRhyme());
-//            return 1 - cost;
-//        }
-        return score2Rhymes(w1.getFullRhyme(),w2.getFullRhyme());
-    }
-
-    public static boolean areIdentical(Word w1, Word w2) {
-        if (w1.getSyllables().equals(w2.getSyllables()))
-            return true;
-        return false;
-    }
-
-    public static boolean areRhymeIdentical(Word w1, Word w2) {
-        if (w1.getFullRhyme().equals(w2.getFullRhyme()))
-            return true;
-        return false;
-    }
-
-    public static boolean areVowelAligned(Word w1, Word w2) {
-        WordSyllables s1 = w1.getSyllables();
-        WordSyllables s2 = w2.getSyllables();
-        if (s1.size() != s2.size())
-            return false;
-        List<VowelPhoneme> v1 = s1.getVowels();
-        List<VowelPhoneme> v2 = s2.getVowels();
-        for (int i = 0; i < s1.size(); i++)
-            if (!v1.get(i).phonemeEnum.equals(v2.get(i).phonemeEnum))
-                return false;
-        return true;
-    }
-*/
     public static double score2Rhymes(SyllableGroup s1, SyllableGroup s2) {
 
         if (U.isNullOrEmpty(s1) || U.isNullOrEmpty(s2))
@@ -682,3 +647,8 @@ public abstract class Rhymer {
 //    }
 
 }
+
+
+
+
+

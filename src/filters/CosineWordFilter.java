@@ -2,7 +2,7 @@
 //
 //import filters.FilterUtils;
 //import filters.ReturnType;
-//import main.ProgramArgs;
+//import main.MultiProgramArgs;
 //import elements.Word;
 //import utils.U;
 //import java.util.Map;
@@ -18,7 +18,7 @@
 //    }
 //
 //    public Map<Double, Word> filterWords(Map<Double, Word> originalWords) {
-//        if (ProgramArgs.isTesting()) {
+//        if (MultiProgramArgs.isDebugMode()) {
 //            FilterUtils.startTimer();
 //            Map<Double, Word> result = this.doFilter(originalWords);
 //            FilterUtils.stopTimer();

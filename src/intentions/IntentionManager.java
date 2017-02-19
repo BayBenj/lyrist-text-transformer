@@ -21,7 +21,7 @@ public abstract class IntentionManager {
     }
 
     public static CompleteIntentions getRandomSongIntentions(int lines) {
-        return new CompleteIntentions(getRandomStructuralIntentions(lines), ThemeManager.getThemePair().getFirst(), getRandomEmotionalIntention(), getRandomCulturalIntention());
+        return new CompleteIntentions(getRandomStructuralIntentions(lines), ThemeManager.getRndThemePair().getFirst(), getRandomEmotionalIntention(), getRandomCulturalIntention());
     }
 
     public static StructuralIntentions getRandomStructuralIntentions(int lines) {
@@ -36,8 +36,7 @@ public abstract class IntentionManager {
         LineRhymeScheme rhymeScheme = null;
         switch (rnd) {
             case 0:
-                RhymeSchemeManager.getAlternatingScheme(lines, U.rand.nextInt(lines - 1) + 2, 1);
-                rhymeScheme = new LineRhymeScheme();
+                rhymeScheme = RhymeSchemeManager.getAlternatingScheme(lines, U.rand.nextInt(lines - 1) + 2, 1);
                 break;
             default:
                 break;
@@ -63,6 +62,7 @@ public abstract class IntentionManager {
     }
 
 }
+
 
 
 

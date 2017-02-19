@@ -5,7 +5,7 @@
 //import java.util.Random;
 //
 //import main.InspirationSource;
-//import main.ProgramArgs;
+//import main.MultiProgramArgs;
 //
 //public class Inspiration {
 //    //Ekman (1993): happiness, surprise, anger, sadness, fear, disgust
@@ -25,10 +25,10 @@
 //            case UNSET:
 //                throw new RuntimeException("Invalid inspiring source: " + source);
 //            case USER:
-//                switch (ProgramArgs.userInterfaceSetting)
+//                switch (MultiProgramArgs.userInterfaceSetting)
 //                {
 //                    case UNSET:
-//                        throw new RuntimeException("Invalid UI setting:" + ProgramArgs.userInterfaceSetting);
+//                        throw new RuntimeException("Invalid UI setting:" + MultiProgramArgs.userInterfaceSetting);
 //                    case COMMANDLINE:
 //                        promptUserForEmotion();
 //                        break;
