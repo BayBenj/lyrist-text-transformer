@@ -129,7 +129,7 @@ public class U {//Utils
 
     public static void testPrint(Object o1) {
         if (MultiProgramArgs.isDebugMode())
-            print(o1);
+            print("\t*** " + o1);
     }
 
     //TODO add handy timer methods here?
@@ -230,10 +230,6 @@ public class U {//Utils
         return sortedMap;
     }
 }
-
-
-
-
 
 
 

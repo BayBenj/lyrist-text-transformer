@@ -33,7 +33,7 @@ public abstract class Rhymer {
         LyristDriver.setupRootPath();
         LyristDriver.setupCmuDict();
 
-        Word w = new Word("fart");
+        Word w = new Word("eat");
         w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
 
         try {
@@ -102,6 +102,20 @@ public abstract class Rhymer {
         catch(IOException i) {
             i.printStackTrace();
         }
+    }
+
+
+    public static Set<String> getAllRhymesByThreshold(Word w, double threshold, int limit) throws NoRhymeFoundException {
+        Set<String> rhymes = getAllRhymesByThreshold(w,threshold);
+        Set<String> result = new HashSet<>();
+        int i = 0;
+        for (String s : rhymes) {
+            if (i > limit)
+                break;
+            result.add(s);
+            i++;
+        }
+        return result;
     }
 
     public static Set<String> getAllRhymesByThreshold(Word w, double threshold) throws NoRhymeFoundException {
@@ -647,6 +661,7 @@ public abstract class Rhymer {
 //    }
 
 }
+
 
 
 

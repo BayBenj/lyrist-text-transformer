@@ -37,7 +37,7 @@ public class RhymeScoreConstraint extends DoubleConstraint {
 
     @Override
     public boolean weaken() {
-        return this.weaken(.25);
+        return this.weaken(.025);
     }
 
 }

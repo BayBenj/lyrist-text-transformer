@@ -11,7 +11,7 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
     public static String templateName;
 
     public static void loadSingleProgramArgs(String[] args) {
-        if (args.length != 5)
+        if (args.length != 7)
             throw new UnsupportedOperationException("Illegal arguments passed to program: " + Arrays.toString(args));
 
         oldTheme = args[0].toLowerCase();
@@ -19,6 +19,14 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
         culture = args[2];
         rhymeScheme = args[3];
         templateName = args[4];
+    }
+
+    public static void loadExtraProgramArgs(String... extraArgs) {
+        if (extraArgs.length != 2)
+            throw new UnsupportedOperationException("Illegal arguments passed to program: " + Arrays.toString(extraArgs));
+
+        debugMode(extraArgs[0]);
+        textInFormat(extraArgs[1]);
     }
 
     public static void clearSingleProgramArgs() {
@@ -30,6 +38,8 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
     }
 
 }
+
+
 
 
 

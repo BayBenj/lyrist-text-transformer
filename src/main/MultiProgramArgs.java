@@ -52,14 +52,14 @@ public abstract class MultiProgramArgs {
         debugMode = testing_in;
     }
 
-    private static void debugMode(String debug) {
+    protected static void debugMode(String debug) {
         if (debug.equalsIgnoreCase("debug"))
             debugMode = true;
         else
             debugMode = false;
     }
 
-    private static void textInFormat(String format) {
+    protected static void textInFormat(String format) {
         if (format.equalsIgnoreCase("paul"))
             textInFormat = TextInFormat.PAUL;
         else

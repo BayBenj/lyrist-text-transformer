@@ -141,8 +141,10 @@ public abstract class WordConstraintManager {
         result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
         result.get(4).enforce();
         result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, .95, ReturnType.MATCHES));// enforced
+        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 0.9, ReturnType.MATCHES));// enforced
         result.get(6).enforce();
+        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 1.0, ReturnType.MATCHES));// enforced
+//        result.get(7).enforce();
         result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
         result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
 //        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//instance-specific

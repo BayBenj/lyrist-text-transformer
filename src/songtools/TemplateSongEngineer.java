@@ -41,6 +41,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
         LyristDriver.standardSetup();
 
         //Load arguments
+        SingleProgramArgs.loadExtraProgramArgs(args[5], args[6]);
         SingleProgramArgs.loadSingleProgramArgs(args);
         InfoSong templateSong = SongScanner.getInfoSong(SingleProgramArgs.textInFormat, SingleProgramArgs.templateName);
         TextComposition composition = generateSongWithArgs(templateSong);
@@ -51,7 +52,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
         U.startSingleTimer();
 
         //Get rhyme scheme
-        LineRhymeScheme rhymeScheme = new LineRhymeScheme(SingleProgramArgs.rhymeScheme);
+        LineRhymeScheme rhymeScheme = new LineRhymeScheme(SingleProgramArgs.rhymeScheme.split("-"));
 
         //Get elements intentions from programmer input
         final CompleteIntentions completeIntentions = IntentionManager.getSongIntentions(
@@ -225,6 +226,10 @@ public abstract class TemplateSongEngineer extends SongEngineer {
 
         if (SingleProgramArgs.rhymeSchemeSelectionMode == IntentionSelectionMode.RND) {
             RhymeScheme scheme = RhymeSchemeManager.getRndAlternatingScheme(song.getAllSubElementsOfType(new Line()).size());
+            rhymeScheme = scheme.toString();
+        }
+        else {
+            LineRhymeScheme scheme = new LineRhymeScheme(SingleProgramArgs.rhymeScheme.split("-"));
             rhymeScheme = scheme.toString();
         }
 
@@ -504,11 +509,6 @@ VBN
 VBP
 VBZ
  */
-
-
-
-
-
 
 
 

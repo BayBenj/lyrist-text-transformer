@@ -19,8 +19,6 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
     private Sentence sentence;
     private int sentenceIndex;
 
-    private Rhyme assignedRhyme;
-
     public Word(String s) {
         this.setSpelling(s);
     }
@@ -119,14 +117,6 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
 
     public void setSentenceIndex(int sentenceIndex) {
         this.sentenceIndex = sentenceIndex;
-    }
-
-    public Rhyme getAssignedRhyme() {
-        return assignedRhyme;
-    }
-
-    public void setAssignedRhyme(Rhyme assignedRhyme) {
-        this.assignedRhyme = assignedRhyme;
     }
 
     @Override

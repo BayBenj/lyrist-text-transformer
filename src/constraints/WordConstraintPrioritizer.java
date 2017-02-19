@@ -38,8 +38,10 @@ public abstract class WordConstraintPrioritizer {
                 if (wordConstraint.isEnforced())
                     return null;
                 //weaken or disable constraint
-                if (!wordConstraint.weaken())
+                if (!wordConstraint.weaken()) {
                     wordConstraint.disable();
+                }
+
                 //recurse, start filtering process over with weaker filters
                 return useConstraintsByWeakening(constraints, originals);
             }
@@ -71,8 +73,10 @@ public abstract class WordConstraintPrioritizer {
                 if (wordConstraint.isEnforced())
                     return null;
                 //weaken or disable constraint
-                if (!wordConstraint.weaken())
+                if (!wordConstraint.weaken()) {
                     wordConstraint.disable();
+                }
+
                 //recurse, start filtering process over with weaker filters
                 return useConstraintsByWeakening(constraints, original, candidates);
             }
@@ -90,6 +94,12 @@ public abstract class WordConstraintPrioritizer {
     public static void disableRhymeConstraints(List<WordConstraint> constraints) {
         for (WordConstraint c : constraints)
             if (c instanceof RhymeScoreConstraint)
+                c.disable();
+    }
+
+    public static void disableUnenforcedConstraints(List<WordConstraint> constraints) {
+        for (WordConstraint c : constraints)
+            if (!c.isEnforced())
                 c.disable();
     }
 

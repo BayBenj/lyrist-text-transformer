@@ -2,17 +2,16 @@ package rhyme;
 
 import elements.Word;
 import utils.Pair;
-
 import java.util.*;
 
 public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Word>>>> {
     //HashMap<rhyme class, List<Pair<oldWord instance,Set<word suggestion for this instance>>>>
 
-    public void putWord(Word oldWord, Collection<Word> newWords) {
-        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
-            for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
-                if (oldWord.equals(rhymeInstance.getFirst()))
-                    rhymeInstance.getSecond().addAll(newWords);
+    public void putWord(Word oldWord, Collection<Word> newWords, Rhyme rhyme) {
+        List<Pair<Word,Set<Word>>> rhymeClass = this.get(rhyme);
+        for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass)
+            if (oldWord.equals(rhymeInstance.getFirst()))
+                rhymeInstance.getSecond().addAll(newWords);
     }
 
     public boolean containsOld(Word oldWord) {
