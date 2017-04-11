@@ -8,24 +8,24 @@ import word2vec.W2vInterface;
 import java.util.List;
 
 
-public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
+public class TransformByAnalogyInfo extends LyristReplacementInfo {
 
     private String oldTheme;
     private String newTheme;
 
-    public ReplacementByAnalogyInfo(List<WordConstraint> markingConstraints,
-                                    List<WordConstraint> wordConstraints,
-                                    W2vInterface w2v,
-                                    double replacementFrequency,
-                                    String oldTheme,
-                                    String newTheme) {
+    public TransformByAnalogyInfo(List<WordConstraint> markingConstraints,
+                                  List<WordConstraint> wordConstraints,
+                                  W2vInterface w2v,
+                                  double replacementFrequency,
+                                  String oldTheme,
+                                  String newTheme) {
         super(markingConstraints, wordConstraints, w2v, replacementFrequency);
         this.setOldTheme(oldTheme);
         this.setNewTheme(newTheme);
     }
 
-    public static ReplacementByAnalogyInfo getNormal(String oldTheme, String newTheme) {
-        return new ReplacementByAnalogyInfo(null,
+    public static TransformByAnalogyInfo getNormal(String oldTheme, String newTheme) {
+        return new TransformByAnalogyInfo(null,
                                             WordConstraintManager.getNormal(),
                                             U.getW2VInterface(),
                                             1,
@@ -64,6 +64,7 @@ public class ReplacementByAnalogyInfo extends LyristReplacementInfo {
                        double replacementFrequency
 
  */
+
 
 
 

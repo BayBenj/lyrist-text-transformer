@@ -60,9 +60,17 @@ public abstract class SongScanner {
         String[] lines = text.split("\\n");
 //        InfoSong song = new InfoSong("title", "writer", "genre");
         InfoSong result = null;
+        Song stanzas = new Song();
+        List<Integer> rhymes = new ArrayList<>();
         Stanza currentStanza = null;
         StringBuilder songText = new StringBuilder();
         String title = "";
+        Stanza intro;
+        Stanza outro;
+        Stanza chorus;
+        List<Stanza> verses = new ArrayList<>();
+        List<Stanza> interludes = new ArrayList<>();
+        List<Stanza> bridges = new ArrayList<>();
 
         for (String lineStr : lines) {
             if (lineStr.equals("") || lineStr.matches("\\s*[[buffer]]\\s*")) continue;
@@ -75,21 +83,51 @@ public abstract class SongScanner {
             else if (lineStr.matches("INSPIRATION: \\w+")) {
                 continue;
             }
-            else if (lineStr.matches("INTRO") ||
-                    lineStr.matches("VERSE") ||
-                    lineStr.matches("CHORUS") ||
-                    lineStr.matches("OUTRO") ||
-                    lineStr.matches("INTERLUDE") ||
-                    lineStr.matches("BRIDGE")) {
-                if (currentStanza != null) {
-//                    song.add(currentStanza);
-                }
-                currentStanza = new Stanza(SegmentType.valueOf(lineStr), result);
+            else if (lineStr.matches("INTRO")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                intro = currentStanza;
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("OUTRO")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                outro = currentStanza;
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("CHORUS")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                chorus = currentStanza;
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("VERSE")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                verses.add(currentStanza);
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("INTERLUDE")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                interludes.add(currentStanza);
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("BRIDGE")) {
+                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+                stanzas.add(currentStanza);
+                bridges.add(currentStanza);
                 songText.append("\n");
                 continue;
             }
             else if (lineStr.matches("\\d+\\t.+")) {
                 int rhyme = lineStr.charAt(0);
+                rhymes.add(rhyme);
                 Line currentLine = new Line(currentStanza);
                 lineStr = lineStr.substring(2);
                 if (lineStr.charAt(lineStr.length() - 1) != '.')
@@ -158,6 +196,16 @@ public abstract class SongScanner {
         clean = clean.replace("  ", " ");
         result = sentencesToInfoSong(clean, parsedSentences);
         result.setTitle(title);
+        int s = 0;
+        int i = 0;
+        for (Stanza stanza : stanzas) {
+            result.get(s).setType(stanza.getType());
+            for (int l = 0; l < result.get(s).size(); l++) {
+                result.get(s).get(l).setRhyme(new Rhyme(rhymes.get(i)));
+                i++;
+            }
+            s++;
+        }
         return result;
     }
 
@@ -427,6 +475,8 @@ public abstract class SongScanner {
     }
 
 }
+
+
 
 
 

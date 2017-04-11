@@ -60,4 +60,19 @@ public class Line extends ArrayList<Word> implements Serializable {
         return result.toString();
     }
 
+    public String toStringRhyme() {
+        StringBuilder result = new StringBuilder();
+        if (rhyme != null) {
+            result.append(rhyme.getRhymeId());
+            result.append("\t");
+        }
+        for (int i = 0; i < this.size(); i++) {
+            result.append(this.get(i).toString());
+            if (i != this.size() - 1)
+                result.append(" ");
+        }
+        return result.toString();
+    }
+
+
 }

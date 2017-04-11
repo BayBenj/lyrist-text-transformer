@@ -143,9 +143,15 @@ public class TextComposition {
                 Line line2 = stanza2.get(j);
                 int extra_space = (longest_line_length + 5) - line1.toString().length();
 //                str.append("\t");
-                str.append(line1.toString());
+                if (printHeaders)
+                    str.append(line1.toStringRhyme());
+                else
+                    str.append(line1.toString());
                 appendExtraSpace(str,extra_space);
-                str.append(line2.toString());
+                if (printHeaders)
+                    str.append(line2.toStringRhyme());
+                else
+                    str.append(line2.toString());
                 str.append("\n");
             }
             str.append("\n");
@@ -159,7 +165,6 @@ public class TextComposition {
     }
 
 }
-
 
 
 

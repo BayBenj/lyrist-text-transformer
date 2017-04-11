@@ -242,7 +242,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
     }
 
     public static InfoSong generateSong(CompleteIntentions intentions, InfoSong templateSong) {
-        InfoSong generatedInfoSong = LyristTransformer.transform(templateSong, NormalReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme), false);
+        InfoSong generatedInfoSong = LyristTransformer.transform(templateSong, NormalTransformInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme), false);
 
 //        InfoSong generatedInfoSong = LyristRhymeReplacer.rhymeReplace(templateSong, RhymeReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme, intentions.getStructuralIntentions().getRhymeScheme()));
         return generatedInfoSong;

@@ -11,9 +11,9 @@ import word2vec.BadW2vInputException;
 
 import java.util.*;
 
-public abstract class LyristRhymeReplacer {
+public abstract class LyristRhymeTransformer {
 
-    public static InfoSong rhymeReplace(InfoSong originalSong, RhymeReplacementInfo info) {
+    public static InfoSong rhymeReplace(InfoSong originalSong, RhymeTransformInfo info) {
         //Get suggestions
         final WordsByRhyme oldWordsByRhyme = SongScanner.getRhymeSchemeWords(originalSong, info.getRhymeScheme());
         WordsToSuggestions wordsToSuggestions = new WordsToSuggestions();
@@ -112,7 +112,7 @@ public abstract class LyristRhymeReplacer {
         }
     }
 
-    private static void selectModelsAndScoreRhymes(RhymeReplacementInfo rInfo, WordSuggestionsByRhyme suggestionsByRhyme) {
+    private static void selectModelsAndScoreRhymes(RhymeTransformInfo rInfo, WordSuggestionsByRhyme suggestionsByRhyme) {
         U.testPrint("Entered selectModelsAndScoreRhymes");
 
 
