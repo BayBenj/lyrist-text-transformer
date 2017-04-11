@@ -6,7 +6,7 @@ public class WordSyllables extends SyllableGroup implements Serializable {
 
     //Pertains specifically to syllables in 1 word
 
-    public SyllableGroup getWordRhymeFromStress() {
+    public SyllableGroup getRhymeTailFromStress() {
         //Find the most stressed syllable
         int highestStress = Integer.MIN_VALUE;
         int i = 0;
@@ -48,8 +48,6 @@ public class WordSyllables extends SyllableGroup implements Serializable {
     }
 
 }
-
-
 
 
 

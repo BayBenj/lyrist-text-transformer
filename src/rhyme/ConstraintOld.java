@@ -2,7 +2,7 @@ package rhyme;
 import java.io.Serializable;
 import java.util.List;
 
-import main.ConstraintCondition;
+import paul.PaulConstraintCondition;
 import main.DelayedConstraintCondition;
 import utils.U;
 
@@ -22,16 +22,16 @@ public class ConstraintOld<T> implements Serializable {
         return position;
     }
 
-    public ConstraintCondition<T> getCondition() {
+    public PaulConstraintCondition<T> getCondition() {
         return condition;
     }
 
     // We allow for a constraint to enforce a condition or the negation of the condition
     private boolean desiredConditionState;
     private int position;
-    protected ConstraintCondition<T> condition;
+    protected PaulConstraintCondition<T> condition;
 
-    public ConstraintOld(int i, ConstraintCondition<T> condition, boolean desiredConditionState) {
+    public ConstraintOld(int i, PaulConstraintCondition<T> condition, boolean desiredConditionState) {
         this.position = i;
         this.condition = condition;
         this.desiredConditionState = desiredConditionState;
@@ -39,7 +39,7 @@ public class ConstraintOld<T> implements Serializable {
 
     public static <T> void reifyConstraints(List<ConstraintOld<T>> constraintOlds, List<List<T>> tokenLine) {
         for (ConstraintOld<T> constraintOld : constraintOlds) {
-            ConstraintCondition<T> condition = constraintOld.getCondition();
+            PaulConstraintCondition<T> condition = constraintOld.getCondition();
             if(condition instanceof DelayedConstraintCondition)
             {
                 ((DelayedConstraintCondition<T>) condition).reify(tokenLine);

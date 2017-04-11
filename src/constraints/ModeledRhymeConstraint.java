@@ -18,7 +18,7 @@ public class ModeledRhymeConstraint extends ObjectConstraint {
 
     public ModeledRhymeConstraint(ReturnType returnType, double threshold) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
         rhymeScoreConstraint.setDbl(threshold);
     }
 
@@ -54,13 +54,13 @@ public class ModeledRhymeConstraint extends ObjectConstraint {
     }
 
     protected static SyllableGroup wordToRhyme(Word word) {
-        return word.getFullRhyme();
+        return word.getRhymeTail();
     }
 
     protected static Map<Word,SyllableGroup> wordsToRhymes(Collection<Word> words) {
         Map<Word,SyllableGroup> result = new HashMap<>();
         for (Word w : words)
-            result.put(w, w.getFullRhyme());
+            result.put(w, w.getRhymeTail());
         return result;
     }
 

@@ -1,4 +1,4 @@
-package markov;
+package paul;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -148,6 +148,9 @@ public class SingleOrderMarkovModel<T> extends AbstractMarkovModel<T>{
 		return -1;
 	}
 }
+
+
+
 
 
 

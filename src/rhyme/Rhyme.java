@@ -7,11 +7,15 @@ import java.util.List;
 public class Rhyme {
 
     private int rhymeId;
-    private Word model;
+    private SyllableGroup model;
     private List<Word> instances;
 
     public Rhyme(Word model) {
-        this.model = model;
+        this.model = model.getRhymeTail();
+    }
+
+    public Rhyme(SyllableGroup modelRhyme) {
+        this.model = modelRhyme;
     }
 
     public Rhyme(int rhymeId) {
@@ -26,11 +30,11 @@ public class Rhyme {
         this.rhymeId = rhymeId;
     }
 
-    public Word getModel() {
+    public SyllableGroup getModel() {
         return model;
     }
 
-    public void setModel(Word model) {
+    public void setModel(SyllableGroup model) {
         this.model = model;
     }
 

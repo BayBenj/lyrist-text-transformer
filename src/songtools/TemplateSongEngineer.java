@@ -1,6 +1,5 @@
 package songtools;
 
-import elements.Line;
 import elements.Song;
 import intentions.CompleteIntentions;
 import intentions.IntentionManager;
@@ -30,9 +29,9 @@ public abstract class TemplateSongEngineer extends SongEngineer {
 //
 //        for (Stanza stanza : templateInfoSong.getStanzas()) {
 //
-//            InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
+//            InfoSong generatedInfoSong = LyristNormalReplacer.transform(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
 //
-////            InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateInfoSong, RhymeReplacementInfo.getExample(oldTheme, newTheme, rhymeScheme));
+////            InfoSong generatedInfoSong = LyristNormalReplacer.rhymeReplace(templateInfoSong, RhymeReplacementInfo.getExample(oldTheme, newTheme, rhymeScheme));
 //        }
 //    }
 
@@ -152,7 +151,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
 //
 //    private String decideOldTheme() {
 //        String oldTheme = "sorrow";//default
-//        //oldTheme = ((TreeMap<Double,String>)U.getW2VInterface().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the instanceSpecific as the old theme?)
+//        //oldTheme = ((TreeMap<Double,String>)U.getW2VInterface().findSentiment(sentimentWords, 1)).firstEntry().getValue(); TODO try looking at 100 results and choosing one from a good POS and NE (the oldWordSpecific as the old theme?)
 //        return oldTheme;
 //    }
 //
@@ -164,7 +163,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
 //    }
 
 //    private Song w2vReplace(Set<Word> normalWordsToReplace, Map<Rhyme,Set<Word>> rhymeWordsToReplace, InfoSong templateInfoSong, String oldTheme, String newTheme, Song templateSong) {
-//        LyristReplacer replacementManager = new LyristReplacer();
+//        LyristNormalReplacer replacementManager = new LyristNormalReplacer();
 //        replacementManager.setnSuggestionsToPrint(100);
 //        WordReplacements wordReplacements = replacementManager.getWordSuggestions(
 //                normalWordsToReplace,
@@ -184,7 +183,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
         SongMutator.fixAllIndefiniteArticles(generatedInfoSong);
 
         // Capitalize first word of every line
-        SongMutator.capitalizeFirstWordsInLines(generatedInfoSong);
+//        SongMutator.capitalizeFirstWordsInLines(generatedInfoSong);
 
         //Lowercase every word
 //        SongMutator.lowercaseAllWords(generatedInfoSong);
@@ -225,7 +224,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
         }
 
         if (SingleProgramArgs.rhymeSchemeSelectionMode == IntentionSelectionMode.RND) {
-            RhymeScheme scheme = RhymeSchemeManager.getRndAlternatingScheme(song.getAllSubElementsOfType(new Line()).size());
+            RhymeScheme scheme = RhymeSchemeManager.getRndAlternatingScheme(song.lines().size());
             rhymeScheme = scheme.toString();
         }
         else {
@@ -243,9 +242,9 @@ public abstract class TemplateSongEngineer extends SongEngineer {
     }
 
     public static InfoSong generateSong(CompleteIntentions intentions, InfoSong templateSong) {
-//        InfoSong generatedInfoSong = LyristReplacer.normalReplace(templateInfoSong, NormalReplacementInfo.getExample(oldTheme, newTheme));
+        InfoSong generatedInfoSong = LyristTransformer.transform(templateSong, NormalReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme), false);
 
-        InfoSong generatedInfoSong = LyristReplacer.rhymeReplace(templateSong, RhymeReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme, intentions.getStructuralIntentions().getRhymeScheme()));
+//        InfoSong generatedInfoSong = LyristRhymeReplacer.rhymeReplace(templateSong, RhymeReplacementInfo.getExample(SingleProgramArgs.oldTheme, SingleProgramArgs.newTheme, intentions.getStructuralIntentions().getRhymeScheme()));
         return generatedInfoSong;
     }
 }
@@ -509,6 +508,7 @@ VBN
 VBP
 VBZ
  */
+
 
 
 

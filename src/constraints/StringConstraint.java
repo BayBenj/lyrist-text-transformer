@@ -19,7 +19,7 @@ public class StringConstraint extends ObjectConstraint {
 
     public StringConstraint(ReturnType returnType) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,6 +62,11 @@ public class StringConstraint extends ObjectConstraint {
         for (Word w : words)
             result.put(w, w.getLowerSpelling());
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "StringConstraint";
     }
 
 }

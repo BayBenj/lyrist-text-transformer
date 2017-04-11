@@ -99,23 +99,53 @@ public class StanfordNlp {
         this.pipeline = new StanfordCoreNLP(props);
     }
 
-    public static List<Sentence> parseWordsToSentences(List<Word> wordInput) {
-        //words to raw text
-        StringBuilder text = new StringBuilder();
-        for (Word word : wordInput) {
-            text.append(word.toString());
-            text.append(" ");
-        }
-        String rawText = text.toString();
+//    public static List<Sentence> parseWordsToSentences(List<Word> wordInput) {
+//        //words to raw text
+//        StringBuilder text = new StringBuilder();
+//        for (Word word : wordInput) {
+//            text.append(word.toString());
+//            text.append(" ");
+//        }
+//        String rawText = text.toString();
+//
+//        return parseTextToSentences(rawText);
+//    }
 
-        return parseTextToSentences(rawText);
-    }
+//    public static List<Sentence> tagSong(Song song) {
+//        String rawText = song.toString();
+//        List<Sentence> sentences = parseTextToSentences(rawText);
+////        List<Word> words = song.getAllWords();
+//        int i = 0;
+//        int s = 0;
+//        int w = 0;
+//        List<Stanza> stanzas = song.getStanzas();
+//        for (Stanza stanza : stanzas) {
+//            List<Line> lines = stanza.getLines();
+//            for (Line line : lines) {
+//                List<Word> words = line.getWords();
+//                for (Word word : words) {
+//                    word = sentences.get(s).get(w);
+//                }
+//            }
+//
+//        }
+//        while (s < sentences.size()) {
+//            while (w >= sentences.get(s).size()) {
+//                w = 0;
+//                s++;
+//            }
+//            Word w
+//            words.get(i) = sentences.get(s).get(w);
+//            w++;
+//            i++;
+//        }
+//    }
 
     public static List<Sentence> parseTextToSentences(String rawText) {
         //TODO: eventually preserve punctuation in Sentence object
 
         //make the result object
-        ArrayList<Sentence> mySentences = new ArrayList<Sentence>();
+        ArrayList<Sentence> mySentences = new ArrayList<>();
 
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(rawText);
@@ -162,22 +192,22 @@ public class StanfordNlp {
                     if (spelling.length() < 1) {
                         //it's empty, do nothing
                     }
-                    else if (spelling.contains("'")) {
-                        Word lastWord = tempSentence.get(tempSentence.size() - 1);
-                        lastWord.setSpelling(lastWord.getLowerSpelling() + spelling);
-                        lastWord.setPos(Pos.CONTRACTION_WORD);
-                        String[] fullStrings = ContractionManager.getExpansion(lastWord.getLowerSpelling()+spelling);
-                        List<Word> words = new ArrayList<>();
-                        if (fullStrings != null && fullStrings.length >= 1) {
-                            Word word1 = new Word(fullStrings[0]);
-                            words.add(word1);//TODO get other attributes besides spelling!
-                            if (fullStrings != null && fullStrings.length == 2) {
-                                Word word2 = new Word(fullStrings[1]);//TODO get other attributes besides spelling!
-                                words.add(word2);
-                            }
-                        }
-                        Word contraction = new ContractionWord(lastWord.getLowerSpelling()+spelling, words);
-                    }
+//                    else if (spelling.contains("'")) {
+//                        Word lastWord = tempSentence.get(tempSentence.size() - 1);
+//                        lastWord.setSpelling(lastWord.getLowerSpelling() + spelling);
+//                        lastWord.setPos(Pos.CONTRACTION_WORD);
+//                        String[] fullStrings = ContractionManager.getExpansion(lastWord.getLowerSpelling()+spelling);
+//                        List<Word> words = new ArrayList<>();
+//                        if (fullStrings != null && fullStrings.length >= 1) {
+//                            Word word1 = new Word(fullStrings[0]);
+//                            words.add(word1);//TODO get other attributes besides spelling!
+//                            if (fullStrings != null && fullStrings.length == 2) {
+//                                Word word2 = new Word(fullStrings[1]);//TODO get other attributes besides spelling!
+//                                words.add(word2);
+//                            }
+//                        }
+//                        Word contraction = new ContractionWord(lastWord.getLowerSpelling()+spelling, words);
+//                    }
                     else {
                         //Make a new word object
                         Word tempWord = new Word(spelling);
@@ -332,11 +362,6 @@ Decide how to hold data on filterWords and their corresponding sentences:
 ArrayList<CoreMap> sentences
 HashMap<sentenceIndex, Word>
  */
-
-
-
-
-
 
 
 

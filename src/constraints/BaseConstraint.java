@@ -18,7 +18,7 @@ public class BaseConstraint extends ObjectConstraint {
 
     public BaseConstraint(ReturnType returnType) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,6 +61,11 @@ public class BaseConstraint extends ObjectConstraint {
         for (Word w : words)
             result.put(w, w.getBase());
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseConstraint";
     }
 
 }

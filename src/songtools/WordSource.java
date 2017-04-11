@@ -4,11 +4,13 @@ import elements.Word;
 import intentions.SourceEnum;
 import rhyme.NoRhymeFoundException;
 import rhyme.Rhymer;
+import rhyme.SyllableGroup;
 import utils.U;
 import word2vec.BadW2vInputException;
 import word2vec.W2vInterface;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,14 +44,30 @@ public class WordSource {
 //        return cmuRhymes;
 //    }
 
-    public static Map<Double, String> imperfectCmuRhymes(Word rhymeModel, int limit) throws NoRhymeFoundException {
+    public static Map<Double, String> imperfectCmuRhymes(SyllableGroup rhymeModel, int limit) throws NoRhymeFoundException {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
         Set<String> allRhymes = Rhymer.getAllRhymesByThreshold(rhymeModel, 1.0);
         Map<Double, String> cmuRhymes = new HashMap<>();
+        //TODO: fix this, find actual distance
         double extra = 0.0001;
         for (String rhyme : allRhymes) {
             cmuRhymes.put(-1.0 - extra, rhyme.toLowerCase());
             extra += 0.0001;
+            if (cmuRhymes.size() > limit)
+                return cmuRhymes;
+        }
+        return cmuRhymes;
+    }
+
+    public static Map<Double, String> perfectCmuRhymes(SyllableGroup rhymeModel, int limit) throws NoRhymeFoundException {
+        //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
+        Set<String> allRhymes = new HashSet<>(Rhymer.perfectRhymes.get(rhymeModel));
+        Map<Double, String> cmuRhymes = new HashMap<>();
+        //TODO: fix this, find actual distance
+        double extra = 0.00001;
+        for (String rhyme : allRhymes) {
+            cmuRhymes.put(-1.0 - extra, rhyme.toLowerCase());
+            extra += 0.00001;
             if (cmuRhymes.size() > limit)
                 return cmuRhymes;
         }
@@ -65,6 +83,10 @@ public class WordSource {
 //    }
 
 }
+
+
+
+
 
 
 

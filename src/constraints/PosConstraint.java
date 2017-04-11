@@ -22,7 +22,7 @@ public class PosConstraint extends ObjectConstraint {
 
     public PosConstraint(ReturnType returnType) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,12 +67,12 @@ public class PosConstraint extends ObjectConstraint {
         return result;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "PosConstraint";
+    }
 
 }
-
-
 
 
 

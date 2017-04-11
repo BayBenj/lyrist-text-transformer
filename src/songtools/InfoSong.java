@@ -10,6 +10,8 @@ public class InfoSong extends Song implements Serializable {
     private String writer;
     private String programmer;
     private String genre;
+    private String oldTheme;
+    private String newTheme;
 
     public InfoSong(String title, String writer, String genre) {
         this.title = title;
@@ -25,7 +27,7 @@ public class InfoSong extends Song implements Serializable {
         this.genre = "postmodern computer pop";
     }
 
-    public String getTitle() {
+    public String title() {
         return title;
     }
 
@@ -33,7 +35,7 @@ public class InfoSong extends Song implements Serializable {
         this.title = title;
     }
 
-    public String getWriter() {
+    public String writer() {
         return writer;
     }
 
@@ -41,7 +43,7 @@ public class InfoSong extends Song implements Serializable {
         this.writer = writer;
     }
 
-    public String getProgrammer() {
+    public String programmer() {
         return programmer;
     }
 
@@ -49,11 +51,39 @@ public class InfoSong extends Song implements Serializable {
         this.programmer = programmer;
     }
 
-    public String getGenre() {
+    public String genre() {
         return genre;
     }
 
     public void setGenre(String genre) {
         this.genre = genre;
     }
+
+    public String getOldTheme() {
+        return oldTheme;
+    }
+
+    public void setOldTheme(String oldTheme) {
+        this.oldTheme = oldTheme;
+    }
+
+    public String getNewTheme() {
+        return newTheme;
+    }
+
+    public void setNewTheme(String newTheme) {
+        this.newTheme = newTheme;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < this.size(); i++) {
+            result.append(this.get(i).toString());
+            if (i != this.size() - 1)
+                result.append("\n\n");
+        }
+        return result.toString();
+    }
 }
+

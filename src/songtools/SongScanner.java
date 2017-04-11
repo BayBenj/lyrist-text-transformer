@@ -2,6 +2,7 @@ package songtools;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
+import globalstructure.SegmentType;
 import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
 import elements.*;
@@ -37,11 +38,9 @@ public abstract class SongScanner {
         }
     }
 
-
-
     public static InfoSong getTemplateSong(String fileString) {
         String rawTemplateText = readFileToText(fileString);
-        rawTemplateText = SongMutator.cleanText(rawTemplateText);
+//        rawTemplateText = SongMutator.cleanText(rawTemplateText);
 //        rawTemplateText = SongMutator.personToPerson(rawTemplateText, Person.FIRST, Person.SECOND);
 //        rawTemplateText = SongMutator.stringToString(rawTemplateText, "my", "your");
         List<Sentence> parsedSentences = U.getStanfordNlp().parseTextToSentences(rawTemplateText);
@@ -52,42 +51,115 @@ public abstract class SongScanner {
 
     public static InfoSong getTemplateSongPaulFormat(String fileString) {
         String rawTemplateText = readFileToText(fileString);
+//        rawTemplateText = SongMutator.cleanText(rawTemplateText);
         InfoSong song = readPaulFormat(rawTemplateText);
-        List<Sentence> parsedSentences = U.getStanfordNlp().parseWordsToSentences(song.getAllWords());
-        setSyllablesForSentences(parsedSentences);
         return song;
     }
 
     public static InfoSong readPaulFormat(String text) {
         String[] lines = text.split("\\n");
-        InfoSong song = new InfoSong("title", "writer", "genre");
+//        InfoSong song = new InfoSong("title", "writer", "genre");
+        InfoSong result = null;
         Stanza currentStanza = null;
+        StringBuilder songText = new StringBuilder();
+        String title = "";
+
         for (String lineStr : lines) {
+            if (lineStr.equals("") || lineStr.matches("\\s*[[buffer]]\\s*")) continue;
+
             if (lineStr.matches("TITLE: \\w+")) {
-                song.setTitle(lineStr.replace("TITLE: ", ""));
+//                song.setTitle(lineStr.replace("TITLE: ", ""));
+                title = lineStr.replace("TITLE: ", "");
+                continue;
+            }
+            else if (lineStr.matches("INSPIRATION: \\w+")) {
+                continue;
             }
             else if (lineStr.matches("INTRO") ||
                     lineStr.matches("VERSE") ||
                     lineStr.matches("CHORUS") ||
+                    lineStr.matches("OUTRO") ||
+                    lineStr.matches("INTERLUDE") ||
                     lineStr.matches("BRIDGE")) {
-                if (currentStanza != null)
-                    song.add(currentStanza);
-                currentStanza = new Stanza();
-            }
-            else if (lineStr.matches("[A-Z]\\t.+")) {
-                String rhyme = Character.toString(lineStr.charAt(0));
-                Line currentLine = new Line();
-                String[] words = lineStr.split(" ");
-                for (String word : words) {
-                    Word tempWord = new Word(word);
-                    currentLine.add(tempWord);
+                if (currentStanza != null) {
+//                    song.add(currentStanza);
                 }
-                currentStanza.add(currentLine);
+                currentStanza = new Stanza(SegmentType.valueOf(lineStr), result);
+                songText.append("\n");
+                continue;
+            }
+            else if (lineStr.matches("\\d+\\t.+")) {
+                int rhyme = lineStr.charAt(0);
+                Line currentLine = new Line(currentStanza);
+                lineStr = lineStr.substring(2);
+                if (lineStr.charAt(lineStr.length() - 1) != '.')
+                    lineStr += " .";
+
+                String maxSyls = lineStr.replaceAll("-","");
+                maxSyls = maxSyls.replaceAll("•"," ");
+                maxSyls = maxSyls.replaceAll("[^\\w\\s\\d]","");
+                maxSyls = maxSyls.replaceAll("\\s\\s"," ");
+                String[] maxSyls_w = maxSyls.split("\\s");
+                currentLine.setMaxSyls(maxSyls_w.length);
+
+                String minSyls = maxSyls.replaceAll("\\[\\[buffer\\]\\]","");
+                minSyls = minSyls.replaceAll("\\s\\s"," ");
+                String[] minSyls_w = minSyls.split("\\s");
+                currentLine.setMinSyls(minSyls_w.length);
+
+                String noDashes = lineStr.replaceAll("\\[\\[buffer\\]\\]","");
+                noDashes = noDashes.replaceAll("•\\s","");
+                noDashes = noDashes.replaceAll("-","");
+                noDashes = noDashes.replaceAll("•","");
+                noDashes = noDashes.replaceAll("\\s\\s"," ");
+                if (noDashes.matches("\\s+.")) continue;
+                songText.append(noDashes);
+                songText.append("\n");
+                continue;
+            }
+            else {
+                Line currentLine = new Line(currentStanza);
+                if (lineStr.charAt(lineStr.length() - 1) != '.')
+                    lineStr += " .";
+
+                String maxSyls = lineStr.replaceAll("-","");
+                maxSyls = maxSyls.replaceAll("•"," ");
+                maxSyls = maxSyls.replaceAll("[^\\w\\s\\d]","");
+                maxSyls = maxSyls.replaceAll("\\s\\s"," ");
+                String[] maxSyls_w = maxSyls.split("\\s");
+                currentLine.setMaxSyls(maxSyls_w.length);
+
+                String minSyls = maxSyls.replaceAll("\\[\\[buffer\\]\\]","");
+                minSyls = minSyls.replaceAll("\\s\\s"," ");
+                String[] minSyls_w = minSyls.split("\\s");
+                currentLine.setMinSyls(minSyls_w.length);
+
+                String noDashes = lineStr.replaceAll("\\[\\[buffer\\]\\]","");
+                noDashes = noDashes.replaceAll("•\\s","");
+                noDashes = noDashes.replaceAll("-","");
+                noDashes = noDashes.replaceAll("•","");
+                noDashes = noDashes.replaceAll("\\s\\s"," ");
+                if (noDashes.matches("\\s+.")) continue;
+                songText.append(noDashes);
+                songText.append("\n");
+                continue;
             }
         }
-        return song;
+        String clean = songText.toString();
+        clean = clean.replaceAll("\n\n\n", "\n\n");
+        if (clean.charAt(0) == '\n')
+            clean = clean.substring(1);
+        if (clean.charAt(clean.length() - 1) == '\n')
+            clean = clean.substring(0, clean.length() - 1);
+        clean = clean.replaceAll(" \\. \\."," .");
+        List<Sentence> parsedSentences = U.getStanfordNlp().parseTextToSentences(clean);
+        setSyllablesForSentences(parsedSentences);
+        clean = clean.replace(",", " ,");
+        clean = clean.replace("  ", " ");
+        result = sentencesToInfoSong(clean, parsedSentences);
+        result.setTitle(title);
+        return result;
     }
-
 
     public static InfoSong getInfoSong(String fileString) {
         InfoSong templateInfoSong = getTemplateSong(fileString);
@@ -152,45 +224,49 @@ public abstract class SongScanner {
 
         InfoSong tempInfoSong = new InfoSong("", "", "");
 
-        ArrayList<String> rawStanzas = new ArrayList<String>(Arrays.asList(rawSong.split("\\n\\n")));
+        ArrayList<String> rawStanzas = new ArrayList<>(Arrays.asList(rawSong.split("\\n\\n")));
 
-        ArrayList<ArrayList<char[]>> punctuation = new ArrayList<ArrayList<char[]>>();
         Sentence currentStringSentence = new Sentence();
 
         int currentSentenceIndex = 0;
+        int sentenceWordIndex = 0;
 
-        for (int i = 0; i < rawStanzas.size(); i++) {
-            ArrayList<String> rawLines = new ArrayList<>(Arrays.asList(rawStanzas.get(i).split("\\n")));
-            Stanza tempStanza = new Stanza();
-            ArrayList<char[]> punctStanza = new ArrayList<>();
-            int sentenceWordIndex = 0;
-            for (int j = 0; j < rawLines.size(); j++) {
-                String rawLine = rawLines.get(j);
+        for (int s = 0; s < rawStanzas.size(); s++) {
+            ArrayList<String> rawLines = new ArrayList<>(Arrays.asList(rawStanzas.get(s).split("\\n")));
+            Stanza tempStanza = new Stanza(null, tempInfoSong);
+            for (int l = 0; l < rawLines.size(); l++) {
+                String rawLine = rawLines.get(l);
                 //kill punctuation (for now)
                 //TODO do something about appostrophes
-                rawLine = rawLine.replaceAll("[^\\w\\d\\s]", "");
-                Line tempLine = new Line();
+//                rawLine = rawLine.replaceAll("[^\\w\\d\\s]", "");
+                Line tempLine = new Line(tempStanza);
                 ArrayList<String> rawWords = new ArrayList<>(Arrays.asList(rawLine.split("\\s")));
-                for (int k = 0; k < rawWords.size(); k++) {
+                for (int w = 0; w < rawWords.size(); w++) {
+                    if (rawWords.get(w).equals("")) continue;
 
-                    // if current sentence is the instanceSpecific as the parsed sentence
-                    if (currentStringSentence.toString().equals(parsedSentences.get(currentSentenceIndex).toString().replaceAll("[^\\w\\d\\s]", ""))) {
+                    // add a word to the current sentence
+                    if (parsedSentences.size() > currentSentenceIndex - 1) {
+                        if (!parsedSentences.get(currentSentenceIndex).get(sentenceWordIndex).getLowerSpelling().equals(""))
+                            tempLine.add(parsedSentences.get(currentSentenceIndex).get(sentenceWordIndex));
+                        currentStringSentence.add(new Word(rawWords.get(w)));
+                        sentenceWordIndex++;
+                    }
+
+                    // if current sentence is the oldWordSpecific as the parsed sentence
+                    System.out.println(currentStringSentence.toString());
+                    System.out.println(parsedSentences.get(currentSentenceIndex).toString());
+                    if (currentStringSentence.toString().equals(parsedSentences.get(currentSentenceIndex).toString())) //.replaceAll("[^\\w\\d\\s]", "")))
+                    {
                         currentStringSentence = new Sentence();
                         sentenceWordIndex = 0;
                         currentSentenceIndex++;
                     }
-
-                    // add a word to the current sentence
-                    if (parsedSentences.size() > currentSentenceIndex - 1) {
-                        tempLine.add(parsedSentences.get(currentSentenceIndex).get(sentenceWordIndex));
-                        currentStringSentence.add(new Word(rawWords.get(k)));
-                        sentenceWordIndex++;
-                    }
-
                 }
-                tempStanza.add(tempLine);
+                if (!tempLine.isEmpty())
+                    tempStanza.add(tempLine);
             }
-            tempInfoSong.add(tempStanza);
+            if (!tempStanza.isEmpty())
+                tempInfoSong.add(tempStanza);
         }
 
         //TODO: eventually make this internal
@@ -313,12 +389,12 @@ public abstract class SongScanner {
 
     public static Set<PositionedWord> getPositionedWords(Song infoSong) {
         Set<PositionedWord> positionedWords = new HashSet<>();
-        for (int s = 0; s < infoSong.getStanzas().size(); s++) {
-            Stanza stanza = infoSong.getStanzas().get(s);
-            for (int l = 0; l < stanza.getLines().size(); l++) {
-                Line line = stanza.getLines().get(l);
-                for (int w = 0; w < line.getWords().size(); w++) {
-                    Word word = line.getWords().get(w);
+        for (int s = 0; s < infoSong.size(); s++) {
+            Stanza stanza = infoSong.get(s);
+            for (int l = 0; l < stanza.size(); l++) {
+                Line line = stanza.get(l);
+                for (int w = 0; w < line.size(); w++) {
+                    Word word = line.get(w);
                     positionedWords.add(new PositionedWord(word, s, l , w));
                 }
 
@@ -329,13 +405,13 @@ public abstract class SongScanner {
     }
 
     public static WordsByRhyme getRhymeSchemeWords(Song infoSongToMark, LineRhymeScheme rhymeScheme) {
-        if (infoSongToMark != null && !infoSongToMark.getAllWords().isEmpty()) {
-            List<SongElement> lines = infoSongToMark.getAllSubElementsOfType(new Line());
+        if (infoSongToMark != null && !infoSongToMark.words().isEmpty()) {
+            List<Line> lines = infoSongToMark.lines();
             WordsByRhyme wordsByRhyme = new WordsByRhyme();
             for (int l = 0; l < lines.size(); l++) {
-                Line line = (Line)lines.get(l);
+                Line line = lines.get(l);
                 if (rhymeScheme.contains(l)) {
-                    Word word = line.getAllWords().get(line.getSize() - 1);
+                    Word word = line.get(line.size() - 1);
                     Rhyme rhyme = rhymeScheme.getRhymeByIndex(l);
                     wordsByRhyme.putWord(rhyme, word);
                 }
@@ -346,17 +422,11 @@ public abstract class SongScanner {
     }
 
     public static int getNLines(Song infoSong) {
-        List<SongElement> lines = infoSong.getAllSubElementsOfType(new Line());
+        List<Line> lines = infoSong.lines();
         return lines.size();
     }
 
 }
-
-
-
-
-
-
 
 
 

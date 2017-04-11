@@ -58,10 +58,10 @@ public abstract class LyristReplacementInfo {
 
     public List<WordConstraint> getBaseConstraints(String base) {
         List<WordConstraint> result = new ArrayList<>(normalConstraints);
-        result.remove(2);
+        result.remove(2);//remove the normal base constraint, change it and put it back in at the same position
         Set<String> set = new HashSet<>();
         set.add(base);
-        result.add(1, new BaseConstraint(set, ReturnType.MATCHES));//(must be the same base as the other new base that was already added)
+        result.add(2, new BaseConstraint(set, ReturnType.MATCHES));//(must be the same base as the other new base that was already added)
         //result.get(1).enforce();
         return result;
     }

@@ -41,8 +41,8 @@ public abstract class DoubleConstraint extends WordConstraint {
     }
 
     @Override
-    public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
-        this.dbl = (this.wordToSpecficDoubleType(specificWord));
+    public Set<Word> useOldWordSpecific(Collection<Word> wordsToFilter, Word oldWord) {
+        this.dbl = (this.wordToSpecficDoubleType(oldWord));
         return this.useWithPresetFields(wordsToFilter);
     }
 
@@ -155,8 +155,13 @@ public abstract class DoubleConstraint extends WordConstraint {
     public void setDbl(double dbl) {
         this.dbl = dbl;
     }
-}
 
+    @Override
+    public String toString() {
+        return "DoubleConstraint";
+    }
+
+}
 
 
 

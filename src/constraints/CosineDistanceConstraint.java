@@ -6,18 +6,17 @@ import filters.ReturnType;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class CosineDistanceConstraint extends DoubleConstraint {
 
     public CosineDistanceConstraint(NonModelNum comparison) {
         super(comparison);
-        this.instanceSpecific = false;
+        this.oldWordSpecific = false;
     }
 
     public CosineDistanceConstraint(ModelNum comparison) {
         super(comparison);
-        this.instanceSpecific = false;
+        this.oldWordSpecific = false;
     }
 
     public CosineDistanceConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
@@ -46,6 +45,11 @@ public class CosineDistanceConstraint extends DoubleConstraint {
     @Override
     public boolean weaken() {
         return this.weaken(.1);
+    }
+
+    @Override
+    public String toString() {
+        return "CosineDistanceConstraint";
     }
 
 }

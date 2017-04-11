@@ -3,14 +3,15 @@ package constraints;
 import elements.Pos;
 import filters.ReturnType;
 import main.VocabManager;
-
 import java.util.*;
 
 public abstract class WordConstraintManager {
 
     //provides complete packages of constraints for replacement operations
 
+    //sets
     private static Set<String> commonWords = VocabManager.readIn("common-words.txt");
+    private static Set<String> wikiWords = VocabManager.readIn("wiki-titles.txt");
     private static Set<String> dirtyWords = VocabManager.readIn("dirty-words.txt");
     private static Set<String> unsafeWordsForMarking = VocabManager.readIn("unsafe-marking-words.txt");
     private static Set<String> alreadyUsedWords = new HashSet<>();
@@ -18,61 +19,40 @@ public abstract class WordConstraintManager {
     private static Set<String> cmuWords = VocabManager.readIn("cmu-vocab.txt");
     private static Set<Pos> goodPosForMarking = null;
 
-    public static List<WordConstraint> getNormal() {
-        /*
-        1. not the original word
-        2. not one of these restricted words
-        3. must be one of these common words
-        4. pos == instanceSpecific
-        5. ne == instanceSpecific
-        6. Highest cosine distance
-        */
-        List<WordConstraint> result = new ArrayList<>();
-        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) instance-specific, enforced
-        result.get(0).enforce();
-        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(1).enforce();
-        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(2).enforce();
-        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
-        result.get(3).enforce();
-        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
-        result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
-//        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//instance-specific
-        result.add(new CosineDistanceConstraint(ModelNum.HIGHEST));
-        return result;
+    //custom constraints
+    private final static BaseConstraint differentBase = new BaseConstraint(ReturnType.NON_MATCHES);
+    private final static StringConstraint differentSpelling = new StringConstraint(ReturnType.NON_MATCHES);
+    private final static BaseConstraint unusedBase = new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES);
+    private final static StringConstraint unusedSpelling = new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES);
+    private final static StringConstraint notInDirty = new StringConstraint(dirtyWords, ReturnType.NON_MATCHES);
+    private final static PosConstraint samePos = new PosConstraint(ReturnType.MATCHES);
+    private final static NeConstraint sameNe = new NeConstraint(ReturnType.MATCHES);
+    private final static StringConstraint inCommonDict = new StringConstraint(commonWords, ReturnType.MATCHES);
+    private final static StringConstraint inWikiDict = new StringConstraint(wikiWords, ReturnType.MATCHES);
+    private final static StringConstraint inCmuDict = new StringConstraint(cmuWords, ReturnType.MATCHES);
+    private final static RhymeScoreConstraint highestRhymeScore = new RhymeScoreConstraint(NonModelNum.HIGHEST);
+    private final static RhymeScoreConstraint reasonableRhymeScore = new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 0.5, ReturnType.MATCHES);
+    private final static CosineDistanceConstraint highestCosine = new CosineDistanceConstraint(NonModelNum.HIGHEST);
+    private final static StringConstraint safeSpellingsForMarking = new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES);
+    private static PosConstraint safePosForMarking;
+
+    public static void initializeFields() {
+        initializeMarkingPos();
+        safePosForMarking = new PosConstraint(goodPosForMarking, ReturnType.MATCHES);
+        differentBase.enforce();
+        differentSpelling.enforce();
+        unusedBase.enforce();
+        unusedSpelling.enforce();
+        notInDirty.enforce();
+        highestRhymeScore.enforce();
+        reasonableRhymeScore.enforce();
+        highestCosine.enforce();
+        inCmuDict.enforce();//until I can guess phonemes or if there's another phoneme source
+        safeSpellingsForMarking.enforce();
+        safePosForMarking.enforce();
     }
 
-    public static List<WordConstraint> getNormalCmuMulti() {
-        /*
-        1. not the original word
-        2. not one of these restricted words
-        3. must be one of these common words
-        4. pos == instanceSpecific
-        5. ne == instanceSpecific
-        6. Highest cosine distance
-        */
-        List<WordConstraint> result = new ArrayList<>();
-        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) instance-specific, enforced
-        result.get(0).enforce();
-        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(1).enforce();
-        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(2).enforce();
-        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
-        result.get(3).enforce();
-        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
-        result.get(4).enforce();
-        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
-        result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
-//        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//instance-specific
-        return result;
-    }
-
-    public static List<WordConstraint> getMarking() {
-
+    public static void initializeMarkingPos() {
         goodPosForMarking = new HashSet<>();
         goodPosForMarking.add(Pos.NN);
         goodPosForMarking.add(Pos.NNS);
@@ -90,20 +70,78 @@ public abstract class WordConstraintManager {
         goodPosForMarking.add(Pos.VBN);
         goodPosForMarking.add(Pos.VBP);
         goodPosForMarking.add(Pos.VBZ);
+    }
 
+    public static List<WordConstraint> getNormal() {
+        List<WordConstraint> result = new ArrayList<>();
+        result.add(differentBase);
+        result.add(differentSpelling);
+        result.add(unusedBase);
+        result.add(unusedSpelling);
+        result.add(notInDirty);
+        result.add(samePos);
+        result.add(sameNe);
+        result.add(inWikiDict);
+        result.add(highestCosine);
+//        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced
+//        result.get(0).enforce();
+//        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+//        result.get(1).enforce();
+//        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+//        result.get(2).enforce();
+//        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+//        result.get(3).enforce();
+//        result.add(new PosConstraint(ReturnType.MATCHES));//oldWord-specific
+//        result.add(new NeConstraint(ReturnType.MATCHES));//oldWord-specific
+//        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+////        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//oldWord-specific
+//        result.add(new CosineDistanceConstraint(ModelNum.HIGHEST));
+        return result;
+    }
+
+    public static List<WordConstraint> getNormalCmuMulti() {
         /*
         1. not the original word
         2. not one of these restricted words
         3. must be one of these common words
-        4. pos == instanceSpecific
-        5. ne == instanceSpecific
+        4. pos == oldWordSpecific
+        5. ne == oldWordSpecific
         6. Highest cosine distance
         */
         List<WordConstraint> result = new ArrayList<>();
-        result.add(new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES));// enforced
+        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced
         result.get(0).enforce();
-        result.add(new PosConstraint(goodPosForMarking, ReturnType.MATCHES));// enforced
+        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
         result.get(1).enforce();
+        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+        result.get(2).enforce();
+        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
+        result.get(3).enforce();
+        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+        result.get(4).enforce();
+//        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+        result.add(new PosConstraint(ReturnType.MATCHES));//oldWord-specific
+        result.add(new NeConstraint(ReturnType.MATCHES));//oldWord-specific
+//        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//oldWord-specific
+        return result;
+    }
+
+    public static List<WordConstraint> getMarking() {
+        /*
+        1. not the original word
+        2. not one of these restricted words
+        3. must be one of these common words
+        4. pos == oldWordSpecific
+        5. ne == oldWordSpecific
+        6. Highest cosine distance
+        */
+        List<WordConstraint> result = new ArrayList<>();
+        result.add(safeSpellingsForMarking);
+        result.add(safePosForMarking);
+//        result.add(new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES));// enforced
+//        result.get(0).enforce();
+//        result.add(new PosConstraint(goodPosForMarking, ReturnType.MATCHES));// enforced
+//        result.get(1).enforce();
         return result;
     }
 
@@ -111,8 +149,8 @@ public abstract class WordConstraintManager {
         /*
         1. not one of these restricted words
         2. must be one of these common words
-        3. pos == instanceSpecific
-        4. ne == instanceSpecific
+        3. pos == oldWordSpecific
+        4. ne == oldWordSpecific
         5. Highest cosine distance
         */
         return null;
@@ -123,33 +161,43 @@ public abstract class WordConstraintManager {
         1. not one of these restricted words (should this be here or should rhyme-specific stuff only be here?)
         2. must be one of these common words
         3. rhyme dbl >= .75
-        4. pos == instanceSpecific
-        5. ne == instanceSpecific
+        4. pos == oldWordSpecific
+        5. ne == oldWordSpecific
         6. Highest rhyme dbl
         7. Highest cosine distance
         */
 
         List<WordConstraint> result = new ArrayList<>();
-        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) instance-specific, enforced, instance-specific
-        result.get(0).enforce();
-        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(1).enforce();
-        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(2).enforce();
-        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
-        result.get(3).enforce();
-        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
-        result.get(4).enforce();
-        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 0.9, ReturnType.MATCHES));// enforced
-        result.get(6).enforce();
-        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 1.0, ReturnType.MATCHES));// enforced
-//        result.get(7).enforce();
-        result.add(new PosConstraint(ReturnType.MATCHES));//instance-specific
-        result.add(new NeConstraint(ReturnType.MATCHES));//instance-specific
-//        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//instance-specific
-        result.add(new RhymeScoreConstraint(NonModelNum.HIGHEST));
-        result.add(new CosineDistanceConstraint(NonModelNum.HIGHEST));
+        result.add(inCmuDict);
+        result.add(reasonableRhymeScore);
+        result.add(differentBase);
+        result.add(differentSpelling);
+        result.add(unusedBase);
+        result.add(unusedSpelling);
+        result.add(notInDirty);
+        result.add(samePos);
+        result.add(sameNe);
+        result.add(highestRhymeScore);
+        result.add(highestCosine);
+
+//        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced, oldWord-specific
+//        result.get(0).enforce();
+//        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+//        result.get(1).enforce();
+//        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+//        result.get(2).enforce();
+//        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
+//        result.get(3).enforce();
+//        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+//        result.get(4).enforce();
+////        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+//        result.add(new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 1.0, ReturnType.MATCHES));// enforced
+////        result.get(5).enforce();
+//        result.add(new PosConstraint(ReturnType.MATCHES));//oldWord-specific
+//        result.add(new NeConstraint(ReturnType.MATCHES));//oldWord-specific
+////        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//oldWord-specific
+//        result.add(new RhymeScoreConstraint(NonModelNum.HIGHEST));
+//        result.add(new CosineDistanceConstraint(NonModelNum.HIGHEST));
         return result;
     }
 
@@ -158,9 +206,9 @@ public abstract class WordConstraintManager {
         1. not one of these restricted words
         2. must be one of these common words
         3. rhyme dbl >= .75
-        4. pos == instanceSpecific
-        5. ne == instanceSpecific
-        3. n of syllables == instanceSpecific
+        4. pos == oldWordSpecific
+        5. ne == oldWordSpecific
+        3. n of syllables == oldWordSpecific
         6. Highest rhyme dbl
         7. Highest cosine distance
         */
@@ -192,46 +240,6 @@ public abstract class WordConstraintManager {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

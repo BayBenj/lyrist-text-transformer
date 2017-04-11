@@ -12,8 +12,8 @@ import java.util.Set;
 
 public abstract class SongMutator {
 
-    public static void fixAllIndefiniteArticles(SongElement se) {
-        List<Word> words = se.getAllWords();
+    public static void fixAllIndefiniteArticles(Song se) {
+        List<Word> words = se.words();
         for (int i = 0; i < words.size(); i++) {
             if (            i < words.size() - 1 &&
                     (words.get(i).getLowerSpelling().equals("a") ||
@@ -30,11 +30,11 @@ public abstract class SongMutator {
         }
     }
 
-    public static void capitalizeFirstWordsInLines(SongElement generatedSong) {
-        List<SongElement> lines = generatedSong.getAllSubElementsOfType(new Line());
-        for (SongElement songElement : lines) {
-            Line line = (Line) songElement;
-            Word firstWord = line.getWords().get(0);
+    public static void capitalizeFirstWordsInLines(Song generatedSong) {
+        List<Line> lines = generatedSong.lines();
+        for (Line line : lines) {
+            if (line == null || line.size() == 0) continue;
+            Word firstWord = line.get(0);
             capitalizeWord(firstWord);
         }
     }
@@ -49,7 +49,7 @@ public abstract class SongMutator {
     }
 
     public static void lowercaseAllWords(Song generatedInfoSong) {
-        List<Word> words = generatedInfoSong.getAllWords();
+        List<Word> words = generatedInfoSong.words();
         for (Word word : words) {
             String spelling = word.getLowerSpelling();
             word.setSpelling(spelling.toLowerCase());
@@ -58,17 +58,19 @@ public abstract class SongMutator {
     }
 
     public static InfoSong replaceWords(Song templateInfoSong, WordReplacements wordReplacements) {
-        //TODO: eventually change this to work with any SongSement, not just entire Songs
-        //TODO: if Clonable becomes viable, skinny out this method and use Cloneable instead
+        //TODO: eventually change this to work with any SongSegment, not just entire Songs
         InfoSong generatedInfoSong = new InfoSong("NEW SONG");
-        for (int i = 0; i < templateInfoSong.getSize(); i++) {
-            Stanza currentStanza = templateInfoSong.getStanzas().get(i);
-            Stanza newStanza = new Stanza();
-            for (int j = 0; j < currentStanza.getSize(); j++) {
-                Line currentLine = currentStanza.getLines().get(j);
-                Line newLine = new Line();
-                for (int k = 0; k < currentLine.getSize(); k++) {
-                    Word currentWord = currentLine.getWords().get(k);
+        for (int i = 0; i < templateInfoSong.size(); i++) {
+            Stanza currentStanza = templateInfoSong.get(i);
+            Stanza newStanza = new Stanza(currentStanza.getType(), generatedInfoSong);
+            newStanza.setType(currentStanza.getType());
+            newStanza.setSong(generatedInfoSong);
+            for (int j = 0; j < currentStanza.size(); j++) {
+                Line currentLine = currentStanza.get(j);
+                Line newLine = new Line(newStanza);
+                newLine.setStanza(newStanza);
+                for (int k = 0; k < currentLine.size(); k++) {
+                    Word currentWord = currentLine.get(k);
                     if (wordReplacements.containsKey(currentWord))
                         newLine.add(wordReplacements.get(currentWord));
                     else {
@@ -78,6 +80,7 @@ public abstract class SongMutator {
                         temp.setPos(currentWord.getPos());
                         temp.setNe(currentWord.getNe());
                         temp.setCapitalized(currentWord.getCapitalized());
+                        temp.setLine(newLine);
                         newLine.add(temp);
                     }
                 }
@@ -88,37 +91,37 @@ public abstract class SongMutator {
         return generatedInfoSong;
     }
 
-    public static Stanza replaceWords(Stanza templateStanza, WordReplacements wordReplacements) {
-        //TODO: eventually change this to work with any SongSement, not just entire Songs
-        //TODO: if Clonable becomes viable, skinny out this method and use Cloneable instead
-        Stanza result = new Stanza();
-        for (int l = 0; l < templateStanza.getSize(); l++) {
-            Line currentLine = templateStanza.getLines().get(l);
-            Line newLine = new Line();
-            for (int w = 0; w < currentLine.getSize(); w++) {
-                Word currentWord = currentLine.getWords().get(w);
-                if (wordReplacements.containsKey(currentWord))
-                    newLine.add(wordReplacements.get(currentWord));
-                else {
-                    Word temp = new Word(currentWord.getLowerSpelling());
-                    temp.setBase(currentWord.getBase());
-                    temp.setSyllables(currentWord.getSyllables());
-                    temp.setPos(currentWord.getPos());
-                    temp.setNe(currentWord.getNe());
-                    temp.setCapitalized(currentWord.getCapitalized());
-                    temp.setRhymeScore(currentWord.getRhymeScore());
-                    temp.setCosineDistance(currentWord.getCosineDistance());
-                    newLine.add(temp);
-                }
-            }
-            result.add(newLine);
-        }
+//    public static Stanza replaceWords(Stanza templateStanza, WordReplacements wordReplacements) {
+//        //TODO: eventually change this to work with any SongSement, not just entire Songs
+//        //TODO: if Clonable becomes viable, skinny out this method and use Cloneable instead
+//        Stanza result = new Stanza();
+//        for (int l = 0; l < templateStanza.size(); l++) {
+//            Line currentLine = templateStanza.get(l);
+//            Line newLine = new Line();
+//            for (int w = 0; w < currentLine.size(); w++) {
+//                Word currentWord = currentLine.get(w);
+//                if (wordReplacements.containsKey(currentWord))
+//                    newLine.add(wordReplacements.get(currentWord));
+//                else {
+//                    Word temp = new Word(currentWord.getLowerSpelling());
+//                    temp.setBase(currentWord.getBase());
+//                    temp.setSyllables(currentWord.getSyllables());
+//                    temp.setPos(currentWord.getPos());
+//                    temp.setNe(currentWord.getNe());
+//                    temp.setCapitalized(currentWord.getCapitalized());
+//                    temp.setRhymeScore(currentWord.getRhymeScore());
+//                    temp.setCosineDistance(currentWord.getCosineDistance());
+//                    newLine.add(temp);
+//                }
+//            }
+//            result.add(newLine);
+//        }
+//
+//        return result;
+//    }
 
-        return result;
-    }
-
-    public static void hideAllPunctuation(SongElement se) {
-        List<Word> words = se.getAllWords();
+    public static void hideAllPunctuation(Song se) {
+        List<Word> words = se.words();
         for (int i = 0; i < words.size(); i++) {
             if (words.get(i) instanceof Punctuation) {
                 ((Punctuation) words.get(i)).hide();
@@ -126,8 +129,8 @@ public abstract class SongMutator {
         }
     }
 
-    public static void revealAllPunctuation(SongElement se) {
-        List<Word> words = se.getAllWords();
+    public static void revealAllPunctuation(Song se) {
+        List<Word> words = se.words();
         for (int i = 0; i < words.size(); i++) {
             if (words.get(i) instanceof Punctuation) {
                 ((Punctuation) words.get(i)).unhide();
@@ -135,7 +138,7 @@ public abstract class SongMutator {
         }
     }
 
-    public static void softenAllPunctuation(SongElement se) {
+    public static void softenAllPunctuation(Song se) {
         /*
         terminals in the middle of a line turn to commas
         all other punctuation is hidden
@@ -284,10 +287,7 @@ public abstract class SongMutator {
         return text;
     }
 
-
 }
-
-
 
 
 

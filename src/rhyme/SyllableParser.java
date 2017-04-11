@@ -478,7 +478,7 @@ public abstract class SyllableParser {
     }
 
     private static boolean codaRule7(List<PhonemeEnum> coda) {
-        //Two obstruents in the instanceSpecific coda must share voicing
+        //Two obstruents in the oldWordSpecific coda must share voicing
         PhonemeEnum obstruent1 = null;
         PhonemeEnum obstruent2 = null;
         for (PhonemeEnum phonemeEnum : coda) {
@@ -570,7 +570,7 @@ public abstract class SyllableParser {
     @Non-alveolar nasals (M, NG) must be homorganic with the next phonemeEnum
         M - P, B
         NG - G, K
-    @Two stops in the instanceSpecific coda must share voicing
+    @Two stops in the oldWordSpecific coda must share voicing
  */
 
 

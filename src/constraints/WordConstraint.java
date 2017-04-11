@@ -13,7 +13,7 @@ public abstract class WordConstraint extends Constraint {
     protected ReturnType returnType = null;
     protected boolean enforced = false;
     protected boolean enabled = true;
-    protected boolean instanceSpecific = false;
+    protected boolean oldWordSpecific = false;
 
     public WordConstraint(ReturnType returnType) {
         this.returnType = returnType;
@@ -21,7 +21,7 @@ public abstract class WordConstraint extends Constraint {
 
     public abstract Set<Word> useWithPresetFields(Collection<Word> wordsToFilter);
 
-    public abstract Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord);
+    public abstract Set<Word> useOldWordSpecific(Collection<Word> wordsToFilter, Word oldWord);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Equals & contains objs w/ returnTypes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -103,12 +103,17 @@ public abstract class WordConstraint extends Constraint {
         this.enabled = false;
     }
 
-    public boolean isInstanceSpecific() {
-        return instanceSpecific;
+    public boolean isOldWordSpecific() {
+        return oldWordSpecific;
     }
 
-    public void setInstanceSpecific(boolean instanceSpecific) {
-        this.instanceSpecific = instanceSpecific;
+    public void setOldWordSpecific(boolean instanceSpecific) {
+        this.oldWordSpecific = instanceSpecific;
+    }
+
+    @Override
+    public String toString() {
+        return "WordConstraint";
     }
 
 }

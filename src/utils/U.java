@@ -4,8 +4,6 @@ import elements.Song;
 import main.MultiProgramArgs;
 import rhyme.Phoneticizer;
 import elements.Line;
-import elements.SongElement;
-import elements.Stanza;
 import stanford.StanfordNlp;
 import word2vec.W2vInterface;
 import java.io.ByteArrayInputStream;
@@ -98,18 +96,15 @@ public class U {//Utils
     }
 
     public static void printSideBySide(Song s1, Song s2) {
-        List<Stanza> s1Stanzas = s1.getStanzas();
-        List<Stanza> s2Stanzas = s2.getStanzas();
-
-        List<SongElement> allLines1 = s1.getAllSubElementsOfType(new Line());
+        List<Line> allLines1 = s1.lines();
         int longest_line_length = -1;
-        for (SongElement line : allLines1)
+        for (Line line : allLines1)
             if (line.toString().length() > longest_line_length)
                 longest_line_length = line.toString().length();
 
-        for (int i = 0; i < s1Stanzas.size(); i++) {
-            List<Line> s1Lines = s1Stanzas.get(i).getLines();
-            List<Line> s2Lines = s2Stanzas.get(i).getLines();
+        for (int i = 0; i < s1.size(); i++) {
+            List<Line> s1Lines = s1.get(i);
+            List<Line> s2Lines = s2.get(i);
             for (int j = 0; j < s1Lines.size(); j++) {
                 int extra_space1 = (longest_line_length + 5) - s1Lines.get(j).toString().length();
                 System.out.print(s1Lines.get(j).toString());
@@ -230,6 +225,9 @@ public class U {//Utils
         return sortedMap;
     }
 }
+
+
+
 
 
 

@@ -67,7 +67,7 @@ public class Sentence extends ArrayList<Word> implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.size(); i++) {
-            if (i != 0 && this.get(i).getClass() != Punctuation.class)
+            if (i != 0 && this.get(i).getLowerSpelling().charAt(0) != '\'' && !this.get(i).getLowerSpelling().equals("n't"))
                 sb.append(" ");
             sb.append(this.get(i).toString());
         }

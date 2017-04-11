@@ -22,7 +22,7 @@ public class NeConstraint extends ObjectConstraint {
 
     public NeConstraint(ReturnType returnType) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,6 +68,10 @@ public class NeConstraint extends ObjectConstraint {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "NeConstraint";
+    }
 }
 
 

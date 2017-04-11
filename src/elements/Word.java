@@ -4,7 +4,7 @@ import rhyme.*;
 
 import java.io.Serializable;
 
-public class Word extends SongElement implements Comparable<Word>, Serializable {
+public class Word implements Comparable<Word>, Serializable {
 
     private String spelling = null;
     private String base = null;
@@ -18,6 +18,7 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
 
     private Sentence sentence;
     private int sentenceIndex;
+    private Line line;
 
     public Word(String s) {
         this.setSpelling(s);
@@ -31,10 +32,10 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
         this.base = base;
     }
 
-    public SyllableGroup getFullRhyme() {
+    public SyllableGroup getRhymeTail() {
         if (this.syllables == null)
             return null;
-        return this.syllables.getWordRhymeFromStress();
+        return this.syllables.getRhymeTailFromStress();
     }
 
     public String getLowerSpelling() {
@@ -119,54 +120,54 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
         this.sentenceIndex = sentenceIndex;
     }
 
-    @Override
-    public Line getSuperElement() {
-        return (Line)super.getSuperElement();
-        // TODO: Catch ClassCastException
-    }
-
-    @Override
-    public void setSuperElement(SongElement line) {
-        super.setSuperElement((Line)line);
-        // TODO: Catch ClassCastException
-    }
-
     public Line getLine() {
-        return this.getSuperElement();
+        return line;
     }
 
     public void setLine(Line line) {
-        this.setSuperElement(line);
-        // TODO: Catch ClassCastException
+        this.line = line;
     }
 
-    @Override
-    public boolean hasCompleteSpellingStructure() {
-        if (this.getLowerSpelling() == null || this.getLowerSpelling().equals(""))
-            return false;
-        return true;
-    }
+    //    @Override
+//    public Line getSuperElement() {
+//        return (Line)super.getSuperElement();
+//        // TODO: Catch ClassCastException
+//    }
+//
+//    @Override
+//    public void setSuperElement(SongElement line) {
+//        super.setSuperElement((Line)line);
+//        // TODO: Catch ClassCastException
+//    }
 
-    @Override
-    public boolean hasCompletePosStructure() {
-        if (this.getPos() == null)
-            return false;
-        return true;
-    }
 
-    @Override
-    public boolean hasCompletePhonemeStructure() {
-        if (this.getPhonemes() == null || this.getPhonemes().isEmpty())
-            return false;
-        return true;
-    }
-
-    @Override
-    public boolean hasCompleteSyllableStructure() {
-        if (this.getSyllables() == null || this.getSyllables().isEmpty())
-            return false;
-        return true;
-    }
+//    @Override
+//    public boolean hasCompleteSpellingStructure() {
+//        if (this.getLowerSpelling() == null || this.getLowerSpelling().equals(""))
+//            return false;
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean hasCompletePosStructure() {
+//        if (this.getPos() == null)
+//            return false;
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean hasCompletePhonemeStructure() {
+//        if (this.getPhonemes() == null || this.getPhonemes().isEmpty())
+//            return false;
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean hasCompleteSyllableStructure() {
+//        if (this.getSyllables() == null || this.getSyllables().isEmpty())
+//            return false;
+//        return true;
+//    }
 
     @Override
     public String toString() {
@@ -186,14 +187,15 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
             return false;
         if (getSyllables() != null ? !getSyllables().equals(word.getSyllables()) : word.getSyllables() != null)
             return false;
-        return getPos() == word.getPos();
+        return true;
+//        return getPos() == word.getPos();
     }
 
     @Override
     public int hashCode() {
         int result = getLowerSpelling() != null ? getLowerSpelling().hashCode() : 0;
         result = 31 * result + (getSyllables() != null ? getSyllables().hashCode() : 0);
-        result = 31 * result + (getPos() != null ? getPos().hashCode() : 0);
+//        result = 31 * result + (getPos() != null ? getPos().hashCode() : 0);
         return result;
     }
 
@@ -202,8 +204,6 @@ public class Word extends SongElement implements Comparable<Word>, Serializable 
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
-
-
 
 
 

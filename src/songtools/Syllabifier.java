@@ -109,7 +109,7 @@
 //            }
 //        }
 //
-//        // if the pronunciation matches the literal pronunciation at each and every position and they have the instanceSpecific length
+//        // if the pronunciation matches the literal pronunciation at each and every position and they have the oldWordSpecific length
 //        if(literalPron && sylIdx == literalPronunciation.size() && litPhonemes != null && sylPhoIdx == litPhonemes.length) {
 //            return literalPronunciation;
 //        }

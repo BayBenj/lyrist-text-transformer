@@ -3,18 +3,20 @@ package constraints;
 import elements.Word;
 import songtools.WordsToSuggestions;
 import songtools.WordReplacements;
+import utils.U;
+
 import java.util.*;
 
 public abstract class WordConstraintPrioritizer {
 
-    public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) {
+    public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         WordReplacements result = new WordReplacements();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet())
             result.put(entry.getKey(), useConstraintsTo1ByWeakening(constraints, entry.getKey(), entry.getValue()));
         return result;
     }
 
-    public static WordsToSuggestions useConstraintsByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) {
+    public static WordsToSuggestions useConstraintsByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         WordsToSuggestions result = new WordsToSuggestions();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet()) {
             Set<Word> temp = useConstraintsByWeakening(constraints, entry.getKey(), entry.getValue());
@@ -23,21 +25,21 @@ public abstract class WordConstraintPrioritizer {
         return result;
     }
 
-    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Collection<Word> originals) {
+    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Collection<Word> originals) throws EnforcedConstraintReturnedZeroException {
         Set<Word> result = new HashSet<>(originals);
         for (int c = 0; c < constraints.size(); c++) {
             WordConstraint wordConstraint = constraints.get(c);
             if (!wordConstraint.isEnabled()) continue;
-            if (!wordConstraint.isInstanceSpecific())
+            if (!wordConstraint.isOldWordSpecific())
                 result.retainAll(wordConstraint.useWithPresetFields(originals));
             else {
                 for (Word w : originals)
-                    result.retainAll(wordConstraint.useInstanceSpecific(originals, w));
+                    result.retainAll(wordConstraint.useOldWordSpecific(originals, w));
             }
             if (result.isEmpty()) {
-                if (wordConstraint.isEnforced())
-                    return null;
                 //weaken or disable constraint
+                if (wordConstraint.isEnforced())
+                    throw new EnforcedConstraintReturnedZeroException(wordConstraint);
                 if (!wordConstraint.weaken()) {
                     wordConstraint.disable();
                 }
@@ -49,8 +51,8 @@ public abstract class WordConstraintPrioritizer {
         return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word original, Collection<Word> candidates) {
-        Set<Word> results = useConstraintsByWeakening(constraints, original, candidates);
+    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word oldWord, Collection<Word> candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
+        Set<Word> results = useConstraintsByWeakening(constraints, oldWord, candidates);
         if (results == null)
             return null;
         TreeSet<Word> result = new TreeSet<>(results);
@@ -59,31 +61,65 @@ public abstract class WordConstraintPrioritizer {
         return null;
     }
 
-    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Word original, Collection<Word> candidates) {
+    public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Word oldWord, Collection<Word> candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         if (candidates == null || candidates.isEmpty() || constraints == null || constraints.isEmpty()) return null;
         Set<Word> remaining = new HashSet(candidates);
         for (int c = 0; c < constraints.size(); c++) {
-            WordConstraint wordConstraint = constraints.get(c);
-            if (!wordConstraint.isEnabled()) continue;
-            if (!wordConstraint.isInstanceSpecific())
-                remaining.retainAll(wordConstraint.useWithPresetFields(remaining));
-            else
-                remaining.retainAll(wordConstraint.useInstanceSpecific(remaining, original));
-            if (remaining.isEmpty()) {
-                if (wordConstraint.isEnforced())
-                    return null;
-                //weaken or disable constraint
-                if (!wordConstraint.weaken()) {
-                    wordConstraint.disable();
+            WordConstraint constraint = constraints.get(c);
+            if (constraint.isEnabled()) {
+                try {
+                    remaining.retainAll(useConstraint(constraint, oldWord, remaining));
+                } catch (NormalConstraintReturnedZeroException e) {
+                    U.testPrint(constraint.toString() + " returned 0 results.");
+                    constraints.set(c, weakenOrDisableConstraint(constraint));
+                    remaining = new HashSet(candidates);
+                    c = 0;
                 }
-
-                //recurse, start filtering process over with weaker filters
-                return useConstraintsByWeakening(constraints, original, candidates);
             }
         }
-        if (!remaining.isEmpty())
+        if (U.notNullnotEmpty(remaining)) {
+            return remaining;
+        }
+        return null;
+    }
+
+    public static Set<Word> useConstraint(WordConstraint constraint, Word oldWord, Collection<Word> candidates) throws EnforcedConstraintReturnedZeroException, NormalConstraintReturnedZeroException {
+        if (candidates == null || candidates.isEmpty() || constraint == null) return null;
+        Set<Word> remaining = new HashSet(candidates);
+        if (!constraint.isEnabled())
+            return new HashSet<>(candidates);
+        while (constraint.isEnabled()) {
+
+            if (!constraint.isOldWordSpecific())
+                remaining.retainAll(constraint.useWithPresetFields(remaining));
+            else
+                remaining.retainAll(constraint.useOldWordSpecific(remaining, oldWord));
+
+
+            if (remaining.isEmpty()) {
+                if (constraint.isEnforced())
+                    throw new EnforcedConstraintReturnedZeroException(constraint);
+                else
+                    throw new NormalConstraintReturnedZeroException(constraint);
+            }
+
+            else
+                return remaining;
+        }
+
+
+        if (U.notNullnotEmpty(remaining))
             return remaining;
         return null;
+    }
+
+    public static WordConstraint weakenOrDisableConstraint(WordConstraint constraint) throws AttemptedDisableOfEnforcedConstraintException {
+        if (constraint.isEnforced())
+            throw new AttemptedDisableOfEnforcedConstraintException(constraint);
+        boolean wasWeakened = constraint.weaken();
+        if (!wasWeakened)
+            constraint.disable();
+        return constraint;
     }
 
     public static void enableAllConstraints(List<WordConstraint> constraints) {
@@ -105,7 +141,7 @@ public abstract class WordConstraintPrioritizer {
 
     public static void disableIntanceSpecificConstraints(List<WordConstraint> constraints) {
         for (WordConstraint c : constraints)
-            if (c.isInstanceSpecific())
+            if (c.isOldWordSpecific())
                 c.disable();
     }
 
@@ -121,8 +157,8 @@ public abstract class WordConstraintPrioritizer {
 //        for (int c = 0; c < constraints.size(); c++) {
 //            WordConstraint wordConstraint = constraints.get(c);
 //            if (!wordConstraint.isEnabled()) continue;
-//            if (wordConstraint.isInstanceSpecific())
-//                remaining.retainAll(wordConstraint.useInstanceSpecific(candidates, original));
+//            if (wordConstraint.isOldWordSpecific())
+//                remaining.retainAll(wordConstraint.useOldWordSpecific(candidates, original));
 //            else
 //                remaining.retainAll(wordConstraint.useWithPresetFields(candidates));
 //            if (remaining.isEmpty())
@@ -197,3 +233,8 @@ Continuous constraints may be weakened or strengthened.
 
 
 
+
+
+/*
+
+ */

@@ -46,7 +46,7 @@
 //    public int hashCode() {
 //        final int prime = 31;
 //        int result = 1;
-//        result = prime * result + ((acceptableStates == null) ? 0 : acceptableStates.hashCode()); // TODO: sets should be equal if they doesContain the instanceSpecific elements
+//        result = prime * result + ((acceptableStates == null) ? 0 : acceptableStates.hashCode()); // TODO: sets should be equal if they doesContain the oldWordSpecific elements
 //        return result;
 //    }
 //

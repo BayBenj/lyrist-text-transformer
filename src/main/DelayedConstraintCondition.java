@@ -2,10 +2,11 @@ package main;
 
 import java.util.List;
 
+import paul.PaulConstraintCondition;
 import rhyme.ConstraintOld;
 import utils.U;
 
-public abstract class DelayedConstraintCondition<T> extends ConstraintCondition<T> {
+public abstract class DelayedConstraintCondition<T> extends PaulConstraintCondition<T> {
     protected T prevT = null;
     protected int prevLineNumber;
     protected int prevPos;

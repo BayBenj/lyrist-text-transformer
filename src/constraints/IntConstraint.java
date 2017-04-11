@@ -41,8 +41,8 @@ public abstract class IntConstraint extends WordConstraint {
     }
 
     @Override
-    public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
-        this.i = (this.wordToSpecficIntType(specificWord));
+    public Set<Word> useOldWordSpecific(Collection<Word> wordsToFilter, Word oldWord) {
+        this.i = (this.wordToSpecficIntType(oldWord));
         return this.useWithPresetFields(wordsToFilter);
     }
 
@@ -173,6 +173,12 @@ public abstract class IntConstraint extends WordConstraint {
     public void seti(int i) {
         this.i = i;
     }
+
+    @Override
+    public String toString() {
+        return "IntConstraint";
+    }
+
 }
 
 

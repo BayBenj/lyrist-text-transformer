@@ -19,7 +19,7 @@ public class WithinStringConstraint extends ObjectConstraint {
 
     public WithinStringConstraint(ReturnType returnType) {
         super(returnType);
-        this.instanceSpecific = true;
+        this.oldWordSpecific = true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~Word transformers~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

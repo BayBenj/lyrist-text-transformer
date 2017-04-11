@@ -3,9 +3,7 @@ package word2vec;
 import utils.Pair;
 import utils.U;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Math.toIntExact;
 
@@ -18,7 +16,6 @@ public abstract class W2vOperations {
         U.testPrint("Entering buildW2vModel");
         File file;
 
-        //TODO: is this st1 correct?
         double len;
         long numberOfWordsInVector;
         long numberOfDimensionsInVector;
@@ -31,25 +28,25 @@ public abstract class W2vOperations {
             DataInputStream data_in = new DataInputStream(new BufferedInputStream(new FileInputStream(U.rootPath + "data/w2v/models/bins/" + file)));
 
             //TODO: fix
-            numberOfWordsInVector = 681320;     //word-phrase
+//            numberOfWordsInVector = 681320;     //word-phrase
 //            numberOfWordsInVector = 682454;   //news2012
 //            numberOfWordsInVector = 38160;   //1600s-lotr
 //            numberOfWordsInVector = 3000000;   //GoogleNews-3000000-300
 //            numberOfWordsInVector = 533448;   //n16-c4-l1
 //            numberOfWordsInVector = 229845;   //n1615-c4-l1.bin
 //            numberOfWordsInVector = 144353;   //c.bin
-//            numberOfWordsInVector = 109478;   //news-lyrics-bom
+            numberOfWordsInVector = 109478;   //news-lyrics-bom
 //            numberOfWordsInVector = 288340;   //songtools 288340-500-5
             System.out.println("Words: " + numberOfWordsInVector);
             data_in.readLong();
 
             //TODO: fix
-            numberOfDimensionsInVector = 200;   //word-phrase
+//            numberOfDimensionsInVector = 200;   //word-phrase
 //            numberOfDimensionsInVector = 300; //news2012
 //            numberOfDimensionsInVector = 1000; //1600s-lotr
 //            numberOfDimensionsInVector = 300; //GoogleNews-3000000-300
 //            numberOfDimensionsInVector = 300; //c.bin
-//            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
+            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
 //            numberOfDimensionsInVector = 500; //n16-c4-l1
 //            numberOfDimensionsInVector = 500;   //songtools 288340-500-5
             System.out.println("Size: " + numberOfDimensionsInVector);
@@ -233,11 +230,21 @@ public abstract class W2vOperations {
         }
 
         // Put resulting suggestions into an object to return (distances are negative for sorting)
-        Map<Double, String> suggestions = new HashMap<>();
+        Map<Double, String> suggestions = new TreeMap<>(Collections.reverseOrder());
         for (a = 0; a < number_of_suggestions_to_show; a++) {
             if (a == 0 && number_of_suggestions_to_show > 1)
-                U.testPrint("\tword2vec found " + number_of_suggestions_to_show + " filterWords.");
-            suggestions.put(closest_distances[toIntExact(a)], closest_words[toIntExact(a)]);
+                U.testPrint("word2vec found " + number_of_suggestions_to_show + " filterWords: ");
+            suggestions.put(closest_distances[toIntExact(a)], closest_words[toIntExact(a)].toLowerCase());
+        }
+
+        Set set = suggestions.entrySet();
+        Iterator i = set.iterator();
+        int count = 0;
+        while(i.hasNext()) {
+            if (count > 5) break;
+            Map.Entry me = (Map.Entry)i.next();
+            U.testPrint("\t" + me.getKey() + ": " + me.getValue());
+            count++;
         }
         return suggestions;
     }
@@ -613,6 +620,9 @@ Input: Woman, Man, Queen
 Output: Man - Woman + Queen = King
 
  */
+
+
+
 
 
 

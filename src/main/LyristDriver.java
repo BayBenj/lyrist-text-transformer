@@ -1,5 +1,6 @@
 package main;
 
+import constraints.WordConstraintManager;
 import rhyme.Phoneticizer;
 import rhyme.Rhymer;
 import songtools.*;
@@ -48,6 +49,7 @@ public class LyristDriver {
         setupCmuDict();
         setupStanfordNlp();
         setupW2vInterface();
+        setupConstraints();
     }
 
     public static void setupRootPath() {
@@ -68,12 +70,15 @@ public class LyristDriver {
     }
 
     public static void setupW2vInterface() {
-        final W2vInterface w2v  = new W2vInterface("vectors-phrase-681320-200");
+        final W2vInterface w2v  = new W2vInterface("news-lyrics-bom3");
         U.setW2VInterface(w2v);
     }
 
-}
+    public static void setupConstraints() {
+        WordConstraintManager.initializeFields();
+    }
 
+}
 
 
 

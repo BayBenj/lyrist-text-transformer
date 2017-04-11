@@ -33,11 +33,17 @@ public abstract class Rhymer {
         LyristDriver.setupRootPath();
         LyristDriver.setupCmuDict();
 
-        Word w = new Word("eat");
+        Word w = new Word("wine");
         w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
 
+        Set<String> perfects = perfectRhymes.get(w.getRhymeTail());
+        System.out.println("PERFECT RHYMES:");
+        for (String s : perfects)
+            System.out.println(s + "\t1.0");
+
         try {
-            getAllRhymesByThreshold(w, 1.0);
+            System.out.println("\n\nALL RHYMES:");
+            getAllRhymesByThreshold(w, 0.95);
         } catch (NoRhymeFoundException e) {
             System.out.println("No rhyme found.");
             e.printStackTrace();
@@ -50,16 +56,16 @@ public abstract class Rhymer {
 //            count++;
 //            Word word = new Word(s.toLowerCase());
 //            word.setSyllables(Phoneticizer.getSyllablesForWord(word.getUpperSpelling()));
-//            if (U.isNullOrEmpty(word.getSyllables()) || U.isNullOrEmpty(word.getFullRhyme()))
+//            if (U.isNullOrEmpty(word.getSyllables()) || U.isNullOrEmpty(word.getRhymeTail()))
 //                continue;
 //
-//            if (!perf.containsKey(word.getFullRhyme())) {
+//            if (!perf.containsKey(word.getRhymeTail())) {
 //                Set<String> perfectRhymes;
 //                try {
 //                    perfectRhymes = getAllRhymesByThreshold(word, 1.0);
-//                    perf.put(word.getFullRhyme(), perfectRhymes);
+//                    perf.put(word.getRhymeTail(), perfectRhymes);
 //                } catch (NoRhymeFoundException e) {
-//                    perf.put(word.getFullRhyme(), new HashSet<>());
+//                    perf.put(word.getRhymeTail(), new HashSet<>());
 //                }
 //            }
 //
@@ -119,7 +125,12 @@ public abstract class Rhymer {
     }
 
     public static Set<String> getAllRhymesByThreshold(Word w, double threshold) throws NoRhymeFoundException {
-        if (w == null || U.isNullOrEmpty(w.getSyllables()) || U.isNullOrEmpty(w.getFullRhyme())) throw new NoRhymeFoundException();
+        if (w == null || U.isNullOrEmpty(w.getRhymeTail())) throw new NoRhymeFoundException();
+        return getAllRhymesByThreshold(w.getRhymeTail(), threshold);
+    }
+
+    public static Set<String> getAllRhymesByThreshold(SyllableGroup w, double threshold) throws NoRhymeFoundException {
+        if (U.isNullOrEmpty(w)) throw new NoRhymeFoundException();
 
         if (threshold > 1.0)
             threshold = 1.0;
@@ -127,7 +138,7 @@ public abstract class Rhymer {
             throw new NoRhymeFoundException();
 
         if (threshold == 1.0) {
-            Set<String> rhymes = perfectRhymes.get(w.getFullRhyme());
+            Set<String> rhymes = perfectRhymes.get(w);
             if (mainDebug)
                 for (String s : rhymes)
                     U.testPrint(s.toLowerCase() + ": 1.0");
@@ -137,9 +148,12 @@ public abstract class Rhymer {
         Set<String> result = new HashSet<>();
         for (Map.Entry<String, List<Pronunciation>> entry : Phoneticizer.cmuDict.entrySet()) {
             if (!Phoneticizer.syllableDict.keySet().contains(entry.getKey().toUpperCase()) || !entry.getKey().matches("\\w+")) continue;
+            if (entry.getKey().equalsIgnoreCase("weeping")) {
+                System.out.println("stop for weeping test");
+            }
             Word temp = new Word(entry.getKey());
             temp.setSyllables(Phoneticizer.getSyllablesForWord(entry.getKey()));
-            double score = score2Rhymes(w.getFullRhyme(), temp.getFullRhyme());
+            double score = score2Rhymes(w, temp.getRhymeTail());
             if (score >= threshold) {
                 result.add(entry.getKey().toLowerCase());
                 if (mainDebug)
@@ -410,7 +424,7 @@ public abstract class Rhymer {
 //    }
 
     /**
-     * Are the final consonants the instanceSpecific (and is the vowel somewhat similar?)
+     * Are the final consonants the oldWordSpecific (and is the vowel somewhat similar?)
      * @param line1Phones
      * @param line2Phones
      * @return
@@ -661,9 +675,5 @@ public abstract class Rhymer {
 //    }
 
 }
-
-
-
-
 
 

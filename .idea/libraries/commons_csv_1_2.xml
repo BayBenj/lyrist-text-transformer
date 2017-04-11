@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="commons-csv-1.2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../pop-star/Pop*/lib/commons-csv-1.2/commons-csv-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

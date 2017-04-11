@@ -1,4 +1,4 @@
-package markov;
+package paul;
 
 public class PositionedState {
 

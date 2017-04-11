@@ -9,7 +9,7 @@ public class RhymeScoreConstraint extends DoubleConstraint {
 
     public RhymeScoreConstraint(NonModelNum comparison) {
         super(comparison);
-        this.instanceSpecific = false;
+        this.oldWordSpecific = false;
     }
 
     public RhymeScoreConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
@@ -38,6 +38,11 @@ public class RhymeScoreConstraint extends DoubleConstraint {
     @Override
     public boolean weaken() {
         return this.weaken(.025);
+    }
+
+    @Override
+    public String toString() {
+        return "RhymeScoreConstraint";
     }
 
 }

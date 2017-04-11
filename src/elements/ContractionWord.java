@@ -11,8 +11,7 @@ public class ContractionWord extends Word {
         this.setAllWords(allWords);
     }
 
-    @Override
-    public List<Word> getAllWords() {
+    public List<Word> contractionWords() {
         return allWords;
     }
 

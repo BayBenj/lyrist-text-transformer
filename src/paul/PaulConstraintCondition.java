@@ -1,8 +1,8 @@
-package main;
+package paul;
 
 import java.io.Serializable;
 
-public abstract class ConstraintCondition<T> implements Serializable {
+public abstract class PaulConstraintCondition<T> implements Serializable {
 
     /**
      *

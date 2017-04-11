@@ -1,7 +1,6 @@
 package songtools;
 
 import elements.Line;
-import elements.SongElement;
 import elements.Stanza;
 import intentions.CompleteIntentions;
 
@@ -82,10 +81,10 @@ public class TextComposition {
     public String printSingleHeader(InfoSong infoSong) {
         StringBuilder str = new StringBuilder();
         str.append("TITLE: ");
-        str.append(infoSong.getTitle());
+        str.append(infoSong.title());
         str.append('\n');
         str.append("WRITER: ");
-        str.append(infoSong.getWriter());
+        str.append(infoSong.writer());
         str.append("\n\n");
         return str.toString();
     }
@@ -93,51 +92,60 @@ public class TextComposition {
     public String printHeadersSideBySide(InfoSong infoSong1, InfoSong infoSong2, int longestLineLength) {
         StringBuilder str = new StringBuilder();
 
-        str.append("TITLE:");
-        appendExtraSpace(str, (longestLineLength + 5) - 6);
-        str.append("TITLE:");
-
-        str.append(infoSong1.getTitle());
-        appendExtraSpace(str, (longestLineLength + 5) - infoSong1.getTitle().length());
-        str.append(infoSong1.getTitle());
-
+        str.append("TITLE: " + infoSong1.title());
+        appendExtraSpace(str, (longestLineLength + 5) - 7 - infoSong1.title().length());
+        str.append("TITLE: " + infoSong2.title());
         str.append('\n');
 
-        str.append("WRITER:");
-        appendExtraSpace(str, (longestLineLength + 5) - 7);
-        str.append("WRITER:");
+        str.append("WRITER: " + infoSong1.writer());
+        appendExtraSpace(str, (longestLineLength + 5) - 8 - infoSong1.writer().length());
+        str.append("WRITER: " + infoSong2.writer());
+        str.append('\n');
 
-        str.append(infoSong1.getWriter());
-        appendExtraSpace(str, (longestLineLength + 5) - infoSong1.getWriter().length());
-        str.append(infoSong1.getWriter());
+        str.append("ORIGINAL THEME: " + infoSong2.getOldTheme());
+        appendExtraSpace(str, (longestLineLength + 5) - 16 - infoSong2.getOldTheme().length());
+        str.append("INSPIRATION: " + infoSong2.getNewTheme());
+
+//        str.append(infoSong2.getOldTheme() + " -> " + infoSong2.getNewTheme());
+//        appendExtraSpace(str, (longestLineLength + 5) - infoSong2.getOldTheme().length());
+//        str.append(infoSong2.getNewTheme());
 
         str.append("\n\n");
         return str.toString();
     }
 
-    public String printSongsSideBySide(InfoSong s1, InfoSong s2, boolean printHeaders) {
+    public String printSongsSideBySide(InfoSong song1, InfoSong song2, boolean printHeaders) {
         StringBuilder str = new StringBuilder();
 
-        List<Stanza> s1Stanzas = s1.getStanzas();
-        List<Stanza> s2Stanzas = s2.getStanzas();
-
-        List<SongElement> allLines1 = s1.getAllSubElementsOfType(new Line());
+        List<Line> allLines1 = song1.lines();
         int longest_line_length = -1;
-        for (SongElement line : allLines1)
+        for (Line line : allLines1)
             if (line.toString().length() > longest_line_length)
                 longest_line_length = line.toString().length();
 
         if (printHeaders)
-            str.append(printHeadersSideBySide(s1,s2, longest_line_length));
+            str.append(printHeadersSideBySide(song1,song2, longest_line_length));
 
-        for (int i = 0; i < s1Stanzas.size(); i++) {
-            List<Line> s1Lines = s1Stanzas.get(i).getLines();
-            List<Line> s2Lines = s2Stanzas.get(i).getLines();
-            for (int j = 0; j < s1Lines.size(); j++) {
-                int extra_space = (longest_line_length + 5) - s1Lines.get(j).toString().length();
-                str.append(s1Lines.get(j).toString());
+        for (int i = 0; i < song1.size(); i++) {
+            Stanza stanza1 = song1.get(i);
+            Stanza stanza2 = song2.get(i);
+
+            if (printHeaders && stanza1.getType() != null && stanza2.getType() != null) {
+                int extra_space = (longest_line_length + 5) - stanza1.getType().toString().length();
+                str.append(stanza1.getType().toString());
                 appendExtraSpace(str,extra_space);
-                str.append(s2Lines.get(j).toString());
+                str.append(stanza2.getType().toString());
+                str.append("\n");
+            }
+
+            for (int j = 0; j < stanza1.size(); j++) {
+                Line line1 = stanza1.get(j);
+                Line line2 = stanza2.get(j);
+                int extra_space = (longest_line_length + 5) - line1.toString().length();
+//                str.append("\t");
+                str.append(line1.toString());
+                appendExtraSpace(str,extra_space);
+                str.append(line2.toString());
                 str.append("\n");
             }
             str.append("\n");
@@ -151,6 +159,23 @@ public class TextComposition {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

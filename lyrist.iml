@@ -9,7 +9,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="twitter" level="project" />
     <orderEntry type="library" exported="" name="stanford" level="project" />
-    <orderEntry type="library" name="cmu" level="project" />
-    <orderEntry type="library" name="misc" level="project" />
+    <orderEntry type="library" exported="" name="cmu" level="project" />
+    <orderEntry type="library" exported="" name="misc" level="project" />
+    <orderEntry type="library" exported="" name="wordnet" level="project" />
+    <orderEntry type="module" module-name="Pop*" exported="" />
   </component>
 </module>

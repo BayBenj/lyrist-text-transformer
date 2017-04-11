@@ -1,4 +1,4 @@
-package markov;
+package paul;
 import java.util.List;
 
 public abstract class AbstractMarkovModel<T> {

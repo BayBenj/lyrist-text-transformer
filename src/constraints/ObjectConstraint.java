@@ -38,9 +38,9 @@ public abstract class ObjectConstraint extends WordConstraint {
     }
 
     @Override
-    public Set<Word> useInstanceSpecific(Collection<Word> wordsToFilter, Word specificWord) {
+    public Set<Word> useOldWordSpecific(Collection<Word> wordsToFilter, Word oldWord) {
         this.objects = new HashSet<>();
-        this.objects.add(this.wordToSpecificObjectType(specificWord));
+        this.objects.add(this.wordToSpecificObjectType(oldWord));
         return this.useWithPresetFields(wordsToFilter);
     }
 
@@ -67,6 +67,11 @@ public abstract class ObjectConstraint extends WordConstraint {
 
     public void setObjects(Collection<Object> objects) {
         this.objects = new HashSet<>(objects);
+    }
+
+    @Override
+    public String toString() {
+        return "ObjectConstraint";
     }
 
 }
