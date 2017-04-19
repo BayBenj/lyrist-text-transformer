@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
+public class WordsByRhyme extends HashMap<RhymeClass, Set<Word>> {
 
     public boolean contains(Word word) {
         for (Set<Word> set : this.values())
@@ -15,7 +15,7 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
         return false;
     }
 
-    public void putWord(Rhyme rhyme, Word word) {
+    public void putWord(RhymeClass rhyme, Word word) {
         if (this.containsKey(rhyme) && this.get(rhyme) != null && !this.get(rhyme).isEmpty()) {
             Set<Word> words = this.get(rhyme);
             words.add(word);
@@ -27,8 +27,8 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
         }
     }
 
-    public Rhyme getRhymeByWord(Word w) {
-        for (Map.Entry<Rhyme,Set<Word>> entry : this.entrySet())
+    public RhymeClass getRhymeByWord(Word w) {
+        for (Map.Entry<RhymeClass,Set<Word>> entry : this.entrySet())
             if (entry.getValue().contains(w))
                 return entry.getKey();
         return null;
@@ -36,7 +36,7 @@ public class WordsByRhyme extends HashMap<Rhyme, Set<Word>> {
 
     public Set<Word> getAll() {
         Set<Word> words = new HashSet<>();
-        for (Map.Entry<Rhyme, Set<Word>> entry : this.entrySet())
+        for (Map.Entry<RhymeClass, Set<Word>> entry : this.entrySet())
             words.addAll(entry.getValue());
         return words;
     }

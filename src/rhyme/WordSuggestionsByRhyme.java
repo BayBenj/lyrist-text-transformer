@@ -4,10 +4,10 @@ import elements.Word;
 import utils.Pair;
 import java.util.*;
 
-public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Word>>>> {
+public class WordSuggestionsByRhyme extends HashMap<RhymeClass, List<Pair<Word,Set<Word>>>> {
     //HashMap<rhyme class, List<Pair<oldWord instance,Set<word suggestion for this instance>>>>
 
-    public void putWord(Word oldWord, Collection<Word> newWords, Rhyme rhyme) {
+    public void putWord(Word oldWord, Collection<Word> newWords, RhymeClass rhyme) {
         List<Pair<Word,Set<Word>>> rhymeClass = this.get(rhyme);
         for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass)
             if (oldWord.equals(rhymeInstance.getFirst()))
@@ -15,7 +15,7 @@ public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Wo
     }
 
     public boolean containsOld(Word oldWord) {
-        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
+        for (Map.Entry<RhymeClass, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
             for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
                 if (rhymeInstance.getFirst().equals(oldWord))
                     return true;
@@ -31,8 +31,8 @@ public class WordSuggestionsByRhyme extends HashMap<Rhyme, List<Pair<Word,Set<Wo
 //            this.put(rhyme, new HashSet<>());
 //    }
 //
-    public Rhyme getRhymeByOldWord(Word oldWord) {
-        for (Map.Entry<Rhyme, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
+    public RhymeClass getRhymeByOldWord(Word oldWord) {
+        for (Map.Entry<RhymeClass, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
             for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
                 if (oldWord.equals(rhymeInstance.getFirst()))
                 return rhymeClass.getKey();

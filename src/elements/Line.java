@@ -1,6 +1,6 @@
 package elements;
 
-import rhyme.Rhyme;
+import rhyme.RhymeClass;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ public class Line extends ArrayList<Word> implements Serializable {
     private int minSyls = Integer.MIN_VALUE;
     private int maxSyls = Integer.MAX_VALUE;
     private Stanza stanza;
-    private Rhyme rhyme;
+    private RhymeClass rhyme;
 
     public Line(Stanza stanza) {
         super();
@@ -41,11 +41,11 @@ public class Line extends ArrayList<Word> implements Serializable {
         this.stanza = stanza;
     }
 
-    public Rhyme getRhyme() {
+    public RhymeClass getRhyme() {
         return rhyme;
     }
 
-    public void setRhyme(Rhyme rhyme) {
+    public void setRhyme(RhymeClass rhyme) {
         this.rhyme = rhyme;
     }
 

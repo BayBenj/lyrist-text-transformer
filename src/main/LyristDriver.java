@@ -27,14 +27,14 @@ public class LyristDriver {
         List<File> templates = new ArrayList<>();
         List<TextComposition> compositions = new ArrayList<>();
         for (File template : templates) {
-            SingleProgramArgs.templateName = template.getName();
+            SingleTransformationArgs.templateName = template.getName();
 
             //Read in template song
-            final InfoSong templateSong = SongScanner.getInfoSong(MultiProgramArgs.textInFormat, SingleProgramArgs.templateName);
+            final InfoSong templateSong = SongScanner.getInfoSong(MultiProgramArgs.textInFormat, SingleTransformationArgs.templateName);
 
             //Generate and read in single program args
             String[] argz = TemplateSongEngineer.generateArgs(templateSong, template);
-            SingleProgramArgs.loadSingleProgramArgs(argz);
+            SingleTransformationArgs.loadSingleTransformationArgs(argz);
             TextComposition tempComposition = TemplateSongEngineer.generateSongWithArgs(templateSong);
             U.print(tempComposition.toString());
             compositions.add(tempComposition);

@@ -1,10 +1,8 @@
 package rhyme;
 
-import intentions.Intention;
-
 import java.util.*;
 
-public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
+public abstract class RhymeScheme extends HashMap<RhymeClass,Set<Integer>> {
 
 //    public void specify(RhymeClass rhymeClass, SpecificRhyme specificRhyme) {
 //        for (int i = 0; i < this.size(); i++) {
@@ -15,7 +13,7 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
 //        }
 //    }
 
-    public RhymeScheme(Map<Rhyme,Set<Integer>> rhymes) {
+    public RhymeScheme(Map<RhymeClass,Set<Integer>> rhymes) {
         this.setRhymes(rhymes);
     }
 
@@ -31,8 +29,7 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
     private int[] stringIdsToIntIds(String[] stringIds) {
         int[] rhymeIntIds = new int[stringIds.length];
         for (int i = 0; i < stringIds.length; i++) {
-            String lineRhymeLetter = stringIds[i];
-            rhymeIntIds[i] = lineRhymeLetter.hashCode();
+            rhymeIntIds[i] = Integer.parseInt(stringIds[i]);
         }
         return rhymeIntIds;
     }
@@ -41,14 +38,14 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
         Set<Integer> alreadyAddedIndexes = new HashSet<>();
         int lineNum = 0;
         for (int lineRhymeId : intIds) {
-            if (this.containsKey(new Rhyme(lineRhymeId))) {
-                Set<Integer> indexes = this.get(new Rhyme(lineRhymeId));
+            if (this.containsKey(new RhymeClass(lineRhymeId))) {
+                Set<Integer> indexes = this.get(new RhymeClass(lineRhymeId));
                 indexes.add(lineNum);
             }
             else {
                 Set<Integer> indexes = new HashSet<>();
                 indexes.add(lineNum);
-                this.put(new Rhyme(lineRhymeId), indexes);
+                this.put(new RhymeClass(lineRhymeId), indexes);
             }
             alreadyAddedIndexes.add(lineNum);
             lineNum++;
@@ -56,18 +53,18 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
     }
 
 
-    public HashMap<Rhyme,Set<Integer>> getRhymes() {
+    public HashMap<RhymeClass,Set<Integer>> getRhymes() {
         return this;
     }
 
-    public void setRhymes(Map<Rhyme,Set<Integer>> rhymes) {
-        for (Map.Entry<Rhyme,Set<Integer>> entry : rhymes.entrySet()) {
+    public void setRhymes(Map<RhymeClass,Set<Integer>> rhymes) {
+        for (Map.Entry<RhymeClass,Set<Integer>> entry : rhymes.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
     }
 
-    public Rhyme getRhymeByIndex(int i) {
-        for (Map.Entry<Rhyme,Set<Integer>> entry : this.entrySet())
+    public RhymeClass getRhymeByIndex(int i) {
+        for (Map.Entry<RhymeClass,Set<Integer>> entry : this.entrySet())
             if (entry.getValue().contains(i))
                 return entry.getKey();
         return null;
@@ -75,7 +72,7 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
 
     public Set<Integer> getAllIndexes() {
         Set<Integer> result = new HashSet<>();
-        for (Map.Entry<Rhyme,Set<Integer>> entry : this.entrySet())
+        for (Map.Entry<RhymeClass,Set<Integer>> entry : this.entrySet())
             result.addAll(entry.getValue());
         return result;
     }
@@ -87,7 +84,7 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
         return false;
     }
 
-    public void putIndex(Rhyme rhyme, int index) {
+    public void putIndex(RhymeClass rhyme, int index) {
         if (this.containsKey(rhyme) && this.get(rhyme) != null && !this.get(rhyme).isEmpty()) {
             Set<Integer> indexes = this.get(rhyme);
             indexes.add(index);
@@ -100,7 +97,7 @@ public abstract class RhymeScheme extends HashMap<Rhyme,Set<Integer>> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Integer i : this.getAllIndexes())
-            for (Map.Entry<Rhyme,Set<Integer>> entry : this.entrySet())
+            for (Map.Entry<RhymeClass,Set<Integer>> entry : this.entrySet())
                 if (entry.getValue().contains(i)) {
                     sb.append(entry.getKey().getRhymeId());
                     sb.append("-");

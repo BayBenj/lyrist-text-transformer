@@ -2,7 +2,7 @@ package main;
 
 import java.util.Arrays;
 
-public abstract class SingleProgramArgs extends MultiProgramArgs {
+public abstract class SingleTransformationArgs extends MultiProgramArgs {
 
     public static String oldTheme;
     public static String newTheme;
@@ -10,7 +10,7 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
     public static String rhymeScheme;
     public static String templateName;
 
-    public static void loadSingleProgramArgs(String[] args) {
+    public static void loadSingleTransformationArgs(String[] args) {
         if (args.length != 7)
             throw new UnsupportedOperationException("Illegal arguments passed to program: " + Arrays.toString(args));
 
@@ -21,7 +21,7 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
         templateName = args[4];
     }
 
-    public static void loadExtraProgramArgs(String... extraArgs) {
+    public static void loadExtraTransformationArgs(String... extraArgs) {
         if (extraArgs.length != 2)
             throw new UnsupportedOperationException("Illegal arguments passed to program: " + Arrays.toString(extraArgs));
 
@@ -29,7 +29,7 @@ public abstract class SingleProgramArgs extends MultiProgramArgs {
         textInFormat(extraArgs[1]);
     }
 
-    public static void clearSingleProgramArgs() {
+    public static void clearSingleTransformationArgs() {
         oldTheme = null;
         newTheme = null;
         culture = null;

@@ -187,13 +187,13 @@ public abstract class Rhymer {
         double average = d / n;
 
         //penalize words with rhymes of differing syllables
-        double difference = Math.abs((double)shorter.size() - (double)longer.size());
-
-        if (difference == 0)
-            return average;
-
-        double ratio = (((difference / 2.0) + ((double)shorter.size())) / ((double)longer.size()));
-        average *= ratio;
+//        double difference = Math.abs((double)shorter.size() - (double)longer.size());
+//
+//        if (difference == 0)
+//            return average;
+//
+//        double ratio = (((difference / 2.0) + ((double)shorter.size())) / ((double)longer.size()));
+//        average *= ratio;
 
         return average;
     }

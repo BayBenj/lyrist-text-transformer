@@ -8,7 +8,7 @@ import word2vec.W2vInterface;
 
 import java.util.List;
 
-public class RhymeTransformInfo extends NormalTransformInfo {
+public class RhymeTransformInfo extends TransformInfo {
 
     private LineRhymeScheme rhymeScheme;
     private List<WordConstraint> rhymeConstraints;

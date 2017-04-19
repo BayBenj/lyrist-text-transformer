@@ -30,12 +30,12 @@ public abstract class W2vOperations {
             //TODO: fix
 //            numberOfWordsInVector = 681320;     //word-phrase
 //            numberOfWordsInVector = 682454;   //news2012
-//            numberOfWordsInVector = 38160;   //1600s-lotr
+            numberOfWordsInVector = 38160;   //1600s-lotr
 //            numberOfWordsInVector = 3000000;   //GoogleNews-3000000-300
 //            numberOfWordsInVector = 533448;   //n16-c4-l1
 //            numberOfWordsInVector = 229845;   //n1615-c4-l1.bin
 //            numberOfWordsInVector = 144353;   //c.bin
-            numberOfWordsInVector = 109478;   //news-lyrics-bom
+//            numberOfWordsInVector = 109478;   //news-lyrics-bom
 //            numberOfWordsInVector = 288340;   //songtools 288340-500-5
             System.out.println("Words: " + numberOfWordsInVector);
             data_in.readLong();
@@ -43,10 +43,10 @@ public abstract class W2vOperations {
             //TODO: fix
 //            numberOfDimensionsInVector = 200;   //word-phrase
 //            numberOfDimensionsInVector = 300; //news2012
-//            numberOfDimensionsInVector = 1000; //1600s-lotr
+            numberOfDimensionsInVector = 1000; //1600s-lotr
 //            numberOfDimensionsInVector = 300; //GoogleNews-3000000-300
 //            numberOfDimensionsInVector = 300; //c.bin
-            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
+//            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
 //            numberOfDimensionsInVector = 500; //n16-c4-l1
 //            numberOfDimensionsInVector = 500;   //songtools 288340-500-5
             System.out.println("Size: " + numberOfDimensionsInVector);

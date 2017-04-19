@@ -15,6 +15,7 @@ public class Word implements Comparable<Word>, Serializable {
 
     private double cosineDistance = Double.MIN_VALUE;
     private double rhymeScore = Double.MIN_VALUE;
+    private String rhymeWord = "[uninitialized]";
 
     private Sentence sentence;
     private int sentenceIndex;
@@ -22,6 +23,15 @@ public class Word implements Comparable<Word>, Serializable {
 
     public Word(String s) {
         this.setSpelling(s);
+    }
+
+    public String getRhymeWord() {
+        return rhymeWord;
+    }
+
+    public void setRhymeWord(String rhymeWord, double score) {
+        this.rhymeWord = rhymeWord;
+        this.rhymeScore = score;
     }
 
     public String getBase() {
@@ -100,8 +110,14 @@ public class Word implements Comparable<Word>, Serializable {
         return rhymeScore;
     }
 
-    public void setRhymeScore(double rhymeScore) {
+    public void setRhymeScore(String rhymeWord, double rhymeScore) {
         this.rhymeScore = rhymeScore;
+        this.rhymeWord = rhymeWord;
+    }
+
+    public void clearRhymeScore() {
+        this.rhymeScore = Double.MIN_VALUE;
+        this.rhymeWord = "[uninitialized]";
     }
 
     public Sentence getSentence() {
@@ -204,6 +220,10 @@ public class Word implements Comparable<Word>, Serializable {
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
+
+
+
+
 
 
 

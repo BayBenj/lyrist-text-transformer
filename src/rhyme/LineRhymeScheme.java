@@ -12,14 +12,10 @@ public class LineRhymeScheme extends RhymeScheme {
         super(rhymes);
     }
 
-    public LineRhymeScheme(Map<Rhyme,Set<Integer>> rhymes) {
+    public LineRhymeScheme(Map<RhymeClass,Set<Integer>> rhymes) {
         super(rhymes);
     }
 }
-
-
-
-
 
 
 

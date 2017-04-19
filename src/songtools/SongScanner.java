@@ -6,7 +6,7 @@ import globalstructure.SegmentType;
 import rhyme.LineRhymeScheme;
 import rhyme.Phoneticizer;
 import elements.*;
-import rhyme.Rhyme;
+import rhyme.RhymeClass;
 import rhyme.WordsByRhyme;
 import utils.U;
 import java.io.File;
@@ -126,7 +126,7 @@ public abstract class SongScanner {
                 continue;
             }
             else if (lineStr.matches("\\d+\\t.+")) {
-                int rhyme = lineStr.charAt(0);
+                int rhyme = Character.getNumericValue(lineStr.charAt(0));
                 rhymes.add(rhyme);
                 Line currentLine = new Line(currentStanza);
                 lineStr = lineStr.substring(2);
@@ -201,7 +201,8 @@ public abstract class SongScanner {
         for (Stanza stanza : stanzas) {
             result.get(s).setType(stanza.getType());
             for (int l = 0; l < result.get(s).size(); l++) {
-                result.get(s).get(l).setRhyme(new Rhyme(rhymes.get(i)));
+                result.get(s).get(l).setRhyme(new RhymeClass(rhymes.get(i)));
+                U.print(result.get(s).get(l).getRhyme().getRhymeId());
                 i++;
             }
             s++;
@@ -458,9 +459,14 @@ public abstract class SongScanner {
             WordsByRhyme wordsByRhyme = new WordsByRhyme();
             for (int l = 0; l < lines.size(); l++) {
                 Line line = lines.get(l);
-                if (rhymeScheme.contains(l)) {
+                if (rhymeScheme.contains(l) && rhymeScheme.getRhymeByIndex(l).getRhymeId() != 0) {
                     Word word = line.get(line.size() - 1);
-                    Rhyme rhyme = rhymeScheme.getRhymeByIndex(l);
+                    int i = 1;
+                    while (word instanceof Punctuation) {
+                        word = line.get(line.size() - 1 - i);
+                        i++;
+                    }
+                    RhymeClass rhyme = rhymeScheme.getRhymeByIndex(l);
                     wordsByRhyme.putWord(rhyme, word);
                 }
             }
