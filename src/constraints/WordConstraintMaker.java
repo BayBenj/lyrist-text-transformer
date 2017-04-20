@@ -5,7 +5,7 @@ import filters.ReturnType;
 import main.VocabManager;
 import java.util.*;
 
-public abstract class WordConstraintManager {
+public abstract class WordConstraintMaker {
 
     //provides complete packages of constraints for replacement operations
 
@@ -26,12 +26,12 @@ public abstract class WordConstraintManager {
     private final static StringConstraint unusedSpelling = new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES);
     private final static StringConstraint notInDirty = new StringConstraint(dirtyWords, ReturnType.NON_MATCHES);
     private final static PosConstraint samePos = new PosConstraint(ReturnType.MATCHES);
-    private final static NeConstraint sameNe = new NeConstraint(ReturnType.MATCHES);
+//    private final static NeConstraint sameNe = new NeConstraint(ReturnType.MATCHES);
     private final static StringConstraint inCommonDict = new StringConstraint(commonWords, ReturnType.MATCHES);
     private final static StringConstraint inWikiDict = new StringConstraint(wikiWords, ReturnType.MATCHES);
     private final static StringConstraint inCmuDict = new StringConstraint(cmuWords, ReturnType.MATCHES);
     private final static RhymeScoreConstraint highestRhymeScore = new RhymeScoreConstraint(NonModelNum.HIGHEST);
-    private final static RhymeScoreConstraint reasonableRhymeScore = new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 0.5, ReturnType.MATCHES);
+    private final static RhymeScoreConstraint reasonableRhymeScore = new RhymeScoreConstraint(ModelNum.GREATER_OR_EQUAL, 0.75, ReturnType.MATCHES);
     private final static CosineDistanceConstraint highestCosine = new CosineDistanceConstraint(NonModelNum.HIGHEST);
     private final static StringConstraint safeSpellingsForMarking = new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES);
     private static PosConstraint safePosForMarking;
@@ -80,7 +80,7 @@ public abstract class WordConstraintManager {
         result.add(unusedSpelling);
         result.add(notInDirty);
         result.add(samePos);
-        result.add(sameNe);
+//        result.add(sameNe);
         result.add(inWikiDict);
         result.add(highestCosine);
 //        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced
@@ -108,21 +108,43 @@ public abstract class WordConstraintManager {
         5. ne == oldWordSpecific
         6. Highest cosine distance
         */
+
+
         List<WordConstraint> result = new ArrayList<>();
-        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced
-        result.get(0).enforce();
-        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(1).enforce();
-        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
-        result.get(2).enforce();
-        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
-        result.get(3).enforce();
-        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
-        result.get(4).enforce();
-//        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
-        result.add(new PosConstraint(ReturnType.MATCHES));//oldWord-specific
-        result.add(new NeConstraint(ReturnType.MATCHES));//oldWord-specific
-//        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//oldWord-specific
+        result.add(inCmuDict);
+//        result.add(reasonableRhymeScore);
+        result.add(differentBase);
+        result.add(differentSpelling);
+//        result.add(unusedBase);
+//        result.add(unusedSpelling);
+        result.add(notInDirty);
+        result.add(samePos);
+        //loop until 1 left:
+            //cut 2 suggestions with lowest rhyme
+            //cut suggestion with lowest cosine similarity
+
+
+
+
+//        result.add(highestRhymeScore);
+//        result.add(highestCosine);
+
+
+//        List<WordConstraint> result = new ArrayList<>();
+//        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced
+//        result.get(0).enforce();
+////        result.add(new StringConstraint(alreadyUsedWords, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+////        result.get(1).enforce();
+////        result.add(new BaseConstraint(alreadyUsedBases, ReturnType.NON_MATCHES));//(not the same as any other new word) enforced
+////        result.get(2).enforce();
+//        result.add(new StringConstraint(cmuWords, ReturnType.MATCHES));//in the cmu rhyming dictionary, enforced
+//        result.get(1).enforce();
+//        result.add(new StringConstraint(dirtyWords, ReturnType.NON_MATCHES));// enforced
+//        result.get(2).enforce();
+////        result.add(new StringConstraint(commonWords, ReturnType.MATCHES));
+//        result.add(new PosConstraint(ReturnType.MATCHES));//oldWord-specific
+////        result.add(new NeConstraint(ReturnType.MATCHES));//oldWord-specific
+////        result.add(new RhymeSyllableNConstraint(ModelNum.EQUAL));//oldWord-specific
         return result;
     }
 
@@ -176,9 +198,13 @@ public abstract class WordConstraintManager {
         result.add(unusedSpelling);
         result.add(notInDirty);
         result.add(samePos);
-        result.add(sameNe);
         result.add(highestRhymeScore);
         result.add(highestCosine);
+
+        //delete the 2 above, loop until 1 left:
+        //  cut 2 suggestions with lowest rhyme
+        //  cut suggestion with lowest cosine similarity
+
 
 //        result.add(new BaseConstraint(ReturnType.NON_MATCHES));//(not the same base as the old word) oldWord-specific, enforced, oldWord-specific
 //        result.get(0).enforce();
@@ -220,7 +246,7 @@ public abstract class WordConstraintManager {
     }
 
     public static void setCommonWords(HashSet<String> commonWords) {
-        WordConstraintManager.commonWords = commonWords;
+        WordConstraintMaker.commonWords = commonWords;
     }
 
     public static Set<String> getDirtyWords() {
@@ -228,7 +254,7 @@ public abstract class WordConstraintManager {
     }
 
     public static void setDirtyWords(HashSet<String> dirtyWords) {
-        WordConstraintManager.dirtyWords = dirtyWords;
+        WordConstraintMaker.dirtyWords = dirtyWords;
     }
 
     public static Set<Pos> getGoodPosForMarking() {
@@ -236,11 +262,10 @@ public abstract class WordConstraintManager {
     }
 
     public static void setGoodPosForMarking(HashSet<Pos> goodPosForMarking) {
-        WordConstraintManager.goodPosForMarking = goodPosForMarking;
+        WordConstraintMaker.goodPosForMarking = goodPosForMarking;
     }
 
 }
-
 
 
 

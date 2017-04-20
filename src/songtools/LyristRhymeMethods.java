@@ -22,7 +22,7 @@ public abstract class LyristRhymeMethods {
                 cosineStrings.putAll(WordSource.perfectCmuRhymes(rhyme.getModel(), 100));
                 final Set<Word> cosineWords = LyristTransformer.cosineStringsToWords(cosineStrings, oldWord);
                 for (Word word : cosineWords)
-                    word.setRhymeScore(rhyme.getModel().toString(),1.0);//TODO this is a string of the rhyme tail
+                    word.setRhymeScore(rhyme.getModel().toString(),1.0);
                 wordsToSuggestions.putWord(oldWord, cosineWords);
             } catch (NoRhymeFoundException e) {
                 U.testPrint("No rhymes found for: " + oldWord.toString());
@@ -53,8 +53,8 @@ public abstract class LyristRhymeMethods {
 
     // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
-    public static void selectModelsAndScoreRhymes(RhymeTransformInfo rInfo, WordSuggestionsByRhyme suggestionsByRhyme) {
-        U.testPrint("Entered selectModelsAndScoreRhymes");
+    public static void selectModels(WordSuggestionsByRhyme suggestionsByRhyme) {
+        U.testPrint("Entered selectModels");
 
 
         //For each rhyme class, choose a model and score every instance according to that model
@@ -64,7 +64,7 @@ public abstract class LyristRhymeMethods {
             LyristRhymeMethods.prefilterRhymeClassSuggestions(rhymeClass);
 
             List<Pair<Word,Set<Word>>> rhymeInstances = rhymeClass.getValue();
-//            U.testPrint("Started adding 10 rhymes in selectModelsAndScoreRhymes");
+//            U.testPrint("Started adding 10 rhymes in selectModels");
 //            //For all but the first instance, add 10 rhymes for each word to the first instance
 //            for (int inst = 1; inst < rhymeInstances.size(); inst++) {
 //                final Pair<Word,Set<Word>> instance = rhymeInstances.get(inst);
@@ -84,23 +84,21 @@ public abstract class LyristRhymeMethods {
 //                    }
 //                }
 //            }
-            U.testPrint("Started checking rhyme models in selectModelsAndScoreRhymes");
+            U.testPrint("Started checking rhyme models in selectModels");
             //For each suggestion in the first rhyme instance, try rhyming it with words in other instances
-            for (Word candidateModel : rhymeInstances.get(0).getSecond()) {
-
-                if (U.isNullOrEmpty(candidateModel.getRhymeTail()))
-                    continue;
-
-                checkAllInstancesWithCandidateModelAtAllThresholdLevels(candidateModel, rhymeClass, rhymeInstances);
-
-                if (rhymeClass.getKey().getModel() == null) {
-                    throwOutCandidateModel(rhymeClass);
-                    continue;
+            if (!checkClassAtAllThresholdLevels(rhymeClass, rhymeInstances)) {
+                try {
+                    throw new NoRhymeModelException();
                 }
-                else {
-                    break;
+                catch (NoRhymeModelException e) {
+                    U.testPrint("No rhyme model for rhyme " + rhymeClass.getKey().getRhymeId());
+                    e.printStackTrace();
                 }
             }
+            else {
+                U.testPrint("Rhyme model " + rhymeClass.getKey().getModel().toString() + " assigned to rhyme class " + rhymeClass.getKey().getRhymeId());
+            }
+
 //                //Fill rhymeClassSuggestions
 //            Set<Word> rhymeClassSuggestions = new HashSet<>();
 //            for (Pair<Word,Set<Word>> instance : rhymeClass.getValue())
@@ -178,50 +176,50 @@ public abstract class LyristRhymeMethods {
 //                rhyme.setModel(chosenModel);
 //                break;
 //            }
-            if (rhymeClass.getKey().getModel() == null) {
-                try {
-                    throw new NoRhymeModelException();
-                } catch (NoRhymeModelException e) {
-                    U.testPrint("No rhyme model for rhyme " + rhymeClass.getKey().getRhymeId());
-                    e.printStackTrace();
-                }
-            }
         }
-        /*
-        > Make the first word in the Rhyme Class the model. Run constraints. If all pass, return these wordReplacements. If not, iterate to the second word in the Rhyme Class, etc.
-         */
     }
 
-    private static void checkAllInstancesWithCandidateModelAtAllThresholdLevels(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, List<Pair<Word,Set<Word>>> rhymeInstances) {
+    private static boolean checkClassAtAllThresholdLevels(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, List<Pair<Word,Set<Word>>> rhymeInstances) {
         final double decrement = .025;
-        final double lowest_acceptable_thresh = 0.95;
+//        final double lowest_acceptable_thresh = 0.95;
+        final double lowest_acceptable_thresh = 1.0;
         for (double temp_thresh = 1.0; temp_thresh >= lowest_acceptable_thresh; temp_thresh -= decrement) {
-            if (checkAllInstancesWithCandidateModelAtTempThreshold(candidateModel, rhymeClass, temp_thresh, rhymeInstances)) {
-                legitimizeCandidateModel(candidateModel, rhymeClass);
-                return;
+            if (checkAllCandidateModels(rhymeClass, rhymeInstances, temp_thresh)) {
+                return true;
             }
         }
+        return false;
     }
 
-    private static boolean checkAllInstancesWithCandidateModelAtTempThreshold(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, double temp_thresh, List<Pair<Word,Set<Word>>> rhymeInstances) {
-        U.testPrint("Candidate model: " + candidateModel.getLowerSpelling());
-        U.testPrint("Threshold: " + temp_thresh + "\n");
+    private static boolean checkAllCandidateModels(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, List<Pair<Word,Set<Word>>> rhymeInstances, double thresh) {
+        for (Word candidateModel : rhymeInstances.get(0).getSecond()) {
+            if (U.isNullOrEmpty(candidateModel.getRhymeTail()))
+                continue;
 
-        rhymeClass.getKey().setInstances(new ArrayList<>());
-
-        //For each other rhyme instance, try rhyming its words with the candidate model
-        return checkAllInstancesWithCandidateModel(candidateModel, temp_thresh, rhymeClass, rhymeInstances);
+            if (checkAllInstancesWithCandidateModelAtThreshold(candidateModel, rhymeClass, thresh, rhymeInstances)) {
+                legitimizeCandidateModel(candidateModel, rhymeClass, thresh);
+                return true;
+            }
+            else {
+                throwOutCandidateModel(candidateModel, rhymeClass);
+                continue;
+            }
+        }
+        return false;
     }
 
-    private static void legitimizeCandidateModel(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
-        U.testPrint("Rhyme model set to " + candidateModel.toString());
+    private static void legitimizeCandidateModel(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, double thresh_used) {
+        U.testPrint("Rhyme model set to " + candidateModel.toString() + " at score threshold " + thresh_used);
 //                            rhymeClass.getKey().addInstance(candidateModel);//TODO is this correct?
         rhymeClass.getKey().setModel(candidateModel.getRhymeTail());
-        candidateModel.setRhymeScore(candidateModel.getLowerSpelling(),1.0);
-        //TODO score all suggestions in this rhyme class to according to this model
+        candidateModel.setRhymeScore(candidateModel.getLowerSpelling(),2.0);
+        scoreSuggestionsByModel(candidateModel.getRhymeTail(), rhymeClass.getValue());
     }
 
-    private static void throwOutCandidateModel(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
+    private static void throwOutCandidateModel(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
+        rhymeClass.getKey().setModel(null);
+        candidateModel.clearRhymeScore();
+
         //reset all rhyme scores of suggestions in this rhyme class
         for (Pair<Word,Set<Word>> instance : rhymeClass.getValue()) {
             for (Word suggestion : instance.getSecond()) {
@@ -230,44 +228,46 @@ public abstract class LyristRhymeMethods {
         }
     }
 
-    private static boolean checkAllInstancesWithCandidateModel(Word candidateModel, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, List<Pair<Word,Set<Word>>> rhymeInstances) {
+    private static boolean checkAllInstancesWithCandidateModelAtThreshold(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, double thresh, List<Pair<Word,Set<Word>>> rhymeInstances) {
+        U.testPrint("Candidate model: " + candidateModel.getLowerSpelling());
+        U.testPrint("Threshold: " + thresh + "\n");
+
+        rhymeClass.getKey().setInstances(new ArrayList<>());
+
         boolean candidateModelIsGood = true;
         for (int inst = 1; inst < rhymeInstances.size(); inst++) {
             Pair<Word,Set<Word>> instance = rhymeInstances.get(inst);
             Set<Word> instanceSuggestions = instance.getSecond();
-            candidateModelIsGood = candidateModelIsGood && !checkInstanceWithCandidateModel(candidateModel, thresh, rhymeClass, instanceSuggestions);
+            candidateModelIsGood = candidateModelIsGood && !testAllCandidateRhymes(candidateModel, thresh, rhymeClass, instanceSuggestions);
+            if (!candidateModelIsGood) return false;
         }
-        return candidateModelIsGood;
+        return true;
     }
 
-    private static boolean checkInstanceWithCandidateModel(Word candidateModel, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, Set<Word> instanceSuggestions) {
-        boolean instIsBad = true;
-        //For each word in this rhyme instance, score its rhyme with the candidate model
-        instIsBad = instIsBad && scoreAllCandidateRhymeInstances(candidateModel, thresh, rhymeClass, instanceSuggestions);
-        return instIsBad;
-    }
-
-    private static boolean scoreAllCandidateRhymeInstances(Word candidateModel, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, Set<Word> candidateRhymeInstances) {
+    private static boolean testAllCandidateRhymes(Word candidateModel, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, Set<Word> candidateRhymeInstances) {
         boolean bad = true;
         for (Word candidateRhymeInstance : candidateRhymeInstances) {
-            bad = bad && scoreCandidateRhymeInstance(candidateModel, candidateRhymeInstance, thresh, rhymeClass);
+            bad = bad && scoreInstanceSuggestionsByCandidate(candidateModel, candidateRhymeInstance, thresh, rhymeClass);
+            if (!bad) return false;
         }
-        return bad;
+        return true;
     }
 
-    private static boolean scoreCandidateRhymeInstance(Word candidateModel, Word candidateRhymeInstance, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
+    private static boolean scoreInstanceSuggestionsByCandidate(Word candidateModel, Word candidateRhymeInstance, double thresh, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
         boolean bad = true;
         double score;
-        if (Rhymer.perfectRhymes.containsKey(candidateModel.getRhymeTail()) && Rhymer.perfectRhymes.get(candidateModel.getRhymeTail()).contains(candidateRhymeInstance.getLowerSpelling()))
-            score = 1.0;
-        else
+
+        if (candidateModel.getLowerSpelling().equals(candidateRhymeInstance.getLowerSpelling())) return true;
+
+//        if (Rhymer.perfectRhymes.containsKey(candidateModel.getRhymeTail()) && Rhymer.perfectRhymes.get(candidateModel.getRhymeTail()).contains(candidateRhymeInstance.getLowerSpelling()))
+//            score = 1.0;
+//        else
             score = Rhymer.score2Rhymes(candidateModel.getRhymeTail(), candidateRhymeInstance.getRhymeTail());
 
-        candidateRhymeInstance.setRhymeScore(candidateModel.getLowerSpelling(), score);
-
         if (score >= thresh) {
+            U.testPrint("Candidate model [" + candidateModel.getLowerSpelling() + "] rhymes with instance suggestion [" + candidateRhymeInstance.getLowerSpelling() + "]");
             rhymeClass.getKey().addInstance(candidateRhymeInstance);
-            bad = false;//instanceIsBadForThisCandidateModel = false;//TODO make sure this change carries over
+            bad = false;
         }
         return bad;
     }
@@ -276,23 +276,47 @@ public abstract class LyristRhymeMethods {
 
     public static void prefilterRhymeClassSuggestions(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass) {
         for (int inst4Model = 0; inst4Model < rhymeClass.getValue().size(); inst4Model++) {
-            prefilterRhymeInstanceSuggestions(rhymeClass, inst4Model);
+            prefilterRhymeInstanceSuggestions(rhymeClass.getValue().get(inst4Model));
         }
     }
 
-    private static void prefilterRhymeInstanceSuggestions(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, int inst4Model) {
-        final Pair<Word,Set<Word>> instanceForModel = rhymeClass.getValue().get(inst4Model);
+    private static void prefilterRhymeInstanceSuggestions(Pair<Word,Set<Word>> instanceForModel) {
         final Word oldWord = instanceForModel.getFirst();
         final Set<Word> unfilteredSuggestions = instanceForModel.getSecond();
-        List<WordConstraint> constraints = WordConstraintManager.getNormalCmuMulti();
-        WordConstraintPrioritizer.disableUnenforcedConstraints(constraints);
+        List<WordConstraint> constraints = WordConstraintMaker.getNormalCmuMulti();
+//        WordConstraintRunner.disableUnenforcedConstraints(constraints);
         try {
-            final Set<Word> filteredSuggestions = WordConstraintPrioritizer.useConstraintsByWeakening(constraints, oldWord, unfilteredSuggestions);
+            final Set<Word> filteredSuggestions = WordConstraintRunner.useConstraintsByWeakening(constraints, oldWord, unfilteredSuggestions);
             instanceForModel.setSecond(filteredSuggestions);
         } catch (EnforcedConstraintException e) {
             e.printStackTrace();
         }
     }
+
+    // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+    public static void scoreSuggestionsByModel(SyllableGroup rhymeModel, List<Pair<Word,Set<Word>>> instanceSuggestions) {
+        for (Pair<Word,Set<Word>> instance : instanceSuggestions) {
+            for (Word w : instance.getSecond()) {
+                if (w.getRhymeScore() != 2.0) {
+                    double score = Rhymer.score2Rhymes(rhymeModel, w.getRhymeTail());
+                    w.setRhymeScore(rhymeModel.toString(), score);
+                }
+            }
+        }
+    }
+
+    // ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+
+    public static void clearSuggestionScores(List<Pair<Word,Set<Word>>> instanceSuggestions) {
+        for (Pair<Word,Set<Word>> instance : instanceSuggestions) {
+            for (Word w : instance.getSecond()) {
+                w.clearRhymeScore();
+            }
+        }
+    }
+
+
 //    public static InfoSong rhymeReplace(InfoSong originalSong, RhymeTransformInfo info) {
 //        //Get suggestions
 //        final WordsByRhyme oldWordsByRhyme = SongScanner.getRhymeSchemeWords(originalSong, info.getRhymeScheme());
@@ -325,7 +349,7 @@ public abstract class LyristRhymeMethods {
 //            WordSuggestionsByRhyme wordSuggestionsByRhyme = sortRhymeSuggestionsByRhyme(originalSong.words(), wordsToSuggestions, oldWordsByRhyme);
 //
 //            //Choose rhyme models, score suggestion word by rhyme models
-//            selectModelsAndScoreRhymes(info, wordSuggestionsByRhyme);
+//            selectModels(info, wordSuggestionsByRhyme);
 //
 //            //For rhyme instances, add cmu rhymes
 //            wordsToSuggestions = addCmuRhymes(wordSuggestionsByRhyme, wordsToSuggestions, allOldWords);
@@ -392,8 +416,8 @@ public abstract class LyristRhymeMethods {
 //        }
 //    }
 //
-//    private static void selectModelsAndScoreRhymes(RhymeTransformInfo rInfo, WordSuggestionsByRhyme suggestionsByRhyme) {
-//        U.testPrint("Entered selectModelsAndScoreRhymes");
+//    private static void selectModels(RhymeTransformInfo rInfo, WordSuggestionsByRhyme suggestionsByRhyme) {
+//        U.testPrint("Entered selectModels");
 //
 //
 //        //For each rhyme class, choose a model and score every instance according to that model
@@ -416,7 +440,7 @@ public abstract class LyristRhymeMethods {
 //            List<Pair<Word,Set<Word>>> rhymeInstances = rhymeClass.getValue();
 //            boolean classHasModel = false;
 //
-////            U.testPrint("Started adding 10 rhymes in selectModelsAndScoreRhymes");
+////            U.testPrint("Started adding 10 rhymes in selectModels");
 ////            //For all but the first instance, add 10 rhymes for each word to the first instance
 ////            for (int inst = 1; inst < rhymeInstances.size(); inst++) {
 ////                final Pair<Word,Set<Word>> instance = rhymeInstances.get(inst);
@@ -437,7 +461,7 @@ public abstract class LyristRhymeMethods {
 ////                }
 ////            }
 //
-//            U.testPrint("Started checking rhyme models in selectModelsAndScoreRhymes");
+//            U.testPrint("Started checking rhyme models in selectModels");
 //            //While rhyme class lacks a model and thresh is above 0, try candidates with a lowering rhyme score threshold
 //            while (!classHasModel) {
 //                //For each suggestion in the first rhyme instance, try rhyming it with words in other instances
@@ -631,30 +655,6 @@ public abstract class LyristRhymeMethods {
 //    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

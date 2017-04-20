@@ -1,14 +1,14 @@
 package songtools;
 
 import constraints.WordConstraint;
-import constraints.WordConstraintManager;
+import constraints.WordConstraintMaker;
 import rhyme.LineRhymeScheme;
 import utils.U;
 import word2vec.W2vInterface;
 
 import java.util.List;
 
-public class RhymeTransformInfo extends TransformInfo {
+public class RhymeTransformInfo extends TransformByAnalogyInfo {
 
     private LineRhymeScheme rhymeScheme;
     private List<WordConstraint> rhymeConstraints;
@@ -43,9 +43,9 @@ public class RhymeTransformInfo extends TransformInfo {
 
     public static RhymeTransformInfo getExample(String oldTheme, String newTheme, LineRhymeScheme rhymeScheme) {
         return new RhymeTransformInfo(
-                WordConstraintManager.getMarking(),
-                WordConstraintManager.getNormal(),
-                WordConstraintManager.getRhyme(),
+                WordConstraintMaker.getMarking(),
+                WordConstraintMaker.getNormal(),
+                WordConstraintMaker.getRhyme(),
                 U.getW2VInterface(),
                 1,
                 oldTheme,

@@ -109,7 +109,7 @@ public abstract class TemplateSongEngineer extends SongEngineer {
 
         SingleTransformationArgs.clearSingleTransformationArgs();
         U.stopSingleTimer();
-        U.print("TOTAL RUNNING TIME FOR THIS SONG: " + U.getTotalSingleTime() + "\n");
+        U.print("TOTAL RUNNING TIME FOR THIS TRANSFORMATION: " + U.getTotalSingleTime() + "\n");
         return composition;
     }
 

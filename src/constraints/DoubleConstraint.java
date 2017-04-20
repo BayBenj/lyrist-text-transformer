@@ -42,7 +42,7 @@ public abstract class DoubleConstraint extends WordConstraint {
 
     @Override
     public Set<Word> useOldWordSpecific(Collection<Word> wordsToFilter, Word oldWord) {
-        this.dbl = (this.wordToSpecficDoubleType(oldWord));
+        this.dbl = (this.wordToSpecificDoubleType(oldWord));
         return this.useWithPresetFields(wordsToFilter);
     }
 
@@ -97,7 +97,7 @@ public abstract class DoubleConstraint extends WordConstraint {
 
     public abstract Map<Word,Double> wordsToSpecficDoubleType(Collection<Word> words);
 
-    public abstract Double wordToSpecficDoubleType(Word word);
+    public abstract Double wordToSpecificDoubleType(Word word);
 
     @Override
     public abstract boolean weaken();

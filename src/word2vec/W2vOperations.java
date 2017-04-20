@@ -37,6 +37,7 @@ public abstract class W2vOperations {
 //            numberOfWordsInVector = 144353;   //c.bin
 //            numberOfWordsInVector = 109478;   //news-lyrics-bom
 //            numberOfWordsInVector = 288340;   //songtools 288340-500-5
+//            numberOfWordsInVector = ?;   //now
             System.out.println("Words: " + numberOfWordsInVector);
             data_in.readLong();
 
@@ -49,6 +50,7 @@ public abstract class W2vOperations {
 //            numberOfDimensionsInVector = 500; //news-lyrics-bom.bin
 //            numberOfDimensionsInVector = 500; //n16-c4-l1
 //            numberOfDimensionsInVector = 500;   //songtools 288340-500-5
+//            numberOfDimensionsInVector = 300;   //now
             System.out.println("Size: " + numberOfDimensionsInVector);
             data_in.readLong();
 
@@ -485,7 +487,7 @@ public abstract class W2vOperations {
         final int nOfPoints = strings.size();
         switch (type) {
             case SUM:
-                U.testPrint("Summing W2v points: ");
+                U.testPrint("\nSumming W2v points: ");
                 int i = 0;
                 for (String string : strings) {
                     if (i >= nOfPoints - 1)
@@ -496,7 +498,7 @@ public abstract class W2vOperations {
                 }
                 break;
             case AVERAGE:
-                U.testPrint("Averaging W2v points: ");
+                U.testPrint("\nAveraging W2v points: ");
                 i = 0;
                 for (String string : strings) {
                     if (i >= nOfPoints - 1)
@@ -507,10 +509,10 @@ public abstract class W2vOperations {
                 }
                 break;
             case ANALOGY:
-                U.testPrint("Performing W2v Analogy: [" + strings.get(0) + "] is to [" + strings.get(1) + "] as [" + strings.get(2) + "] is to ?");
+                U.testPrint("\nPerforming W2v Analogy: [" + strings.get(0) + "] is to [" + strings.get(1) + "] as [" + strings.get(2) + "] is to ?");
                 break;
             case SINGLE:
-                U.testPrint("Finding point of : [" + strings.get(0) + "]...");
+                U.testPrint("\nFinding point of : [" + strings.get(0) + "]...");
                 break;
         }
     }
@@ -620,8 +622,6 @@ Input: Woman, Man, Queen
 Output: Man - Woman + Queen = King
 
  */
-
-
 
 
 

@@ -35,7 +35,7 @@ public class WordSuggestionsByRhyme extends HashMap<RhymeClass, List<Pair<Word,S
         for (Map.Entry<RhymeClass, List<Pair<Word,Set<Word>>>> rhymeClass : this.entrySet())
             for (Pair<Word,Set<Word>> rhymeInstance : rhymeClass.getValue())
                 if (oldWord.equals(rhymeInstance.getFirst()))
-                return rhymeClass.getKey();
+                    return rhymeClass.getKey();
         return null;
     }
 

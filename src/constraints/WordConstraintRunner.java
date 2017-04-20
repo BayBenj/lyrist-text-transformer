@@ -7,7 +7,7 @@ import utils.U;
 
 import java.util.*;
 
-public abstract class WordConstraintPrioritizer {
+public abstract class WordConstraintRunner {
 
     public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         WordReplacements result = new WordReplacements();
@@ -235,6 +235,5 @@ Continuous constraints may be weakened or strengthened.
 
 
 
-/*
 
- */
+

@@ -1,6 +1,6 @@
 package main;
 
-import constraints.WordConstraintManager;
+import constraints.WordConstraintMaker;
 import rhyme.Phoneticizer;
 import rhyme.Rhymer;
 import songtools.*;
@@ -61,7 +61,7 @@ public class LyristDriver {
     public static void setupCmuDict() {
         Phoneticizer.loadCMUDict();
         U.phoneticizer = new Phoneticizer();
-        Rhymer.deserializePerfRhymes();
+//        Rhymer.deserializePerfRhymes();
     }
 
     public static void setupStanfordNlp() {
@@ -75,7 +75,7 @@ public class LyristDriver {
     }
 
     public static void setupConstraints() {
-        WordConstraintManager.initializeFields();
+        WordConstraintMaker.initializeFields();
     }
 
 }

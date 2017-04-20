@@ -31,7 +31,7 @@ public class CosineDistanceConstraint extends DoubleConstraint {
     }
 
     @Override
-    public Double wordToSpecficDoubleType(Word word) {
+    public Double wordToSpecificDoubleType(Word word) {
         return word.getCosineDistance();
     }
 

@@ -112,10 +112,10 @@ public abstract class SongScanner {
                 continue;
             }
             else if (lineStr.matches("INTERLUDE")) {
-                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
-                stanzas.add(currentStanza);
-                interludes.add(currentStanza);
-                songText.append("\n");
+//                currentStanza = new Stanza(SegmentType.valOf(lineStr), stanzas);
+//                stanzas.add(currentStanza);
+//                interludes.add(currentStanza);
+//                songText.append("\n");
                 continue;
             }
             else if (lineStr.matches("BRIDGE")) {
@@ -422,7 +422,7 @@ public abstract class SongScanner {
         if (originalIndexes.size() < 1)
             return originalIndexes;
 
-        HashSet<Integer> randomIndexes = new HashSet<Integer>();
+        HashSet<Integer> randomIndexes = new HashSet<>();
         int nOfOriginalIndexes = originalIndexes.size();
         int num_to_replace = (int)(replacement_frequency * nOfOriginalIndexes); //TODO decide which way to round
         Random rand = new Random();
@@ -459,7 +459,7 @@ public abstract class SongScanner {
             WordsByRhyme wordsByRhyme = new WordsByRhyme();
             for (int l = 0; l < lines.size(); l++) {
                 Line line = lines.get(l);
-                if (rhymeScheme.contains(l) && rhymeScheme.getRhymeByIndex(l).getRhymeId() != 0) {
+                if (rhymeScheme.contains(l) && rhymeScheme.getRhymeByIndex(l).getRhymeId() != 0 && rhymeScheme.get(rhymeScheme.getRhymeByIndex(l)).size() >= 2) {
                     Word word = line.get(line.size() - 1);
                     int i = 1;
                     while (word instanceof Punctuation) {
@@ -481,7 +481,6 @@ public abstract class SongScanner {
     }
 
 }
-
 
 
 

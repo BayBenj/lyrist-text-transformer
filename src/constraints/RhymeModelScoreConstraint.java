@@ -5,14 +5,14 @@ import filters.ReturnType;
 
 import java.util.*;
 
-public class RhymeScoreConstraint extends DoubleConstraint {
+public class RhymeModelScoreConstraint extends RhymeScoreConstraint {
 
-    public RhymeScoreConstraint(NonModelNum comparison) {
+    public RhymeModelScoreConstraint(NonModelNum comparison) {
         super(comparison);
         this.oldWordSpecific = false;
     }
 
-    public RhymeScoreConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
+    public RhymeModelScoreConstraint(ModelNum comparison, double dbl, ReturnType returnType) {
         super(comparison, dbl, returnType);
     }
 
@@ -42,7 +42,7 @@ public class RhymeScoreConstraint extends DoubleConstraint {
 
     @Override
     public String toString() {
-        return "RhymeScoreConstraint";
+        return "RhymeModelScoreConstraint";
     }
 
 }

@@ -1,14 +1,14 @@
 package songtools;
 
 import constraints.WordConstraint;
-import constraints.WordConstraintManager;
+import constraints.WordConstraintMaker;
 import utils.U;
 import word2vec.W2vInterface;
 
 import java.util.List;
 
 
-public class TransformByAnalogyInfo extends LyristReplacementInfo {
+public class TransformByAnalogyInfo extends TransformInfo {
 
     private String oldTheme;
     private String newTheme;
@@ -26,7 +26,7 @@ public class TransformByAnalogyInfo extends LyristReplacementInfo {
 
     public static TransformByAnalogyInfo getNormal(String oldTheme, String newTheme) {
         return new TransformByAnalogyInfo(null,
-                                            WordConstraintManager.getNormal(),
+                                            WordConstraintMaker.getNormal(),
                                             U.getW2VInterface(),
                                             1,
                                             oldTheme,

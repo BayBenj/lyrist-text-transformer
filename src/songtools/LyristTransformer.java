@@ -15,6 +15,9 @@ import java.util.*;
 
 public abstract class LyristTransformer {
 
+    private static final int N_NORMAL = 10;
+    private static final int N_RHYME = 1000;
+
     public static void main(String[] args) throws IOException {
         LyristDriver.standardSetup();
 
@@ -93,12 +96,12 @@ public abstract class LyristTransformer {
 //        list2.add(new Pair<>(o4, set4));
 //        wordSuggestionsByRhyme.put(new Rhyme(1), new ArrayList<>(list2));
 
-        LyristRhymeMethods.selectModelsAndScoreRhymes(null, wordSuggestionsByRhyme);
+        LyristRhymeMethods.selectModels(wordSuggestionsByRhyme);
 //        WordReplacements replacements = filterSuggestions(suggestions, info, rhyming, oldWordsByRhyme);
 
     }
 
-    public static InfoSong transform(InfoSong originalSong, TransformInfo info, boolean rhyming) {
+    public static InfoSong transform(InfoSong originalSong, TransformByAnalogyInfo info, boolean rhyming) {
         //dummy variable
         WordsByRhyme oldWordsByRhyme = new WordsByRhyme();
 
@@ -115,10 +118,26 @@ public abstract class LyristTransformer {
             WordSuggestionsByRhyme wordSuggestionsByRhyme = LyristRhymeMethods.sortRhymeSuggestionsByRhyme(originalSong.words(), suggestions, oldWordsByRhyme);
 
             //Choose rhyme models, score suggestion word by rhyme models
-            LyristRhymeMethods.selectModelsAndScoreRhymes((RhymeTransformInfo)info, wordSuggestionsByRhyme);
+            LyristRhymeMethods.selectModels(wordSuggestionsByRhyme);
+
+            //assign rhyme scores to suggestions
+            for (Map.Entry<RhymeClass, List<Pair<Word,Set<Word>>>> rhymeClass : wordSuggestionsByRhyme.entrySet()) {
+                if (rhymeClass.getKey().getModel() != null)
+                    LyristRhymeMethods.scoreSuggestionsByModel(rhymeClass.getKey().getModel(), rhymeClass.getValue());
+                else
+                    LyristRhymeMethods.clearSuggestionScores(rhymeClass.getValue());
+            }
+
+            //For each rhyme that doesn't have a model, remove it from rhyme scheme
+            Set<RhymeClass> rhymeClasses = new HashSet<>(oldWordsByRhyme.keySet());
+            for (RhymeClass rhymeClass : rhymeClasses) {
+                if (rhymeClass.getModel() == null) {
+                    oldWordsByRhyme.remove(rhymeClass);
+                }
+            }
 
             //For rhyme instances, add cmu rhymes
-            suggestions = LyristRhymeMethods.addCmuRhymes(wordSuggestionsByRhyme, suggestions, originalSong.words());
+//            suggestions = LyristRhymeMethods.addCmuRhymes(wordSuggestionsByRhyme, suggestions, originalSong.words());
         }
 
         //use constraints on suggestions
@@ -132,11 +151,18 @@ public abstract class LyristTransformer {
         return transformed;
     }
 
-    public static WordsToSuggestions getSuggestions(InfoSong originalSong, TransformInfo info, boolean rhyming, WordsByRhyme oldWordsByRhyme) {
+    public static WordsToSuggestions getSuggestions(InfoSong originalSong, TransformByAnalogyInfo info, boolean rhyming, WordsByRhyme oldWordsByRhyme) {
         try {
-            final Set<Word> marked = WordConstraintPrioritizer.useConstraintsByWeakening(info.getMarkingConstraints(), originalSong.words());
+            final Set<Word> marked = WordConstraintRunner.useConstraintsByWeakening(info.getMarkingConstraints(), originalSong.words());
             final WordsToSuggestions suggestions = new WordsToSuggestions();
             final List<Word> allOldWords = originalSong.words();
+
+            boolean analogy = true;
+            //if new theme is [similar], then find similar instead of analogous words
+            if (info.getNewTheme().equalsIgnoreCase("[similar]")) {
+                analogy = false;
+            }
+
             //For each word in original song, get replacement suggestions
             for (final Word oldWord : allOldWords) {
                 if (oldWord instanceof Punctuation || (!marked.contains(oldWord) && !oldWordsByRhyme.contains(oldWord)) || suggestions.keySet().contains(oldWord))//TODO: make suggestions have a list rather than a set of oldWords?
@@ -145,10 +171,18 @@ public abstract class LyristTransformer {
                 Map<Double, String> cosineStrings = new HashMap<>();
                 //Add w2v analogy suggestions
                 try {
-                    if (rhyming && oldWordsByRhyme.contains(oldWord))
-                        cosineStrings.putAll(WordSource.w2vAnalogy(info.getW2v(), info.getOldTheme(), info.getNewTheme(), oldWord.getLowerSpelling(), 100));
-                    else
-                        cosineStrings.putAll(WordSource.w2vAnalogy(info.getW2v(), info.getOldTheme(), info.getNewTheme(), oldWord.getLowerSpelling(), 10));
+                    if (analogy) {
+                        if (rhyming && oldWordsByRhyme.contains(oldWord))
+                            cosineStrings.putAll(WordSource.w2vAnalogy(info.getW2v(), info.getOldTheme(), info.getNewTheme(), oldWord.getLowerSpelling(), N_RHYME));
+                        else
+                            cosineStrings.putAll(WordSource.w2vAnalogy(info.getW2v(), info.getOldTheme(), info.getNewTheme(), oldWord.getLowerSpelling(), N_NORMAL));
+                    }
+                    else {
+                        if (rhyming && oldWordsByRhyme.contains(oldWord))
+                            cosineStrings.putAll(WordSource.w2vSimilar(info.getW2v(), oldWord.getLowerSpelling(), N_RHYME));
+                        else
+                            cosineStrings.putAll(WordSource.w2vSimilar(info.getW2v(), oldWord.getLowerSpelling(), N_NORMAL));
+                    }
                 }
                 catch (BadW2vInputException e) {
                     System.out.print("\t***Bad w2v input: " + oldWord.toString());
@@ -159,7 +193,7 @@ public abstract class LyristTransformer {
 
                 final Set<Word> cosineWords = cosineStringsToWords(cosineStrings, oldWord);
 
-                //if rhyming, add CMU perfect rhymes for each suggestion TODO: this only works if each rhyme model is established
+                //if rhyming, add CMU perfect rhymes for each suggestion
 //                if (rhyming) {
 //                    Map<Double, String> rhymeStrings = new HashMap<>();
 //                    for (Word w : cosineWords) {
@@ -242,7 +276,7 @@ public abstract class LyristTransformer {
 //    }
     
     public static Set<Word> cosineStringsToWords(Map<Double, String> stringMapSuggestions, Word oldWord) {
-        U.testPrint("Entered cosineStringsToWords");
+//        U.testPrint("Entered cosineStringsToWords");
         //text, Pos and Ne for each word
         if (stringMapSuggestions == null || stringMapSuggestions.isEmpty()) return null;
         Map<Double, Word> wordMap = StanfordNlp.tagWordsWithSentenceContextWithDoubles(new TreeMap<>(stringMapSuggestions), oldWord);
@@ -262,7 +296,7 @@ public abstract class LyristTransformer {
         return result;
     }
 
-    public static WordReplacements filterSuggestions(final WordsToSuggestions wordsToSuggestions, final TransformInfo info, boolean rhyming, WordsByRhyme oldWordsByRhyme) {//TODO get this to work
+    public static WordReplacements filterSuggestions(final WordsToSuggestions wordsToSuggestions, final TransformByAnalogyInfo info, boolean rhyming, WordsByRhyme oldWordsByRhyme) {//TODO get this to work
         U.testPrint("Started filtering suggestions");
         //Filter suggestions
         final WordReplacements replacements = new WordReplacements();
@@ -271,22 +305,22 @@ public abstract class LyristTransformer {
             final Word oldWord = wordToSuggestions.getKey();
             final Set<Word> suggestions = wordToSuggestions.getValue();
             Word chosen;
-            WordConstraintPrioritizer.enableAllConstraints(info.getNormalConstraints());
+            WordConstraintRunner.enableAllConstraints(info.getNormalConstraints());
 
             try {
                 //Use rhyme filters
                 if (rhyming && oldWordsByRhyme.contains(wordToSuggestions.getKey())) {
-                    chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(((RhymeTransformInfo)info).getRhymeConstraints(), oldWord, suggestions);
+                    chosen = WordConstraintRunner.useConstraintsTo1ByWeakening(((RhymeTransformInfo)info).getRhymeConstraints(), oldWord, suggestions);
                 }
                 else {
                     //Use normal filters
-                    WordConstraintPrioritizer.disableRhymeConstraints(info.getNormalConstraints());
+                    WordConstraintRunner.disableRhymeConstraints(info.getNormalConstraints());
                     if (baseReplacements.keySet().contains(oldWord.getBase())) {
-                        WordConstraintPrioritizer.enableAllConstraints(info.getBaseConstraints(baseReplacements.get(oldWord.getBase())));
-                        chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(info.getBaseConstraints(baseReplacements.get(oldWord.getBase())), oldWord, suggestions);
+                        WordConstraintRunner.enableAllConstraints(info.getBaseConstraints(baseReplacements.get(oldWord.getBase())));
+                        chosen = WordConstraintRunner.useConstraintsTo1ByWeakening(info.getBaseConstraints(baseReplacements.get(oldWord.getBase())), oldWord, suggestions);
                     }
                     else
-                        chosen = WordConstraintPrioritizer.useConstraintsTo1ByWeakening(info.getNormalConstraints(), oldWord, suggestions);
+                        chosen = WordConstraintRunner.useConstraintsTo1ByWeakening(info.getNormalConstraints(), oldWord, suggestions);
                 }
 
                 //if no suggestion was successful, don't do a replacement
@@ -403,40 +437,6 @@ Fix rhyming functionality before the 20th:
     > Maybe mark non-rhymes and rhymes separately, and rhymes should include every Pos, even difficult ones like pronoun.
     > For rhymes, allow pronouns to be replaced by nouns. Figure out other good Pos expansion rules.
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
