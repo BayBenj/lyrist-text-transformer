@@ -139,7 +139,7 @@ public abstract class WordConstraintRunner {
                 c.disable();
     }
 
-    public static void disableIntanceSpecificConstraints(List<WordConstraint> constraints) {
+    public static void disableInstanceSpecificConstraints(List<WordConstraint> constraints) {
         for (WordConstraint c : constraints)
             if (c.isOldWordSpecific())
                 c.disable();

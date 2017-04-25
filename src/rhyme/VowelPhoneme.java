@@ -1,5 +1,7 @@
 package rhyme;
 
+import utils.U;
+
 import java.io.Serializable;
 
 public class VowelPhoneme extends Phoneme implements Serializable {
@@ -44,7 +46,15 @@ public class VowelPhoneme extends Phoneme implements Serializable {
         result = 31 * result + stress;
         return result;
     }
+
+    public static VowelPhoneme rnd() {
+        int stress = U.rand.nextInt(3);
+        return new VowelPhoneme(PhonemeEnum.rndVowel(), stress);
+    }
 }
+
+
+
 
 
 

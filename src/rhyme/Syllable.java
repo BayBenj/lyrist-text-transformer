@@ -166,13 +166,13 @@ public final class Syllable implements Serializable {
         return getCoda() != null ? getCoda().equals(syllable.getCoda()) : syllable.getCoda() == null;
     }
 
+    public static Syllable rnd(int len1, int len2) {
+        return new Syllable(ConsonantPronunciation.rnd(len1), VowelPhoneme.rnd(), ConsonantPronunciation.rnd(len2));
+    }
+
 }
 // extends ArrayList<PhonemeEnum>?
 // holds ArrayList<PhonemeEnum>?
-
-
-
-
 
 
 

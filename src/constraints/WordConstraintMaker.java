@@ -35,6 +35,7 @@ public abstract class WordConstraintMaker {
     private final static CosineDistanceConstraint highestCosine = new CosineDistanceConstraint(NonModelNum.HIGHEST);
     private final static StringConstraint safeSpellingsForMarking = new StringConstraint(unsafeWordsForMarking, ReturnType.NON_MATCHES);
     private static PosConstraint safePosForMarking;
+    private static SyllableNConstraint sameNSyllables = new SyllableNConstraint(ModelNum.EQUAL);
 
     public static void initializeFields() {
         initializeMarkingPos();
@@ -80,6 +81,7 @@ public abstract class WordConstraintMaker {
         result.add(unusedSpelling);
         result.add(notInDirty);
         result.add(samePos);
+//        result.add(sameNSyllables);
 //        result.add(sameNe);
         result.add(inWikiDict);
         result.add(highestCosine);
@@ -194,12 +196,20 @@ public abstract class WordConstraintMaker {
         result.add(reasonableRhymeScore);
         result.add(differentBase);
         result.add(differentSpelling);
-        result.add(unusedBase);
-        result.add(unusedSpelling);
+//        result.add(unusedBase);
+//        result.add(unusedSpelling);
         result.add(notInDirty);
         result.add(samePos);
+//        result.add(sameNSyllables);
         result.add(highestRhymeScore);
         result.add(highestCosine);
+
+        // BEST idea - have equation like:
+        //      maximize: A = xyz
+        //      constraint: x + y + z = 3
+        //      constraint: x, y, z > 0
+        //      constraint: x, y, z <= 1.0
+        // Then filter by word with the highest of that score
 
         //delete the 2 above, loop until 1 left:
         //  cut 2 suggestions with lowest rhyme
@@ -266,6 +276,11 @@ public abstract class WordConstraintMaker {
     }
 
 }
+
+
+
+
+
 
 
 

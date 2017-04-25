@@ -1,5 +1,7 @@
 package rhyme;
 
+import utils.U;
+
 import java.io.Serializable;
 
 public class ConsonantPhoneme extends Phoneme implements Serializable {
@@ -17,5 +19,10 @@ public class ConsonantPhoneme extends Phoneme implements Serializable {
     public PlaceOfArticulation getPlace() {
         return phonemeEnum.getPlace();
     }
+
+    public static ConsonantPhoneme rnd() {
+        return new ConsonantPhoneme(PhonemeEnum.rndConsonant());
+    }
+
 
 }

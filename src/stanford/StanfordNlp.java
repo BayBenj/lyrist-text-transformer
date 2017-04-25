@@ -10,7 +10,6 @@ import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.util.CoreMap;
-import english.ContractionManager;
 import main.MultiProgramArgs;
 import elements.*;
 import elements.Sentence;

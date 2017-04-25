@@ -1,5 +1,7 @@
 package rhyme;
 
+import utils.U;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,4 +20,13 @@ public class ConsonantPronunciation extends ArrayList<ConsonantPhoneme> implemen
         sb += "]";
         return sb;
     }
+
+    public static ConsonantPronunciation rnd(int len) {
+        ConsonantPronunciation cp = new ConsonantPronunciation();
+        for (int i = 0; i < len; i++) {
+            cp.add(ConsonantPhoneme.rnd());
+        }
+        return cp;
+    }
+
 }

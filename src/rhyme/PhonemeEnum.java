@@ -1,5 +1,7 @@
 package rhyme;
 
+import utils.U;
+
 import java.io.Serializable;
 
 public enum PhonemeEnum implements Serializable {
@@ -500,7 +502,105 @@ public enum PhonemeEnum implements Serializable {
         return false;
     }
 
+    public static PhonemeEnum rnd() {
+        int i = U.rand.nextInt(39);
+        switch (i) {
+            case 0: return B;
+            case 1: return CH;
+            case 2: return D;
+            case 3: return DH;
+            case 4: return F;
+            case 5: return G;
+            case 6: return HH;
+            case 7: return JH;
+            case 8: return K;
+            case 9: return L;
+            case 10: return M;
+            case 11: return N;
+            case 12: return NG;
+            case 13: return P;
+            case 14: return R;
+            case 15: return S;
+            case 16: return SH;
+            case 17: return T;
+            case 18: return TH;
+            case 19: return V;
+            case 20: return W;
+            case 21: return Y;
+            case 22: return Z;
+            case 23: return ZH;
+            case 24: return AA;
+            case 25: return AE;
+            case 26: return AO;
+            case 27: return AH;
+            case 28: return AW;
+            case 29: return AY;
+            case 30: return EH;
+            case 31: return ER;
+            case 32: return EY;
+            case 33: return IH;
+            case 34: return IY;
+            case 35: return OW;
+            case 36: return OY;
+            case 37: return UH;
+            default: return UW;
+        }
+    }
+
+    public static PhonemeEnum rndVowel() {
+        int i = U.rand.nextInt(15);
+        switch (i) {
+            case 0: return AA;
+            case 1: return AE;
+            case 2: return AO;
+            case 3: return AH;
+            case 4: return AW;
+            case 5: return AY;
+            case 6: return EH;
+            case 7: return ER;
+            case 8: return EY;
+            case 9: return IH;
+            case 10: return IY;
+            case 11: return OW;
+            case 12: return OY;
+            case 13: return UH;
+            default: return UW;
+        }
+    }
+
+    public static PhonemeEnum rndConsonant() {
+        int i = U.rand.nextInt(24);
+        switch (i) {
+            case 0: return B;
+            case 1: return CH;
+            case 2: return D;
+            case 3: return DH;
+            case 4: return F;
+            case 5: return G;
+            case 6: return HH;
+            case 7: return JH;
+            case 8: return K;
+            case 9: return L;
+            case 10: return M;
+            case 11: return N;
+            case 12: return NG;
+            case 13: return P;
+            case 14: return R;
+            case 15: return S;
+            case 16: return SH;
+            case 17: return T;
+            case 18: return TH;
+            case 19: return V;
+            case 20: return W;
+            case 21: return Y;
+            case 22: return Z;
+            default: return ZH;
+        }
+    }
 }
+
+
+
 
 
 

@@ -133,7 +133,7 @@ public abstract class SongScanner {
                 if (lineStr.charAt(lineStr.length() - 1) != '.')
                     lineStr += " .";
 
-                String maxSyls = lineStr.replaceAll("-","");
+                String maxSyls = lineStr.replaceAll("-"," ");
                 maxSyls = maxSyls.replaceAll("•"," ");
                 maxSyls = maxSyls.replaceAll("[^\\w\\s\\d]","");
                 maxSyls = maxSyls.replaceAll("\\s\\s"," ");
@@ -160,7 +160,7 @@ public abstract class SongScanner {
                 if (lineStr.charAt(lineStr.length() - 1) != '.')
                     lineStr += " .";
 
-                String maxSyls = lineStr.replaceAll("-","");
+                String maxSyls = lineStr.replaceAll("-"," ");
                 maxSyls = maxSyls.replaceAll("•"," ");
                 maxSyls = maxSyls.replaceAll("[^\\w\\s\\d]","");
                 maxSyls = maxSyls.replaceAll("\\s\\s"," ");
