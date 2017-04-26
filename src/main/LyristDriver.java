@@ -6,6 +6,7 @@ import rhyme.Rhymer;
 import songtools.*;
 import stanford.StanfordNlp;
 import utils.U;
+import word2vec.BadW2vInputException;
 import word2vec.W2vInterface;
 import java.io.*;
 import java.util.ArrayList;
@@ -35,6 +36,17 @@ public class LyristDriver {
             //Generate and read in single program args
             String[] argz = TemplateSongEngineer.generateArgs(templateSong, template);
             SingleTransformationArgs.loadSingleTransformationArgs(argz);
+
+            //Check that analogy args are in w2v vocab
+            try {
+                U.getW2VInterface().checkStringInput(SingleTransformationArgs.oldTheme);
+                U.getW2VInterface().checkStringInput(SingleTransformationArgs.newTheme);
+            }
+            catch (BadW2vInputException e) {
+                e.printStackTrace();
+                return;
+            }
+
             TextComposition tempComposition = TemplateSongEngineer.generateSongWithArgs(templateSong);
             U.print(tempComposition.toString());
             compositions.add(tempComposition);
@@ -70,7 +82,7 @@ public class LyristDriver {
     }
 
     public static void setupW2vInterface() {
-        final W2vInterface w2v  = new W2vInterface("news-lyrics-bom3");
+        final W2vInterface w2v  = new W2vInterface("now-91995-300");
         U.setW2VInterface(w2v);
     }
 
@@ -79,8 +91,6 @@ public class LyristDriver {
     }
 
 }
-
-
 
 
 

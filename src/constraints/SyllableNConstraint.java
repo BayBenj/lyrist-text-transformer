@@ -31,16 +31,16 @@ public class SyllableNConstraint extends IntConstraint {
 
     @Override
     public Integer wordToSpecficIntType(Word word) {
-        return word.getSyllables().size();
+        return word.getPronunciations().size();
     }
 
     private static Map<Word,Integer> wordsToSyllableN(Collection<Word> words) {
         Map<Word,Integer> result = new HashMap<>();
         for (Word w : words) {
-            if (w.getSyllables() == null || w.getSyllables().isEmpty())
+            if (w.getPronunciations() == null || w.getPronunciations().isEmpty())
                 result.put(w, 0);
             else
-                result.put(w, w.getSyllables().size());
+                result.put(w, w.getPronunciations().size());
         }
         return result;
     }

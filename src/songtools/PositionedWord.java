@@ -10,7 +10,7 @@ public class PositionedWord extends Word {
 
     public PositionedWord(Word word, int stanzaIndex, int lineIndex, int wordIndex) {
         super(word.getLowerSpelling());
-        super.setSyllables(word.getSyllables());
+        super.setPronunciations(word.getPronunciations());
         super.setPos(word.getPos());
         super.setNe(word.getNe());
         super.setCapitalized(word.getCapitalized());

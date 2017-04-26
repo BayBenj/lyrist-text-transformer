@@ -34,6 +34,7 @@ public class W2vInterface {
             ObjectInputStream in = new ObjectInputStream(fileIn);
             this.model = null;
             this.model = (W2vModel) in.readObject();
+            this.model.setContents(getContentsMap(fileName));
             in.close();
             fileIn.close();
         }
@@ -62,10 +63,37 @@ public class W2vInterface {
 
     public void buildModel(String fileName) {
         this.model = W2vOperations.buildW2vModel(fileName);
+        this.model.setContents(getContentsMap(fileName));
         this.serializeW2vModel(fileName);
     }
 
+    private Map<String,Integer> getContentsMap(String fileName) {
+        Map<String,Integer> result = new HashMap<>();
+
+        File inFile = new File(U.rootPath + "data/w2v/models/vocab-lists/" + fileName + ".txt");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(inFile);
+            Scanner sc = null;
+            sc = new Scanner(fis, "UTF-8");
+
+            while (sc.hasNextLine()) {
+                String s = sc.nextLine();
+                String[] split = s.split(" ");
+                result.put(split[0],Integer.parseInt(split[1]));
+            }
+            return result;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public Map<Double, String> findAnalogy(String oldSentiment, String newSentiment, String oldWord, int nOfSuggestions) throws BadW2vInputException {
+        checkStringInput(oldSentiment);
+        checkStringInput(newSentiment);
+        checkStringInput(oldWord);
+
         // newSentiment - oldSentiment + oldWord
         ArrayList<String> strings = new ArrayList<>();
         strings.add(oldSentiment);
@@ -76,6 +104,8 @@ public class W2vInterface {
     }
 
     public Map<Double, String> findSimilars(String string, int nOfSuggestions) throws BadW2vInputException {
+        checkStringInput(string);
+
         // uses chosen suggestion quantity
         ArrayList<String> oneString = new ArrayList<>();
         oneString.add(string);
@@ -87,18 +117,29 @@ public class W2vInterface {
     }
 
     public Map<Double, String> findSimilars(String string) throws BadW2vInputException {
+        checkStringInput(string);
+
         // uses default suggestion quantity
         return this.findSimilars(string, nOfDefaultSuggestions);
     }
 
     public Map<Double, String> findSum(Set<Word> words, int nOfSuggestions) throws BadW2vInputException {
         HashSet<String> strings = new HashSet<>();
-        for (Word word : words)
+        for (Word word : words) {
             strings.add(word.getLowerSpelling().toLowerCase());
+        }
+        for (String s : strings) {
+            checkStringInput(s);
+        }
+
         return this.findSum(strings, nOfSuggestions, true);
     }
 
     public Map<Double, String> findSum(Set<String> strings, int nOfSuggestions, boolean b) throws BadW2vInputException {
+        for (String s : strings) {
+            checkStringInput(s);
+        }
+
         Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.SUM, new ArrayList<>(strings));
         return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
@@ -108,55 +149,34 @@ public class W2vInterface {
     }
 
     public Map<Double, String> findSentiment(Set<String> strings, int nOfSuggestions) throws BadW2vInputException {
+        for (String s : strings) {
+            checkStringInput(s);
+        }
+
         Pair<W2vPoint,int[]> pair = stringsToPoint(OperationType.AVERAGE, new ArrayList<>(strings));
         return new HashMap<>(W2vOperations.pointToStrings(pair.getFirst(), pair.getSecond(), nOfSuggestions));
     }
 
     public Double findDistanceBetween(String string1, String string2) throws BadW2vInputException {
+        checkStringInput(string1);
+        checkStringInput(string2);
+
         //TODO implement this, especially for choosing the closest rhyming word from a set of distantly-related rhymes
         return null;
     }
 
+    public void checkStringInput(String s) throws BadW2vInputException {
+        if (!this.contains(s))
+            throw new BadW2vInputException(s);
+    }
+
     public boolean contains(String string) {
-        //TODO implement this, to be used for every word2vec operation. Simply looks at a list of this model's vocabulary.
+        if (model.getContents().containsKey(string))
+            return true;
         return false;
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

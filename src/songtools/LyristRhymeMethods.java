@@ -181,8 +181,8 @@ public abstract class LyristRhymeMethods {
 
     private static boolean checkClassAtAllThresholdLevels(Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, List<Pair<Word,Set<Word>>> rhymeInstances) {
         final double decrement = .025;
-//        final double lowest_acceptable_thresh = 0.95;
-        final double lowest_acceptable_thresh = 1.0;
+        final double lowest_acceptable_thresh = 0.95;
+//        final double lowest_acceptable_thresh = 1.0;
         for (double temp_thresh = 1.0; temp_thresh >= lowest_acceptable_thresh; temp_thresh -= decrement) {
             if (checkAllCandidateModels(rhymeClass, rhymeInstances, temp_thresh)) {
                 return true;
@@ -207,6 +207,8 @@ public abstract class LyristRhymeMethods {
         }
         return false;
     }
+
+    //TODO add candidate model pronunciation section
 
     private static void legitimizeCandidateModel(Word candidateModel, Map.Entry<RhymeClass,List<Pair<Word,Set<Word>>>> rhymeClass, double thresh_used) {
         U.testPrint("Rhyme model set to " + candidateModel.toString() + " at score threshold " + thresh_used);
@@ -259,16 +261,17 @@ public abstract class LyristRhymeMethods {
 
         if (candidateModel.getLowerSpelling().equals(candidateRhymeInstance.getLowerSpelling())) return true;
 
+            score = Rhymer.score2Rhymes(candidateModel.getRhymeTail(), candidateRhymeInstance.getRhymeTail());
+
+            if (score >= thresh) {
+                U.testPrint("Candidate model [" + candidateModel.getLowerSpelling() + "] rhymes with instance suggestion [" + candidateRhymeInstance.getLowerSpelling() + "]");
+                rhymeClass.getKey().addInstance(candidateRhymeInstance);
+                bad = false;
+            }
+
 //        if (Rhymer.perfectRhymes.containsKey(candidateModel.getRhymeTail()) && Rhymer.perfectRhymes.get(candidateModel.getRhymeTail()).contains(candidateRhymeInstance.getLowerSpelling()))
 //            score = 1.0;
 //        else
-            score = Rhymer.score2Rhymes(candidateModel.getRhymeTail(), candidateRhymeInstance.getRhymeTail());
-
-        if (score >= thresh) {
-            U.testPrint("Candidate model [" + candidateModel.getLowerSpelling() + "] rhymes with instance suggestion [" + candidateRhymeInstance.getLowerSpelling() + "]");
-            rhymeClass.getKey().addInstance(candidateRhymeInstance);
-            bad = false;
-        }
         return bad;
     }
 
@@ -655,9 +658,6 @@ public abstract class LyristRhymeMethods {
 //    }
 
 }
-
-
-
 
 
 

@@ -11,7 +11,7 @@ public class WordsToSuggestions extends HashMap<Word,Set<Word>> {
             this.get(oldWord).addAll(newWords);
         }
         else {
-            this.put(oldWord, new TreeSet<>(newWords));
+            this.put(oldWord, new HashSet<>(newWords));
         }
     }
 

@@ -25,9 +25,9 @@ public abstract class LyristTransformer {
         Word w1 = new Word("blues");
         Word w2 = new Word("red");
         Word w3 = new Word("purples");
-        w1.setSyllables(Phoneticizer.getSyllables("blues"));
-        w2.setSyllables(Phoneticizer.getSyllables("red"));
-        w3.setSyllables(Phoneticizer.getSyllables("purples"));
+        w1.setPronunciations(Phoneticizer.getSyllables("blues"));
+        w2.setPronunciations(Phoneticizer.getSyllables("red"));
+        w3.setPronunciations(Phoneticizer.getSyllables("purples"));
         w1.setBase("blue");
         w2.setBase("red");
         w3.setBase("purples");
@@ -41,9 +41,9 @@ public abstract class LyristTransformer {
         Word w4 = new Word("shoes");
         Word w5 = new Word("boots");
         Word w6 = new Word("kick");
-        w4.setSyllables(Phoneticizer.getSyllables("shoes"));
-        w5.setSyllables(Phoneticizer.getSyllables("boots"));
-        w6.setSyllables(Phoneticizer.getSyllables("kick"));
+        w4.setPronunciations(Phoneticizer.getSyllables("shoes"));
+        w5.setPronunciations(Phoneticizer.getSyllables("boots"));
+        w6.setPronunciations(Phoneticizer.getSyllables("kick"));
         w4.setBase("shoe");
         w5.setBase("boot");
         w6.setBase("kick");
@@ -56,11 +56,11 @@ public abstract class LyristTransformer {
         set2.add(w6);
         List<Pair<Word, Set<Word>>> list1 = new ArrayList();
         Word o1 = new Word("oranges");
-        o1.setSyllables(Phoneticizer.getSyllables("oranges"));
+        o1.setPronunciations(Phoneticizer.getSyllables("oranges"));
         o1.setBase("orange");
         o1.setPos(Pos.NNS);
         Word o2 = new Word("sandals");
-        o2.setSyllables(Phoneticizer.getSyllables("sandals"));
+        o2.setPronunciations(Phoneticizer.getSyllables("sandals"));
         o2.setBase("sandal");
         o2.setPos(Pos.NNS);
         list1.add(new Pair<>(o1, set1));
@@ -283,7 +283,7 @@ public abstract class LyristTransformer {
 
         //Assign syllables on word2vec's suggestions
         for (Map.Entry<Double, Word> entry : wordMap.entrySet()) {
-            entry.getValue().setSyllables(Phoneticizer.getSyllablesForWord(entry.getValue()));
+            entry.getValue().setPronunciations(Phoneticizer.getSyllablesForWord(entry.getValue()));
         }
 
         //Put cosine distances into result

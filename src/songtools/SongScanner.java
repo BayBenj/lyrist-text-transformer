@@ -263,7 +263,7 @@ public abstract class SongScanner {
     public static void setSyllablesForSentences(List<Sentence> sentences) {
         for (Sentence sentence : sentences) {
             for (Word word : sentence) {
-                word.setSyllables(Phoneticizer.getSyllablesForWord(word));
+                word.setPronunciations(Phoneticizer.getSyllablesForWord(word));
             }
         }
     }

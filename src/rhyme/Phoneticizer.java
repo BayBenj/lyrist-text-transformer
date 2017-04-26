@@ -18,7 +18,7 @@ public class Phoneticizer {
     public static Map<List<PhonemeEnum>, Set<String>> lastSylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last2SylRhymeDict = new HashMap<>();
     public static Map<List<List<PhonemeEnum>>, Set<String>> last3SylRhymeDict = new HashMap<>();
-    public static Map<String, WordSyllables> syllableDict = loadSyllableDicts();
+    public static Map<String, List<WordSyllables>> syllableDict = loadSyllableDicts();
 //    private static Map<String, Pair<Integer, MannerOfArticulation>> phonesDict = loadPhonesDict();
 //    private static List<Pair<String, MannerOfArticulation>> reversePhonesDict = loadReversePhonesDict();
     private static G2PConverter converter = new G2PConverter(U.rootPath + "data/phonemes/pron-dict/model.fst.ser");
@@ -89,70 +89,74 @@ public class Phoneticizer {
         return cmuDict;
     }
 
-    public static Map<String, WordSyllables> loadSyllableDicts() {
-        Map<String, WordSyllables> result = new HashMap<>();
+    public static Map<String, List<WordSyllables>> loadSyllableDicts() {
+        Map<String, List<WordSyllables>> result = new HashMap<>();
         for (Map.Entry<String, List<Pronunciation>> entry : cmuDict.entrySet()) {
             if (entry.getKey().equals("SWIMSUIT")) {
 //                U.print("stop for test");
             }
-            WordSyllables syllables = SyllableParser.algorithmicallyParse(entry.getValue().get(0));
-            result.put(entry.getKey(), syllables);  //TODO it gets the top pronunciation, make sure that's right
-            int nSyl = syllables.size();
-            if (nSyl > 0) {
-                Syllable ultimate = syllables.get(syllables.size() - 1);
-                Set<String> oldSet1 = lastSylRhymeDict.get(ultimate.getRhyme());
-                if (oldSet1 == null)
-                    oldSet1 = new HashSet<>();
-                oldSet1.add(entry.getKey());
-                lastSylRhymeDict.put(ultimate.getRhyme().getPhonemeEnums(), oldSet1);
-                if (nSyl > 1) {
-                    List<List<PhonemeEnum>> list1 = new ArrayList<>();
-                    Syllable penultimate = syllables.get(syllables.size() - 2);
-                    list1.add(penultimate.getRhyme().getPhonemeEnums());
-                    list1.add(ultimate.getPhonemes().getPhonemeEnums());
-                    Set<String> oldSet2 = lastSylRhymeDict.get(list1);
-                    if (oldSet2 == null)
-                        oldSet2 = new HashSet<>();
-                    oldSet2.add(entry.getKey());
-                    last2SylRhymeDict.put(list1, oldSet2);
-                    if (nSyl > 2) {
-                        List<List<PhonemeEnum>> list2 = new ArrayList<>();
-                        Syllable antepenultimate = syllables.get(syllables.size() - 3);
-                        list2.add(antepenultimate.getRhyme().getPhonemeEnums());
-                        list2.add(penultimate.getPhonemes().getPhonemeEnums());
-                        list2.add(ultimate.getPhonemes().getPhonemeEnums());
-                        Set<String> oldSet3 = lastSylRhymeDict.get(list2);
-                        if (oldSet3 == null)
-                            oldSet3 = new HashSet<>();
-                        oldSet3.add(entry.getKey());
-                        last3SylRhymeDict.put(list2, oldSet3);
+            List<WordSyllables> pronunciationSyls = new ArrayList<>();
+            for (Pronunciation pronunciation : entry.getValue()) {
+                WordSyllables syllables = SyllableParser.algorithmicallyParse(pronunciation);
+                pronunciationSyls.add(syllables);
+                int nSyl = syllables.size();
+                if (nSyl > 0) {
+                    Syllable ultimate = syllables.get(syllables.size() - 1);
+                    Set<String> oldSet1 = lastSylRhymeDict.get(ultimate.getRhyme());
+                    if (oldSet1 == null)
+                        oldSet1 = new HashSet<>();
+                    oldSet1.add(entry.getKey());
+                    lastSylRhymeDict.put(ultimate.getRhyme().getPhonemeEnums(), oldSet1);
+                    if (nSyl > 1) {
+                        List<List<PhonemeEnum>> list1 = new ArrayList<>();
+                        Syllable penultimate = syllables.get(syllables.size() - 2);
+                        list1.add(penultimate.getRhyme().getPhonemeEnums());
+                        list1.add(ultimate.getPhonemes().getPhonemeEnums());
+                        Set<String> oldSet2 = lastSylRhymeDict.get(list1);
+                        if (oldSet2 == null)
+                            oldSet2 = new HashSet<>();
+                        oldSet2.add(entry.getKey());
+                        last2SylRhymeDict.put(list1, oldSet2);
+                        if (nSyl > 2) {
+                            List<List<PhonemeEnum>> list2 = new ArrayList<>();
+                            Syllable antepenultimate = syllables.get(syllables.size() - 3);
+                            list2.add(antepenultimate.getRhyme().getPhonemeEnums());
+                            list2.add(penultimate.getPhonemes().getPhonemeEnums());
+                            list2.add(ultimate.getPhonemes().getPhonemeEnums());
+                            Set<String> oldSet3 = lastSylRhymeDict.get(list2);
+                            if (oldSet3 == null)
+                                oldSet3 = new HashSet<>();
+                            oldSet3.add(entry.getKey());
+                            last3SylRhymeDict.put(list2, oldSet3);
+                        }
                     }
                 }
             }
+            result.put(entry.getKey(), pronunciationSyls);
         }
         return result;
     }
 
-    public static List<PhonemeEnum> getRhymeOfLastXSyllables(String s, int x) {
-        if (x < 1 || x > s.length())
-            return null;
-        else {
-            List<Syllable> syllables = getSyllables(s);
-            List<Syllable> shavedSyllables = getLastXSyllables(syllables, x);
-            List<PhonemeEnum> rhymeOfLastXSyllables = new ArrayList<>();
-            rhymeOfLastXSyllables.addAll(shavedSyllables.get(0).getRhyme().getPhonemeEnums());
-            for (int i = 1; i < shavedSyllables.size(); i++)
-                rhymeOfLastXSyllables.addAll(shavedSyllables.get(i).getPhonemes().getPhonemeEnums());
-            return rhymeOfLastXSyllables;
-        }
-    }
-
-    public static List<Syllable> getLastXSyllables(String s, int x) {
-        if (x < 1 || x > s.length())
-            return null;
-        else
-            return getLastXSyllables(Phoneticizer.getSyllables(s), x);
-    }
+//    public static List<PhonemeEnum> getRhymeOfLastXSyllables(String s, int x) {
+//        if (x < 1 || x > s.length())
+//            return null;
+//        else {
+//            List<Syllable> syllables = getPronunciations(s);
+//            List<Syllable> shavedSyllables = getLastXSyllables(syllables, x);
+//            List<PhonemeEnum> rhymeOfLastXSyllables = new ArrayList<>();
+//            rhymeOfLastXSyllables.addAll(shavedSyllables.get(0).getRhyme().getPhonemeEnums());
+//            for (int i = 1; i < shavedSyllables.size(); i++)
+//                rhymeOfLastXSyllables.addAll(shavedSyllables.get(i).getPhonemes().getPhonemeEnums());
+//            return rhymeOfLastXSyllables;
+//        }
+//    }
+//
+//    public static List<Syllable> getLastXSyllables(String s, int x) {
+//        if (x < 1 || x > s.length())
+//            return null;
+//        else
+//            return getLastXSyllables(Phoneticizer.getPronunciations(s), x);
+//    }
 
     private static List<Syllable> getLastXSyllables(List<Syllable> syllables, int x) {
         if (syllables == null || x > syllables.size())
@@ -309,7 +313,7 @@ public class Phoneticizer {
 //        prevPhones = nextPhones;
     }
 
-    public static WordSyllables getSyllables(String s) {
+    public static List<WordSyllables> getSyllables(String s) {
         return syllableDict.get(s.toUpperCase());
     }
 
@@ -533,14 +537,14 @@ public class Phoneticizer {
         return null;
     }
 
-    public static WordSyllables getSyllablesForWord(String string) {
+    public static List<WordSyllables> getSyllablesForWord(String string) {
         if (string != null && string.length() > 0 && string.matches("\\w+")) {
             return getSyllables(string.toUpperCase());
         }
         return null;
     }
 
-    public static WordSyllables getSyllablesForWord(Word word) {
+    public static List<WordSyllables> getSyllablesForWord(Word word) {
         if (word.getClass() != Punctuation.class) {
             return getSyllablesForWord(word.getLowerSpelling());
         }

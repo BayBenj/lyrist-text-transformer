@@ -18,12 +18,12 @@
 //
 //    @Override
 //    public Set<Word> doFilter(Collection<Word> originalWords) {
-//        if (this.getModel().getSyllables() != null && !this.getModel().getSyllables().isEmpty()) {
+//        if (this.getModel().getPronunciations() != null && !this.getModel().getPronunciations().isEmpty()) {
 //            Set<Word> result = new HashSet<>();
 //            for (Word w : originalWords) {
-//                if (    (w.getSyllables() != null && !w.getSyllables().isEmpty()) &&
-//                        (super.getReturnType() == ReturnType.MATCHES && this.getModel().getSyllables().size() == w.getSyllables().size() ||
-//                        super.getReturnType() == ReturnType.NON_MATCHES && this.getModel().getSyllables().size() != w.getSyllables().size()) )
+//                if (    (w.getPronunciations() != null && !w.getPronunciations().isEmpty()) &&
+//                        (super.getReturnType() == ReturnType.MATCHES && this.getModel().getPronunciations().size() == w.getPronunciations().size() ||
+//                        super.getReturnType() == ReturnType.NON_MATCHES && this.getModel().getPronunciations().size() != w.getPronunciations().size()) )
 //                    result.add(w);
 //            }
 //            return result;

@@ -23,7 +23,7 @@ public class RhymerTest extends TestCase {
 
     public void testPerfectRhymes() throws Exception {
         Word w1 = new Word("bat");
-        w1.setSyllables(Phoneticizer.getSyllables("bat"));
+        w1.setPronunciations(Phoneticizer.getSyllables("bat"));
         Set<String> r1 = Rhymer.getAllRhymesByThreshold(w1, 1.0);
 
         // corner cases
@@ -68,13 +68,13 @@ public class RhymerTest extends TestCase {
 
     public void testScore2Rhymes() throws Exception {
         Word w1 = new Word("bat");
-        w1.setSyllables(Phoneticizer.getSyllables("bat"));
+        w1.setPronunciations(Phoneticizer.getSyllables("bat"));
         Word w2 = new Word("cat");
-        w2.setSyllables(Phoneticizer.getSyllables("cat"));
+        w2.setPronunciations(Phoneticizer.getSyllables("cat"));
         Word w3 = new Word("bait");
-        w3.setSyllables(Phoneticizer.getSyllables("bait"));
+        w3.setPronunciations(Phoneticizer.getSyllables("bait"));
         Word w4 = new Word("ban");
-        w4.setSyllables(Phoneticizer.getSyllables("ban"));
+        w4.setPronunciations(Phoneticizer.getSyllables("ban"));
 
         assertEquals(Rhymer.score2Rhymes(w1.getRhymeTail(), w1.getRhymeTail()), 1.0);
         assertEquals(Rhymer.score2Rhymes(w1.getRhymeTail(), w2.getRhymeTail()), 1.0);

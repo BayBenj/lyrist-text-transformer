@@ -3,12 +3,14 @@ package elements;
 import rhyme.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Word implements Comparable<Word>, Serializable {
 
     private String spelling = null;
     private String base = null;
-    private WordSyllables syllables = null;
+    private List<WordSyllables> pronunciations = null;
+    private int chosenPronunciationIndex = 0;//TODO change this to use the optimal pronunciation instead of just the first
     private Pos pos = null;
     private Ne ne = null;
     private boolean capitalized = false;
@@ -43,9 +45,9 @@ public class Word implements Comparable<Word>, Serializable {
     }
 
     public SyllableGroup getRhymeTail() {
-        if (this.syllables == null)
+        if (this.pronunciations == null)
             return null;
-        return this.syllables.getRhymeTailFromStress();
+        return this.pronunciations.get(chosenPronunciationIndex).getRhymeTailFromStress();
     }
 
     public String getLowerSpelling() {
@@ -63,15 +65,31 @@ public class Word implements Comparable<Word>, Serializable {
     }
 
     public Pronunciation getPhonemes() {
-        return this.syllables.getPronunciation();
+        return this.pronunciations.get(chosenPronunciationIndex).getPronunciation();
+    }
+
+    public List<WordSyllables> getPronunciations() {
+        return this.pronunciations;
+    }
+
+    public void setPronunciations(List<WordSyllables> pronunciations) {
+        this.pronunciations = pronunciations;
+    }
+
+    public WordSyllables getPronunciation() {
+        return this.pronunciations.get(chosenPronunciationIndex);
     }
 
     public WordSyllables getSyllables() {
-        return this.syllables;
+        return this.getPronunciation();
     }
 
-    public void setSyllables(WordSyllables syllables) {
-        this.syllables = syllables;
+    public void setPronunciation(int i) {
+        this.chosenPronunciationIndex = i;
+    }
+
+    public void setSyllables(int i) {
+        this.setPronunciation(i);
     }
 
     public Pos getPos() {
@@ -180,7 +198,7 @@ public class Word implements Comparable<Word>, Serializable {
 //
 //    @Override
 //    public boolean hasCompleteSyllableStructure() {
-//        if (this.getSyllables() == null || this.getSyllables().isEmpty())
+//        if (this.getPronunciations() == null || this.getPronunciations().isEmpty())
 //            return false;
 //        return true;
 //    }
@@ -201,7 +219,7 @@ public class Word implements Comparable<Word>, Serializable {
 
         if (getLowerSpelling() != null ? !getLowerSpelling().equals(word.getLowerSpelling()) : word.getLowerSpelling() != null)
             return false;
-        if (getSyllables() != null ? !getSyllables().equals(word.getSyllables()) : word.getSyllables() != null)
+        if (getPronunciations() != null ? !getPronunciations().equals(word.getPronunciations()) : word.getPronunciations() != null)
             return false;
         return true;
 //        return getPos() == word.getPos();
@@ -210,7 +228,7 @@ public class Word implements Comparable<Word>, Serializable {
     @Override
     public int hashCode() {
         int result = getLowerSpelling() != null ? getLowerSpelling().hashCode() : 0;
-        result = 31 * result + (getSyllables() != null ? getSyllables().hashCode() : 0);
+        result = 31 * result + (getPronunciations() != null ? getPronunciations().hashCode() : 0);
 //        result = 31 * result + (getPos() != null ? getPos().hashCode() : 0);
         return result;
     }
@@ -220,6 +238,8 @@ public class Word implements Comparable<Word>, Serializable {
         return this.getLowerSpelling().compareTo(o.getLowerSpelling());
     }
 }
+
+
 
 
 

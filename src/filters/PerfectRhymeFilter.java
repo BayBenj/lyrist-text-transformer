@@ -20,14 +20,14 @@
 //
 //    @Override
 //    public Set<Word> doFilter(Collection<Word> originalWords) {
-//        if (this.getModel().getSyllables() != null && !this.getModel().getSyllables().isEmpty()) {
-//            int nModelSyl = this.getModel().getSyllables().size();
+//        if (this.getModel().getPronunciations() != null && !this.getModel().getPronunciations().isEmpty()) {
+//            int nModelSyl = this.getModel().getPronunciations().size();
 //            Set<Word> result = new HashSet<>();
 //            for (Word w : originalWords) {
-//                if (w.getSyllables() != null && !w.getSyllables().isEmpty()) {
-//                    int nWordSyl = w.getSyllables().size();
-//                    List<PhonemeEnum> modelRhyme = this.getModel().getSyllables().get(nModelSyl - 1).getRhyme();
-//                    List<PhonemeEnum> wordRhyme = w.getSyllables().get(nWordSyl - 1).getRhyme();
+//                if (w.getPronunciations() != null && !w.getPronunciations().isEmpty()) {
+//                    int nWordSyl = w.getPronunciations().size();
+//                    List<PhonemeEnum> modelRhyme = this.getModel().getPronunciations().get(nModelSyl - 1).getRhyme();
+//                    List<PhonemeEnum> wordRhyme = w.getPronunciations().get(nWordSyl - 1).getRhyme();
 //                    if (    super.getReturnType() == ReturnType.MATCHES && modelRhyme.equals(wordRhyme) ||
 //                            super.getReturnType() == ReturnType.NON_MATCHES && !modelRhyme.equals(wordRhyme) )
 //                    result.add(w);

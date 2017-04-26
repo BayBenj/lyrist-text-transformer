@@ -34,7 +34,7 @@ public abstract class Rhymer {
         LyristDriver.setupCmuDict();
 
         Word w = new Word("captive");
-        w.setSyllables(Phoneticizer.getSyllables(w.getLowerSpelling()));
+        w.setPronunciations(Phoneticizer.getSyllables(w.getLowerSpelling()));
 
 //        Set<String> perfects = perfectRhymes.get(w.getRhymeTail());
 //        System.out.println("PERFECT RHYMES:");
@@ -55,8 +55,8 @@ public abstract class Rhymer {
 //        for (String s : cmudict) {
 //            count++;
 //            Word word = new Word(s.toLowerCase());
-//            word.setSyllables(Phoneticizer.getSyllablesForWord(word.getUpperSpelling()));
-//            if (U.isNullOrEmpty(word.getSyllables()) || U.isNullOrEmpty(word.getRhymeTail()))
+//            word.setPronunciations(Phoneticizer.getSyllablesForWord(word.getUpperSpelling()));
+//            if (U.isNullOrEmpty(word.getPronunciations()) || U.isNullOrEmpty(word.getRhymeTail()))
 //                continue;
 //
 //            if (!perf.containsKey(word.getRhymeTail())) {
@@ -152,7 +152,7 @@ public abstract class Rhymer {
 //                System.out.println("stop for weeping test");
 //            }
             Word temp = new Word(entry.getKey());
-            temp.setSyllables(Phoneticizer.getSyllablesForWord(entry.getKey()));
+            temp.setPronunciations(Phoneticizer.getSyllablesForWord(entry.getKey()));
             double score = score2Rhymes(w, temp.getRhymeTail());
             if (score >= threshold) {
                 result.add(entry.getKey().toLowerCase());

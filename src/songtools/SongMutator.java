@@ -24,7 +24,7 @@ public abstract class SongMutator {
                     articleWord.setSpelling(correctArticle);
                     articleWord.setPos(Pos.DT);//TODO make sure this is right
                     articleWord.setNe(Ne.O);
-                    articleWord.setSyllables(Phoneticizer.getSyllables(articleWord.getLowerSpelling().toUpperCase()));
+                    articleWord.setPronunciations(Phoneticizer.getSyllables(articleWord.getLowerSpelling().toUpperCase()));
                 }
             }
         }
@@ -76,7 +76,7 @@ public abstract class SongMutator {
                     else {
                         Word temp = new Word(currentWord.getLowerSpelling());
                         temp.setBase(currentWord.getBase());
-                        temp.setSyllables(currentWord.getSyllables());
+                        temp.setPronunciations(currentWord.getPronunciations());
                         temp.setPos(currentWord.getPos());
                         temp.setNe(currentWord.getNe());
                         temp.setCapitalized(currentWord.getCapitalized());
@@ -105,7 +105,7 @@ public abstract class SongMutator {
 //                else {
 //                    Word temp = new Word(currentWord.getLowerSpelling());
 //                    temp.setBase(currentWord.getBase());
-//                    temp.setSyllables(currentWord.getSyllables());
+//                    temp.setPronunciations(currentWord.getPronunciations());
 //                    temp.setPos(currentWord.getPos());
 //                    temp.setNe(currentWord.getNe());
 //                    temp.setCapitalized(currentWord.getCapitalized());

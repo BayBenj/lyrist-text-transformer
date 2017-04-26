@@ -1,6 +1,7 @@
 package word2vec;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import static java.lang.Math.toIntExact;
 
@@ -11,6 +12,8 @@ public class W2vModel implements Serializable {
     private final long numberOfDimensionsInVector ;
     private float[] M;
     private char[] vocab;
+
+    private Map<String,Integer> contents;
 
     public W2vModel(long numberOfWordsInVector,
                     long numberOfDimensionsInVector,
@@ -73,7 +76,19 @@ public class W2vModel implements Serializable {
     public void setVocab(char[] vocab) {
         this.vocab = vocab;
     }
+
+    public Map<String, Integer> getContents() {
+        return contents;
+    }
+
+    public void setContents(Map<String, Integer> contents) {
+        this.contents = contents;
+    }
 }
+
+
+
+
 
 
 
