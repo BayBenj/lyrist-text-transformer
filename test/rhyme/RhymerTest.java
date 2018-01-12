@@ -4,6 +4,8 @@ import elements.Word;
 import junit.framework.TestCase;
 import main.LyristDriver;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class RhymerTest extends TestCase {
@@ -24,39 +26,44 @@ public class RhymerTest extends TestCase {
     public void testPerfectRhymes() throws Exception {
         Word w1 = new Word("bat");
         w1.setPronunciations(Phoneticizer.getSyllables("bat"));
-        Set<String> r1 = Rhymer.getAllRhymesByThreshold(w1, 1.0);
+        Map<Double, Set<String>> r1 = Rhymer.getAllRhymesByThreshold(w1, 1.0);
 
+        Set<String> allRhymes = new HashSet<>();
+        for (Map.Entry<Double, Set<String>> entry : r1.entrySet()) {
+            allRhymes.addAll(entry.getValue());
+        }
+        
         // corner cases
-        assertTrue(r1.contains("bat"));
-        assertFalse(r1.contains(""));
+        assertTrue(allRhymes.contains("bat"));
+        assertFalse(allRhymes.contains(""));
 
         // + 0 syllables
-        assertTrue(r1.contains("cat"));
-        assertTrue(r1.contains("rat"));
-        assertTrue(r1.contains("scat"));
-        assertTrue(r1.contains("chat"));
-        assertTrue(r1.contains("fat"));
-        assertTrue(r1.contains("sat"));
-        assertTrue(r1.contains("spat"));
-        assertFalse(r1.contains("cats"));
-        assertFalse(r1.contains("rats"));
-        assertFalse(r1.contains("scats"));
-        assertFalse(r1.contains("chats"));
-        assertFalse(r1.contains("fats"));
-        assertFalse(r1.contains("ban"));
-        assertFalse(r1.contains("bad"));
-        assertFalse(r1.contains("batch"));
-        assertFalse(r1.contains("back"));
-        assertFalse(r1.contains("bet"));
-        assertFalse(r1.contains("bent"));
-        assertFalse(r1.contains("bought"));
-        assertFalse(r1.contains("bit"));
-        assertFalse(r1.contains("boot"));
-        assertFalse(r1.contains("beat"));
+        assertTrue(allRhymes.contains("cat"));
+        assertTrue(allRhymes.contains("rat"));
+        assertTrue(allRhymes.contains("scat"));
+        assertTrue(allRhymes.contains("chat"));
+        assertTrue(allRhymes.contains("fat"));
+        assertTrue(allRhymes.contains("sat"));
+        assertTrue(allRhymes.contains("spat"));
+        assertFalse(allRhymes.contains("cats"));
+        assertFalse(allRhymes.contains("rats"));
+        assertFalse(allRhymes.contains("scats"));
+        assertFalse(allRhymes.contains("chats"));
+        assertFalse(allRhymes.contains("fats"));
+        assertFalse(allRhymes.contains("ban"));
+        assertFalse(allRhymes.contains("bad"));
+        assertFalse(allRhymes.contains("batch"));
+        assertFalse(allRhymes.contains("back"));
+        assertFalse(allRhymes.contains("bet"));
+        assertFalse(allRhymes.contains("bent"));
+        assertFalse(allRhymes.contains("bought"));
+        assertFalse(allRhymes.contains("bit"));
+        assertFalse(allRhymes.contains("boot"));
+        assertFalse(allRhymes.contains("beat"));
 
         // + 1 syllable
-//        assertFalse(r1.contains("wombat"));
-        assertFalse(r1.contains("combat"));
+//        assertFalse(allRhymes.contains("wombat"));
+        assertFalse(allRhymes.contains("combat"));
     }
 
     public void testImperfectRhymes() throws Exception {

@@ -33,7 +33,7 @@ public abstract class Rhymer {
         LyristDriver.setupRootPath();
         LyristDriver.setupCmuDict();
 
-        Word w = new Word("captive");
+        Word w = new Word(args[0]);
         w.setPronunciations(Phoneticizer.getSyllables(w.getLowerSpelling()));
 
 //        Set<String> perfects = perfectRhymes.get(w.getRhymeTail());
@@ -42,8 +42,13 @@ public abstract class Rhymer {
 //            System.out.println(s + "\t1.0");
 
         try {
-            System.out.println("\n\nPERFECT RHYMES:");
-            getAllRhymesByThreshold(w, 1.0);
+            System.out.println("\n\n[" + w.getLowerSpelling() + "] RHYMES OF SCORE >= " + args[1].toString());
+            TreeMap<Double, Set<String>> map = new TreeMap(getAllRhymesByThreshold(w, Double.parseDouble(args[1])));
+            for (Map.Entry<Double, Set<String>> entry : map.entrySet()) {
+                for (String s : entry.getValue()) {
+                    System.out.println(s + "\t\t" + entry.getKey().toString());
+                }
+            }
         } catch (NoRhymeFoundException e) {
             System.out.println("No rhyme found.");
             e.printStackTrace();
@@ -110,9 +115,12 @@ public abstract class Rhymer {
         }
     }
 
-
     public static Set<String> getAllRhymesByThreshold(Word w, double threshold, int limit) throws NoRhymeFoundException {
-        Set<String> rhymes = getAllRhymesByThreshold(w,threshold);
+        Set<String> rhymes = new HashSet<>();
+        for (Set<String> set : getAllRhymesByThreshold(w,threshold).values()) {
+            rhymes.addAll(set);
+        }
+
         Set<String> result = new HashSet<>();
         int i = 0;
         for (String s : rhymes) {
@@ -124,12 +132,12 @@ public abstract class Rhymer {
         return result;
     }
 
-    public static Set<String> getAllRhymesByThreshold(Word w, double threshold) throws NoRhymeFoundException {
+    public static Map<Double, Set<String>> getAllRhymesByThreshold(Word w, double threshold) throws NoRhymeFoundException {
         if (w == null || U.isNullOrEmpty(w.getRhymeTail())) throw new NoRhymeFoundException();
         return getAllRhymesByThreshold(w.getRhymeTail(), threshold);
     }
 
-    public static Set<String> getAllRhymesByThreshold(SyllableGroup w, double threshold) throws NoRhymeFoundException {
+    public static Map<Double, Set<String>> getAllRhymesByThreshold(SyllableGroup w, double threshold) throws NoRhymeFoundException {
         if (U.isNullOrEmpty(w)) throw new NoRhymeFoundException();
 
         if (threshold > 1.0)
@@ -145,7 +153,7 @@ public abstract class Rhymer {
 //            return rhymes;
 //        }
 
-        Set<String> result = new HashSet<>();
+        Map<Double,Set<String>> result = new HashMap<>();
         for (Map.Entry<String, List<Pronunciation>> entry : Phoneticizer.cmuDict.entrySet()) {
             if (!Phoneticizer.syllableDict.keySet().contains(entry.getKey().toUpperCase()) || !entry.getKey().matches("\\w+")) continue;
 //            if (entry.getKey().equalsIgnoreCase("weeping")) {
@@ -155,9 +163,16 @@ public abstract class Rhymer {
             temp.setPronunciations(Phoneticizer.getSyllablesForWord(entry.getKey()));
             double score = score2Rhymes(w, temp.getRhymeTail());
             if (score >= threshold) {
-                result.add(entry.getKey().toLowerCase());
-                if (mainDebug)
-                    System.out.println(entry.getKey().toLowerCase() + ": " + score);
+                if (result.containsKey(score)) {
+                    result.get(score).add(entry.getKey().toLowerCase());
+                }
+                else {
+                    Set<String> temp_set = new TreeSet<>();
+                    temp_set.add(entry.getKey().toLowerCase());
+                    result.put(score, temp_set);
+                }
+//                if (mainDebug)
+//                    System.out.println(entry.getKey().toLowerCase() + ": " + score);
             }
         }
         return result;
@@ -281,9 +296,12 @@ public abstract class Rhymer {
             return 0;
         double frontnessDiff = Math.abs(coord1[0] - coord2[0]);
         double hightDiff = Math.abs(coord1[1] - coord2[1]);
-        double frontScore = Math.abs((frontnessDiff / 12.72792) - 1) * 1;
-        double heightScore = Math.abs((hightDiff / 12.72792) - 1) * 1;
-        return (frontScore + heightScore) / 2;//TODO weight frontness and height
+        double frontScore = Math.pow(frontnessDiff, 2);
+        double heightScore = Math.pow(hightDiff, 2);
+        double euclidianDistance = Math.sqrt(frontScore + heightScore);//TODO weight frontness and height
+        double normalizedDistance = euclidianDistance / 20;
+        double vowelMatchScore = 1 - normalizedDistance;
+        return vowelMatchScore;
         //        Frontness f1 = ph1.getFrontness();
 //        Frontness f2 = ph2.getFrontness();
 //        Height h1 = ph1.getHeight();
@@ -323,11 +341,15 @@ public abstract class Rhymer {
         boolean v2 = ph2.isVoiced();
         double score = 0;
         if (v1 == v2)
-            score += .1;
+            score += .05;
         if (m1 == m2)
-            score += .45;
+            score += .625;
         if (p1 == p2)
-            score += .45;
+            score += .325;
+//        if (m1 == m2)
+//            score += .65;
+//        if (p1 == p2)
+//            score += .25;
         return score;
     }
 
@@ -675,5 +697,3 @@ public abstract class Rhymer {
 //    }
 
 }
-
-

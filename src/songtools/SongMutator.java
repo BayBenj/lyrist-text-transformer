@@ -110,7 +110,7 @@ public abstract class SongMutator {
 //                    temp.setNe(currentWord.getNe());
 //                    temp.setCapitalized(currentWord.getCapitalized());
 //                    temp.setRhymeScore(currentWord.getRhymeScore());
-//                    temp.setCosineDistance(currentWord.getCosineDistance());
+//                    temp.setCosineSimilarity(currentWord.getCosineSimilarity());
 //                    newLine.add(temp);
 //                }
 //            }

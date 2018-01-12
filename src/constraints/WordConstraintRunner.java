@@ -3,16 +3,17 @@ package constraints;
 import elements.Word;
 import songtools.WordsToSuggestions;
 import songtools.WordReplacements;
+import utils.Pair;
+import utils.Triple;
 import utils.U;
-
 import java.util.*;
 
 public abstract class WordConstraintRunner {
 
-    public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
+    public static WordReplacements useConstraintsTo1ByWeakening(List<WordConstraint> constraints, WordsToSuggestions candidates, ProbabalisticParams probabalisticParams) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         WordReplacements result = new WordReplacements();
         for (Map.Entry<Word,Set<Word>> entry : candidates.entrySet())
-            result.put(entry.getKey(), useConstraintsTo1ByWeakening(constraints, entry.getKey(), entry.getValue()));
+            result.put(entry.getKey(), useConstraintsTo1ByWeakening(constraints, entry.getKey(), entry.getValue(), probabalisticParams));
         return result;
     }
 
@@ -51,14 +52,97 @@ public abstract class WordConstraintRunner {
         return result;
     }
 
-    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word oldWord, Collection<Word> candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
+    public static Word useConstraintsTo1ByWeakening(List<WordConstraint> constraints, Word oldWord, Collection<Word> candidates, ProbabalisticParams probabalisticParams) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
         Set<Word> results = useConstraintsByWeakening(constraints, oldWord, candidates);
-        if (results == null)
+
+        //return null
+        if (results == null || results.isEmpty())
             return null;
         TreeSet<Word> result = new TreeSet<>(results);
-        if (result != null && !result.isEmpty())
+
+        //return the one replacement word
+        if (result.size() == 1) {
             return result.first();
+        }
+
+        //probabilistically select replacement word
+        else {
+            return chooseWordProbabilistically(result, probabalisticParams);
+        }
+    }
+
+    private static Word chooseWordProbabilistically(Set<Word> suggestions, ProbabalisticParams probabalisticParams) {
+        Set<Triple<Word, Double, Double>> normalizedWords = normalizeValues(suggestions);
+        List<Pair<Word,Double>> wordsAndScores = new ArrayList<>();
+        double scoreSum = 0;
+        for (Triple<Word, Double, Double> w : normalizedWords) {
+            double score = probabalisticParams.getScore(w.getSecond(), w.getThird());
+            wordsAndScores.add(new Pair<>(w.getFirst(),score));
+            scoreSum += score;
+        }
+        double p = U.rand.nextDouble() * scoreSum;
+        double cumulativeProbability = 0;
+        for (Pair<Word,Double> pair : wordsAndScores) {
+            cumulativeProbability += pair.getSecond();
+            if (p <= cumulativeProbability)
+                return pair.getFirst();
+        }
         return null;
+    }
+
+    private static Set<Triple<Word, Double, Double>> normalizeValues(Set<Word> words) {
+        //find the minimums and maximums
+        double highestCosine = 0.0;
+        double highestRhyme = 0.0;
+        double lowestCosine = 1.0;
+        double lowestRhyme = 1.0;
+        for (Word w : words) {
+            if (w.getCosineSimilarity() > highestCosine)
+                highestCosine = w.getCosineSimilarity();
+
+            if (w.getRhymeScore() > highestRhyme)
+                highestRhyme = w.getRhymeScore();
+
+            if (w.getCosineSimilarity() < lowestCosine)
+                lowestCosine = w.getCosineSimilarity();
+
+            if (w.getRhymeScore() < lowestRhyme)
+                lowestRhyme = w.getRhymeScore();
+        }
+
+        //if any value is undefined, its normal is set to 0
+        if (highestCosine == Double.MIN_VALUE)
+            highestCosine = 0;
+
+        if (lowestCosine == Double.MIN_VALUE)
+            lowestCosine = 0;
+
+        if (highestRhyme == Double.MIN_VALUE)
+            highestRhyme = 0;
+
+        if (lowestRhyme == Double.MIN_VALUE)
+            lowestRhyme = 0;
+
+        //normalize according to mins and maxes
+        Set<Triple<Word, Double, Double>> result = new HashSet<>();
+        for (Word w : words) {
+            double normalizedCosine;
+            if (highestCosine - lowestCosine == 0)
+                normalizedCosine = 0;
+            else
+                normalizedCosine = (w.getCosineSimilarity() - lowestCosine)/(highestCosine - lowestCosine);
+
+            double normalizedRhyme;
+            if (highestRhyme - lowestRhyme == 0)
+                normalizedRhyme = 0;
+            else
+                normalizedRhyme = (w.getRhymeScore() - lowestRhyme)/(highestRhyme - lowestRhyme);
+
+            Triple<Word, Double, Double> triple = new Triple<>(w, normalizedCosine, normalizedRhyme);
+            result.add(triple);
+        }
+
+        return result;
     }
 
     public static Set<Word> useConstraintsByWeakening(List<WordConstraint> constraints, Word oldWord, Collection<Word> candidates) throws EnforcedConstraintReturnedZeroException, AttemptedDisableOfEnforcedConstraintException {
@@ -206,10 +290,6 @@ Continuous constraints may be weakened or strengthened.
 4. Highest rhyme dbl
 5. Highest cosine distance
  */
-
-
-
-
 
 
 

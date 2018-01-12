@@ -22,7 +22,6 @@
       <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/stanford-corenlp-3.7.0-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31/xom-1.2.10-src.jar!/src" />
       <root url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" />
-      <root url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/lib/stanford/stanford-corenlp-full-2016-10-31" recursive="false" type="SOURCES" />

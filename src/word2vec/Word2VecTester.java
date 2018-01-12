@@ -28,7 +28,7 @@ public class Word2VecTester {
 //                model = "news-lyrics-bom";
 //            }
 //            w2v = new W2vInterface(model);
-            w2v = new W2vInterface("n1615-c4-l1");
+            w2v = new W2vInterface("news-lyrics-bom3");
 
 
 //            //Choose number of results to return
@@ -139,12 +139,6 @@ Should be able to
 3) choose the word2vec model
 all with console input variables.
  */
-
-
-
-
-
-
 
 
 

@@ -15,7 +15,7 @@ public class Word implements Comparable<Word>, Serializable {
     private Ne ne = null;
     private boolean capitalized = false;
 
-    private double cosineDistance = Double.MIN_VALUE;
+    private double cosineSimilarity = Double.MIN_VALUE;
     private double rhymeScore = Double.MIN_VALUE;
     private String rhymeWord = "[uninitialized]";
 
@@ -116,12 +116,12 @@ public class Word implements Comparable<Word>, Serializable {
         this.capitalized = b;
     }
 
-    public double getCosineDistance() {
-        return cosineDistance;
+    public double getCosineSimilarity() {
+        return cosineSimilarity;
     }
 
-    public void setCosineDistance(double cosineDistance) {
-        this.cosineDistance = cosineDistance;
+    public void setCosineSimilarity(double cosineSimilarity) {
+        this.cosineSimilarity = cosineSimilarity;
     }
 
     public double getRhymeScore() {

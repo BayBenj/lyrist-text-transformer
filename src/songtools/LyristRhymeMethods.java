@@ -214,7 +214,7 @@ public abstract class LyristRhymeMethods {
         U.testPrint("Rhyme model set to " + candidateModel.toString() + " at score threshold " + thresh_used);
 //                            rhymeClass.getKey().addInstance(candidateModel);//TODO is this correct?
         rhymeClass.getKey().setModel(candidateModel.getRhymeTail());
-        candidateModel.setRhymeScore(candidateModel.getLowerSpelling(),2.0);
+        candidateModel.setRhymeScore(candidateModel.getLowerSpelling(),thresh_used);
         scoreSuggestionsByModel(candidateModel.getRhymeTail(), rhymeClass.getValue());
     }
 
@@ -301,10 +301,10 @@ public abstract class LyristRhymeMethods {
     public static void scoreSuggestionsByModel(SyllableGroup rhymeModel, List<Pair<Word,Set<Word>>> instanceSuggestions) {
         for (Pair<Word,Set<Word>> instance : instanceSuggestions) {
             for (Word w : instance.getSecond()) {
-                if (w.getRhymeScore() != 2.0) {
+//                if (w.getRhymeScore() != 2.0) {
                     double score = Rhymer.score2Rhymes(rhymeModel, w.getRhymeTail());
                     w.setRhymeScore(rhymeModel.toString(), score);
-                }
+//                }
             }
         }
     }

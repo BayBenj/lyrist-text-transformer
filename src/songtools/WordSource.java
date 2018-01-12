@@ -65,7 +65,11 @@ public class WordSource {
 
     public static Map<Double, String> imperfectCmuRhymes(SyllableGroup rhymeModel, int limit, int thresh) throws NoRhymeFoundException {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
-        Set<String> allRhymes = Rhymer.getAllRhymesByThreshold(rhymeModel, thresh);
+        Set<String> allRhymes = new HashSet<>();
+        for (Set<String> set : Rhymer.getAllRhymesByThreshold(rhymeModel, thresh).values()) {
+            allRhymes.addAll(set);
+        }
+
         Map<Double, String> cmuRhymes = new HashMap<>();
         //TODO: fix this, find actual distance
         double extra = 0.0001;
@@ -81,7 +85,10 @@ public class WordSource {
     public static Map<Double, String> perfectCmuRhymes(SyllableGroup rhymeModel, int limit) throws NoRhymeFoundException {
         //Adds all this word's perfect rhymes to the stringSuggestionMap. TODO use the actual distance from the rhyming word to the point of analogy.
 //        Set<String> allRhymes = new HashSet<>(Rhymer.perfectRhymes.get(rhymeModel));
-        Set<String> allRhymes = Rhymer.getAllRhymesByThreshold(rhymeModel, 1.0);
+        Set<String> allRhymes = new HashSet<>();
+        for (Set<String> set : Rhymer.getAllRhymesByThreshold(rhymeModel, 1.0).values()) {
+            allRhymes.addAll(set);
+        }
         Map<Double, String> cmuRhymes = new HashMap<>();
         //TODO: fix this, find actual distance
         double extra = 0.00001;

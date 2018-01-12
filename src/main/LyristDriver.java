@@ -82,7 +82,7 @@ public class LyristDriver {
     }
 
     public static void setupW2vInterface() {
-        final W2vInterface w2v  = new W2vInterface("now-91995-300");
+        final W2vInterface w2v = new W2vInterface("now-86376-300");
         U.setW2VInterface(w2v);
     }
 

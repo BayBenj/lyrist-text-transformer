@@ -20,51 +20,51 @@ public class W2vInterface {
 
     public void setupModel(String fileName) {
         File f = new File(U.rootPath + "data/w2v/models/sers/" + fileName + ".ser");
-        if(f.exists() && !f.isDirectory())
-            this.deserializeW2vModel(fileName);
-        else
+//        if(f.exists() && !f.isDirectory())
+//            this.deserializeW2vModel(fileName);
+//        else
             this.buildModel(fileName);
         W2vOperations.setModel(this.model);
     }
 
-    public void deserializeW2vModel(String fileName) {
-        U.testPrint("Deserializing W2v Model");
-        try {
-            FileInputStream fileIn = new FileInputStream(U.rootPath + "data/w2v/models/sers/" + fileName + ".ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            this.model = null;
-            this.model = (W2vModel) in.readObject();
-            this.model.setContents(getContentsMap(fileName));
-            in.close();
-            fileIn.close();
-        }
-        catch(IOException i) {
-            i.printStackTrace();
-        }
-        catch(ClassNotFoundException c) {
-            System.out.println("W2vModel class not found");
-            c.printStackTrace();
-        }
-    }
+//    public void deserializeW2vModel(String fileName) {
+//        U.testPrint("Deserializing W2v Model");
+//        try {
+//            FileInputStream fileIn = new FileInputStream(U.rootPath + "data/w2v/models/sers/" + fileName + ".ser");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            this.model = null;
+//            this.model = (W2vModel) in.readObject();
+//            this.model.setContents(getContentsMap(fileName));
+//            in.close();
+//            fileIn.close();
+//        }
+//        catch(IOException i) {
+//            i.printStackTrace();
+//        }
+//        catch(ClassNotFoundException c) {
+//            System.out.println("W2vModel class not found");
+//            c.printStackTrace();
+//        }
+//    }
 
-    public void serializeW2vModel(String fileName) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream(U.rootPath + "data/w2v/models/sers/" + fileName + ".ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(this.model);
-            out.close();
-            fileOut.close();
-            System.out.println("Serialized W2v Model is saved in lyrist/data/w2v/models/sers/" + fileName + ".ser");
-        }
-        catch(IOException i) {
-            i.printStackTrace();
-        }
-    }
+//    public void serializeW2vModel(String fileName) {
+//        try {
+//            FileOutputStream fileOut = new FileOutputStream(U.rootPath + "data/w2v/models/sers/" + fileName + ".ser");
+//            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//            out.writeObject(this.model);
+//            out.close();
+//            fileOut.close();
+//            System.out.println("Serialized W2v Model is saved in lyrist/data/w2v/models/sers/" + fileName + ".ser");
+//        }
+//        catch(IOException i) {
+//            i.printStackTrace();
+//        }
+//    }
 
     public void buildModel(String fileName) {
         this.model = W2vOperations.buildW2vModel(fileName);
         this.model.setContents(getContentsMap(fileName));
-        this.serializeW2vModel(fileName);
+//        this.serializeW2vModel(fileName);
     }
 
     private Map<String,Integer> getContentsMap(String fileName) {

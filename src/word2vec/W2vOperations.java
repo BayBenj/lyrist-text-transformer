@@ -37,7 +37,7 @@ public abstract class W2vOperations {
 //            numberOfWordsInVector = 144353;   //c.bin
 //            numberOfWordsInVector = 109478;   //news-lyrics-bom
 //            numberOfWordsInVector = 288340;   //songtools 288340-500-5
-            numberOfWordsInVector = 91995;   //now
+            numberOfWordsInVector = 86376;   //now
             System.out.println("Words: " + numberOfWordsInVector);
             data_in.readLong();
 
